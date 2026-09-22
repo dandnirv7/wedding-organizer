@@ -1,60 +1,93 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
+
+/* ==========================================================================
+   THE SELECTS TABLE — Meja Seleksi
+   Paper reads; the dark table is for looking. No gradient between them.
+   Radius is zero everywhere except the SVG selection circle.
+   ========================================================================== */
+@theme {
+  /* Grounds */
+  --color-paper: #f2f1ec;
+  --color-paper-deep: #e7e5dd;
+  --color-table: #17181a;
+  --color-table-deep: #101113;
+
+  /* Ink */
+  --color-ink: #1a1c1e;
+  --color-ink-muted: #5c6066;
+  --color-table-ink: #e9e7e1;
+  --color-table-muted: #a09c94;
+
+  /* Lines + the single accent */
+  --color-hairline: #d9d6ce;
+  --color-hairline-table: #2a2c30;
+  --color-select: #c9302b;
+  --color-film: #b8935a;
+
+  /* Type: one serif for words, one narrow grotesque for data */
+  --font-reading: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+  --font-data: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+
+  --text-lede: 1.0625rem;
+  --text-lede-lg: 1.125rem;
+  --text-strip: 0.75rem;
+  --text-section: clamp(1.75rem, 4.5vw, 2.75rem);
+  --text-display: clamp(2.4rem, 7.5vw, 5rem);
+
+  --leading-reading: 1.7;
+  --leading-tight: 1.08;
+  --tracking-strip: 0.14em;
+  --tracking-folio: 0.22em;
+
+  --max-w-measure: 66ch;
+  --max-w-sheet: 1240px;
+}
 
 @layer base {
-  :root {
-    /* Selects Table grounds: paper for reading, dark table for viewing */
-    --paper: #f2f1ec;
-    --table: #17181a;
-    --ink: #1a1c1e;
-    --table-ink: #e9e7e1;
-    --graphite: #5c6066;
-    --hairline-paper: #d9d6ce;
-    --hairline-table: #2a2c30;
-    --select-red: #c9302b;
-
-    /* Legacy aliases mapped to the system (avoid slate/emerald drift) */
-    --color-bg: var(--paper);
-    --color-surface: var(--paper);
-    --color-text: var(--ink);
-    --color-muted: var(--graphite);
-    --color-primary: var(--ink);
-    --color-accent: var(--select-red);
-  }
-
   html {
     scroll-behavior: smooth;
-    /* One serif family for all words; narrow grotesk for labels/nav/capsules */
-    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
-    color: var(--ink);
-    background-color: var(--paper);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-reading);
+    font-optical-sizing: auto;
+    -webkit-text-size-adjust: 100%;
   }
 
-  .font-label {
-    font-family: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  body {
+    text-rendering: optimizeLegibility;
   }
 
-  /* Accessible focus outline (kept for all motion preferences) */
+  h1,
+  h2,
+  h3,
+  figure,
+  blockquote,
+  p,
+  ol,
+  ul {
+    margin: 0;
+  }
+
+  ::selection {
+    background: var(--color-select);
+    color: var(--color-paper);
+  }
+
   :focus-visible {
-    outline: 2px solid var(--select-red);
-    outline-offset: 2px;
+    outline: 2px solid var(--color-select);
+    outline-offset: 3px;
   }
 
-  /* Editorial section rhythm: airier before the heading than after it */
-  .section-space {
-    padding-top: 6rem;
-    padding-bottom: 2.5rem;
-  }
+  /* Browser surfaces the page never draws: caret, scrollbar */
+  caret-color: var(--color-select);
 
-  @media (min-width: 1024px) {
-    .section-space {
-      padding-top: 9rem;
-      padding-bottom: 2.5rem;
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-hairline) transparent;
     }
   }
 
-  /* Respect users requesting reduced motion: no smooth scroll,
-     no non-essential animation. Layout and focus styles untouched. */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -63,9 +96,474 @@
     *,
     *::before,
     *::after {
-      animation-duration: 0.01ms !important;
+      animation-duration: 1ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
+      transition-duration: 1ms !important;
+      animation-timeline: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---- Fields ----------------------------------------------------------- */
+  .field-paper {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  .field-table {
+    background-color: var(--color-table);
+    color: var(--color-table-ink);
+    scrollbar-color: var(--color-hairline-table) transparent;
+
+    ::selection {
+      background: var(--color-table-ink);
+      color: var(--color-table);
+    }
+  }
+
+  .sheet {
+    max-width: var(--max-w-sheet);
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 2rem);
+  }
+
+  /* One rhythm: more air above a section heading than below it. */
+  .sheet-block {
+    padding-block: clamp(4.5rem, 11vw, 8.5rem) clamp(3.5rem, 8vw, 6rem);
+  }
+
+  /* ---- Data type -------------------------------------------------------- */
+  .strip {
+    font-family: var(--font-data);
+    font-size: var(--text-strip);
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  .field-table .strip {
+    color: var(--color-table-muted);
+  }
+
+  .folio {
+    font-family: var(--font-data);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-folio);
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .field-table .folio {
+    color: var(--color-table-muted);
+  }
+
+  /* ---- Reading type ----------------------------------------------------- */
+  .display {
+    font-size: var(--text-display);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    letter-spacing: -0.02em;
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+
+  .h-section {
+    font-size: var(--text-section);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+
+  .h-item {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .lede {
+    font-size: var(--text-lede);
+    line-height: var(--leading-reading);
+    max-width: var(--max-w-measure);
+    text-wrap: pretty;
+
+    @media (min-width: 768px) {
+      font-size: var(--text-lede-lg);
+    }
+  }
+
+  .hairline-top {
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .field-table .hairline-top {
+    border-top-color: var(--color-hairline-table);
+  }
+
+  /* ---- The one action vocabulary: a line + a red selection mark --------- */
+  .select-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 44px;
+    font-family: var(--font-data);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+    color: currentColor;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 220ms ease;
+
+    &:hover,
+    &:focus-visible {
+      border-bottom-color: var(--color-select);
+    }
+
+    & svg {
+      flex: none;
+      overflow: visible;
+    }
+
+    & .ring {
+      stroke: var(--color-select);
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 118;
+      stroke-dashoffset: 0;
+      transform-origin: center;
+      transition: stroke-dashoffset 420ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* The authored moment: the pencil circle closes as the row is entered. */
+    &:hover .ring,
+    &:focus-visible .ring {
+      stroke-dashoffset: -118;
+      transform: rotate(-8deg);
+    }
+  }
+
+  .select-line--quiet {
+    font-size: 0.8125rem;
+    min-height: 40px;
+  }
+
+  /* ---- Frames ----------------------------------------------------------- */
+  .plate {
+    display: block;
+    border: 1px solid var(--color-hairline);
+    background-color: var(--color-paper-deep);
+  }
+
+  .field-table .plate {
+    border-color: var(--color-hairline-table);
+    background-color: var(--color-table-deep);
+  }
+
+  .plate-media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    & img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .plate-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 0.875rem;
+    padding-inline: 1.25rem;
+    text-align: center;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in oklab, var(--color-hairline) 55%, transparent) 0 1px,
+      transparent 1px 11px
+    );
+  }
+
+  .field-table .plate-empty {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in oklab, var(--color-hairline-table) 90%, transparent) 0 1px,
+      transparent 1px 11px
+    );
+  }
+
+  .plate-caption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.625rem 0.875rem;
+    border-top: 1px solid var(--color-hairline);
+  }
+
+  .field-table .plate-caption {
+    border-top-color: var(--color-hairline-table);
+  }
+
+  /* Film edge: the only place the faded amber is printed. */
+  .edge-band {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2rem);
+    overflow: hidden;
+    padding-block: 0.5rem;
+    border-block: 1px solid var(--color-hairline-table);
+    background-color: var(--color-table-deep);
+    color: var(--color-film);
+  }
+
+  .edge-perf {
+    display: flex;
+    gap: 0.375rem;
+
+    & i {
+      display: block;
+      width: 0.5rem;
+      height: 0.4375rem;
+      background-color: color-mix(in oklab, var(--color-film) 22%, transparent);
+    }
+  }
+
+  /* ---- Ledger (Services) ------------------------------------------------ */
+  .ledger {
+    display: grid;
+    gap: clamp(2rem, 5vw, 3.5rem);
+
+    @media (min-width: 1024px) {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      align-items: start;
+    }
+  }
+
+  .ledger-row {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 0.25rem 1rem;
+    align-items: baseline;
+    padding-block: clamp(1.25rem, 3vw, 1.75rem);
+    border-top: 1px solid var(--color-hairline);
+    transition: background-color 260ms ease;
+
+    &:last-of-type {
+      border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &:hover,
+    &:focus-within {
+      background-color: color-mix(in oklab, var(--color-paper-deep) 70%, transparent);
+    }
+  }
+
+  .ledger-view {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    max-height: 68vh;
+
+    @media (max-width: 1023px) {
+      display: none;
+    }
+  }
+
+  .ledger-view > * {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .ledger-view > :first-child {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The rows drive the plate; :has() keeps it JavaScript-free. */
+  .ledger:has(.ledger-row:nth-child(2):hover) .ledger-view > :nth-child(2),
+  .ledger:has(.ledger-row:nth-child(2):focus-within) .ledger-view > :nth-child(2),
+  .ledger:has(.ledger-row:nth-child(3):hover) .ledger-view > :nth-child(3),
+  .ledger:has(.ledger-row:nth-child(3):focus-within) .ledger-view > :nth-child(3),
+  .ledger:has(.ledger-row:nth-child(4):hover) .ledger-view > :nth-child(4),
+  .ledger:has(.ledger-row:nth-child(4):focus-within) .ledger-view > :nth-child(4),
+  .ledger:has(.ledger-row:nth-child(5):hover) .ledger-view > :nth-child(5),
+  .ledger:has(.ledger-row:nth-child(5):focus-within) .ledger-view > :nth-child(5),
+  .ledger:has(.ledger-row:nth-child(6):hover) .ledger-view > :nth-child(6),
+  .ledger:has(.ledger-row:nth-child(6):focus-within) .ledger-view > :nth-child(6) {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* On paper: a selected row prints its number in red. */
+  .ledger-row .ledger-no {
+    color: var(--color-ink-muted);
+    transition: color 220ms ease;
+  }
+
+  .ledger-row:hover .ledger-no,
+  .ledger-row:focus-within .ledger-no {
+    color: var(--color-select);
+  }
+
+  /* Mobile: the plate rides inside its own row, inline. */
+  .ledger-inline {
+    @media (min-width: 1024px) {
+      display: none;
+    }
+  }
+
+  /* ---- FAQ (native disclosure, no script) ------------------------------- */
+  .faq-item {
+    border-top: 1px solid var(--color-hairline);
+
+    &:last-of-type {
+      border-bottom: 1px solid var(--color-hairline);
+    }
+
+    & summary {
+      display: grid;
+      grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+      align-items: baseline;
+      gap: 0.25rem 1rem;
+      min-height: 44px;
+      padding-block: 1.25rem;
+      cursor: pointer;
+      list-style: none;
+
+      &::-webkit-details-marker {
+        display: none;
+      }
+    }
+
+    & summary:hover .faq-q,
+    & summary:focus-visible .faq-q {
+      text-decoration: underline;
+      text-decoration-color: var(--color-select);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 0.35em;
+    }
+
+    & .faq-mark::after {
+      content: "+";
+    }
+
+    &[open] .faq-mark::after {
+      content: "\2212";
+    }
+
+    & p {
+      padding-block-end: 1.5rem;
+    }
+  }
+
+  /* ---- Story strip: asymmetric, not a uniform grid ---------------------- */
+  .story-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.25rem);
+    align-items: start;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (min-width: 1200px) {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    & > :nth-child(2) {
+      @media (min-width: 768px) {
+        margin-top: clamp(2rem, 6vw, 5rem);
+      }
+    }
+
+    & > :nth-child(4) {
+      @media (min-width: 1200px) {
+        margin-top: clamp(2rem, 6vw, 5rem);
+      }
+    }
+  }
+
+  /* ---- Nav: transparent over the table, printed once it leaves ---------- */
+  .sheet-nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: color-mix(in oklab, var(--color-table) 55%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid transparent;
+    transition: background-color 200ms ease;
+
+    @supports not (backdrop-filter: blur(2px)) {
+      background-color: var(--color-table);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .sheet-nav {
+        animation: nav-print linear both;
+        animation-timeline: view();
+        animation-range: exit 90% cover 100%;
+      }
+    }
+  }
+
+  @keyframes nav-print {
+    from {
+      background-color: var(--color-table);
+      border-bottom-color: var(--color-hairline-table);
+    }
+  }
+
+  /* ---- Reveal: a folio strip wipe, content visible by default ----------- */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: folio-wipe linear both;
+        animation-timeline: view();
+        animation-range: entry 2% entry 34%;
+      }
+    }
+  }
+
+  @keyframes folio-wipe {
+    from {
+      opacity: 0;
+      transform: translateY(1.25rem);
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* Mobile sticky action reserves its own space so it never covers a caption */
+  .sticky-reserve {
+    @media (max-width: 767px) {
+      padding-block-end: 5.5rem;
     }
   }
 }
