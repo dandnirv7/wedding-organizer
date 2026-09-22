@@ -24,6 +24,8 @@ pnpm-debug.log*
 .idea/
 .cursor/
 
+.impeccable
+
 # Vercel
 .vercel/
 
