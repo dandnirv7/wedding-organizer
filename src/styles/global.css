@@ -3,25 +3,54 @@
 
 @layer base {
   :root {
-    --color-primary: #0f172a;
-    --color-accent: #059669;
-    --color-bg: #ffffff;
-    --color-surface: #f8fafc;
-    --color-text: #0f172a;
-    --color-muted: #64748b;
+    /* Selects Table grounds: paper for reading, dark table for viewing */
+    --paper: #f2f1ec;
+    --table: #17181a;
+    --ink: #1a1c1e;
+    --table-ink: #e9e7e1;
+    --graphite: #5c6066;
+    --hairline-paper: #d9d6ce;
+    --hairline-table: #2a2c30;
+    --select-red: #c9302b;
+
+    /* Legacy aliases mapped to the system (avoid slate/emerald drift) */
+    --color-bg: var(--paper);
+    --color-surface: var(--paper);
+    --color-text: var(--ink);
+    --color-muted: var(--graphite);
+    --color-primary: var(--ink);
+    --color-accent: var(--select-red);
   }
 
   html {
     scroll-behavior: smooth;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    color: var(--color-text);
-    background-color: var(--color-bg);
+    /* One serif family for all words; narrow grotesk for labels/nav/capsules */
+    font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+    color: var(--ink);
+    background-color: var(--paper);
+  }
+
+  .font-label {
+    font-family: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
   }
 
   /* Accessible focus outline (kept for all motion preferences) */
   :focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 2px solid var(--select-red);
     outline-offset: 2px;
+  }
+
+  /* Editorial section rhythm: airier before the heading than after it */
+  .section-space {
+    padding-top: 6rem;
+    padding-bottom: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .section-space {
+      padding-top: 9rem;
+      padding-bottom: 2.5rem;
+    }
   }
 
   /* Respect users requesting reduced motion: no smooth scroll,
