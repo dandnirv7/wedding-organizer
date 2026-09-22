@@ -21,7 +21,7 @@ const { graph, ...seoProps } = Astro.props;
 <html lang={siteConfig.locale.split('-')[0]} class="h-full antialiased">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <ClientRouter />
     <SeoHead {...seoProps} />
     <Schema graph={graph || null} />

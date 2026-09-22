@@ -31,7 +31,9 @@ const hasWa = Boolean(siteConfig.contact.whatsapp);
 ---
 
 <BaseLayout title={copy.sheet.title} description={copy.sheet.description} canonical={canonicalUrl} graph={graph}>
-  <SheetNav slot="header" items={copy.sheet.nav} />
+  <SheetNav slot="header" items={copy.sheet.nav}>
+    <WaButton slot="cta" variant="quiet" text="Chat via WhatsApp" message={copy.waMessage} />
+  </SheetNav>
 
   {/* 01 HERO — bidang meja penuh; pelat menguasai, teks di tepi kiri */}
   <section class="field-table">

@@ -504,35 +504,177 @@
     }
   }
 
-  /* ---- Nav: transparent over the table, printed once it leaves ---------- */
+  /* ---- Nav: folio tepi lembar + sheet indeks dari kanan ---------------- */
+  /* Bidang meja solid: di atas hero warnanya sama sehingga terbaca menyatu,
+     lalu hairline memisahkannya sendiri saat bertemu bidang kertas. */
   .sheet-nav {
     position: sticky;
     top: 0;
     z-index: 40;
-    background-color: color-mix(in oklab, var(--color-table) 55%, transparent);
-    backdrop-filter: blur(6px);
-    border-bottom: 1px solid transparent;
-    transition: background-color 200ms ease;
+    background-color: var(--color-table);
+    border-bottom: 1px solid var(--color-hairline-table);
+  }
 
-    @supports not (backdrop-filter: blur(2px)) {
-      background-color: var(--color-table);
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    padding-inline: 0.25rem;
+    background: none;
+    border: 0;
+    color: var(--color-table-ink);
+    cursor: pointer;
+  }
+
+  /* Tiga helai hairline: ikon digambar, bukan glyph unicode. */
+  .nav-bars {
+    display: grid;
+    gap: 4px;
+    inline-size: 1.125rem;
+
+    & i {
+      display: block;
+      block-size: 1px;
+      inline-size: 100%;
+      background-color: currentColor;
+      transition: inline-size 200ms ease;
+    }
+
+    & i:nth-child(2) {
+      inline-size: 70%;
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: view()) {
-      .sheet-nav {
-        animation: nav-print linear both;
-        animation-timeline: view();
-        animation-range: exit 90% cover 100%;
+  .nav-toggle:active .nav-bars i:nth-child(2) {
+    inline-size: 0.5rem;
+  }
+
+  .nav-sheet {
+    position: fixed;
+    inset: 0 0 0 auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-left: 1px solid var(--color-hairline-table);
+    block-size: 100dvh;
+    inline-size: min(20rem, 86vw);
+    max-inline-size: none;
+    max-block-size: none;
+    overflow-y: auto;
+    background-color: var(--color-table);
+    color: var(--color-table-ink);
+    translate: 100% 0;
+    transition:
+      translate 420ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 200ms linear,
+      display 420ms allow-discrete,
+      overlay 420ms allow-discrete;
+
+    &::backdrop {
+      background-color: rgb(5 6 7 / 0.58);
+      opacity: 0;
+      transition: opacity 320ms ease, overlay 320ms allow-discrete;
+    }
+
+    &:popover-open {
+      translate: 0 0;
+      padding-block: 1rem max(1.5rem, env(safe-area-inset-bottom));
+      padding-inline: clamp(1.25rem, 6vw, 2rem);
+
+      &::backdrop {
+        opacity: 1;
       }
     }
   }
 
-  @keyframes nav-print {
-    from {
-      background-color: var(--color-table);
-      border-bottom-color: var(--color-hairline-table);
+  @starting-style {
+    .nav-sheet:popover-open {
+      translate: 100% 0;
+    }
+
+    .nav-sheet:popover-open::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* Sheet di atas konten: kunci scroll halaman selama terbuka. */
+  body:has(.nav-sheet:popover-open) {
+    overflow: clip;
+  }
+
+  .nav-row {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem 1rem;
+    min-height: 56px;
+    border-top: 1px solid var(--color-hairline-table);
+    font-family: var(--font-data);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+    color: var(--color-table-ink);
+
+    &:last-of-type {
+      border-bottom: 1px solid var(--color-hairline-table);
+    }
+
+    &:hover .nav-no,
+    &:focus-visible .nav-no {
+      color: var(--color-select);
+    }
+  }
+
+  .nav-no {
+    font-family: var(--font-data);
+    font-size: var(--text-strip);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-table-muted);
+    transition: color 200ms ease;
+  }
+
+  .nav-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 44px;
+    block-size: 44px;
+    margin-inline-end: -0.625rem;
+    background: none;
+    border: 0;
+    color: var(--color-table-ink);
+    cursor: pointer;
+
+    & svg {
+      stroke: currentColor;
+      stroke-width: 1.5;
+      transition: stroke 200ms ease;
+    }
+
+    &:hover svg,
+    &:focus-visible svg {
+      stroke: var(--color-select);
+    }
+  }
+
+  /* Browser tanpa Popover API: navigasi tetap ada, sebagai baris inline. */
+  @supports not selector(:popover-open) {
+    .nav-toggle,
+    .nav-sheet {
+      display: none;
+    }
+
+    .nav-fallback {
+      display: flex !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-sheet,
+    .nav-sheet::backdrop {
+      transition: none;
     }
   }
 
