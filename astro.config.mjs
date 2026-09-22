@@ -6,7 +6,18 @@ import vercel from '@astrojs/vercel';
 import robotsTxt from 'astro-robots-txt';
 import min from 'astro-min';
 import compressor from 'astro-compressor';
+import fs from 'node:fs';
 
+function loadDotEnv() {
+  try {
+    const raw = fs.readFileSync('.env', 'utf8');
+    for (const line of raw.split('\n')) {
+      const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*)\s*$/);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '').trim();
+    }
+  } catch {}
+}
+loadDotEnv();
 const siteUrl = (process.env.SITE_URL || '').trim().replace(/\/+$/, '');
 
 if (!siteUrl) {

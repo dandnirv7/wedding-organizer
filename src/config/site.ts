@@ -42,20 +42,35 @@ export interface SiteConfig {
   description: string;
   locale: string;
   ogDefault: string;
+  /** Wilayah kerja yang benar-benar dilayani; kosong = belum dikonfirmasi. */
+  serviceAreas: string[];
   contact: SiteContact;
   socials: SiteSocials;
 }
 
+/**
+ * ===== DATA BELUM DITERIMA — GANTI SEMUA NILAI DI BAWAH INI =====
+ * Nilai identitas di bawah adalah placeholder yang diberi label, bukan fakta
+ * klien. Jangan dipublikasikan apa adanya: nama, tagline, deskripsi, nomor
+ * WhatsApp, Instagram, dan area layanan harus diisi dari materi klien.
+ * Nomor WA kosong = seluruh CTA tidak dirender (bukan tautan mati).
+ */
+export const PLACEHOLDER_IDENTITY = true;
+
 export const siteConfig: SiteConfig = {
   url: resolveSiteUrl(),
-  name: "Boilerplate Astro",
-  tagline: "Boilerplate Generik Marketing & Katalog",
+  name: 'Nama Wedding Organizer',
+  tagline: 'Tagline resmi menunggu materi klien',
   description:
-    "Boilerplate Astro generik dengan SEO teknis, structured data JSON-LD @graph valid, dan OG otomatis.",
-  locale: "id-ID",
-  ogDefault: "/og/default.png",
-  // Fill per project. Empty by default: no fictional organization facts
-  // in the generic baseline (see IMPLEMENTATION-PLAN.md Phase 1).
-  contact: {},
-  socials: {},
+    'Deskripsi perusahaan akan diisi setelah materi brand klien diterima. Teks ini adalah placeholder berlabel, bukan fakta usaha.',
+  locale: 'id-ID',
+  ogDefault: '/og/default.png',
+  serviceAreas: [],
+  // Kosong dengan sengaja: tanpa data, tanpa klaim.
+  contact: {
+    whatsapp: '',
+  },
+  socials: {
+    instagram: '',
+  },
 };
