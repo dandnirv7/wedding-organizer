@@ -604,7 +604,7 @@ A change is complete when:
 Before changing architecture:
 
 1. Read this file.
-2. Read `BOILERPLATE_SPEC.md`.
+2. Read `docs/PRD.md`, `docs/DESIGN.md`, `docs/TECH-SPEC.md`, `PRODUCT.md`.
 3. Inspect the existing repository.
 4. Identify the active package/branch.
 5. Prefer the smallest change that satisfies the requirement.
@@ -632,3 +632,52 @@ maintainability
 ```
 
 over abstraction or feature completeness.
+
+---
+
+# Project Overlay: wedding-organizer (active checkout, branch `main`)
+
+Boilerplate ini adalah fondasi **multipage public site** generik (landing, company profile,
+content, catalog). Checkout ini dipakai sebagai **proyek wedding organizer one-page** di
+branch `main` — pengecualian satu-rute yang disengaja, bukan pola default boilerplate.
+
+Sumber kebenaran proyek (urutan menang bila konflik):
+
+```text
+docs/PRD.md (what/why)
+  ↓
+docs/DESIGN.md (Selects Table visual/UX)
+  ↓
+docs/TECH-SPEC.md (how teknis + SOW)
+  ↓
+PRODUCT.md (keputusan terkonfirmasi vs belum diputuskan)
+```
+
+Aturan proyek yang mengikat (di atas aturan generik):
+
+- Satu rute `/` berisi 11 section: Hero → Brand Statement → Featured Wedding (`#work`)
+  → Services (`#services`) → Process → Cinematic Video Break → Visual Story →
+  Testimonial → About/Trust (`#about`) → Final CTA → Footer. Tidak ada
+  `/portfolio`, `/services`, `/about`, `/blog`, `/contact` pada versi initial.
+- Bahasa copy tayang **Indonesia penuh**, locale `id-ID`. Contoh heading Inggris di
+  `docs/DESIGN.md` wajib diterjemahkan saat implementasi.
+- Tepat 1 H1 per halaman. Klaim di JSON-LD harus terlihat di HTML. Tanpa review,
+  rating, harga, ketersediaan, statistik, atau pasangan fiktif.
+- Nomor WhatsApp hanya dari `siteConfig.contact.whatsapp`. Tanpa nomor → CTA tidak
+  dirender (bukan `href="#"`). Tracking hanya via abstraksi `track()` LEAD
+  (`lead_whatsapp_click` + lokasi CTA). Tanpa `gtag` langsung, tanpa data sensitif.
+- Visual Selects Table: bidang kertas (`#f2f1ec`) untuk baca, meja gelap (`#17181a`)
+  untuk lihat, tanpa gradient di antaranya. Merah (`#c9302b`) hanya lingkaran seleksi
+  / satu baris aksi per bidang (≤3% viewport), tanpa latar merah. Radius nol kecuali
+  lingkaran seleksi SVG. Tanpa kartu, pill, badge, blur, shadow-blur, glassmorphism,
+  emas-cream, italic-broadsheet, font ketiga, WebGL.
+- Slot foto/video kosong dirender sebagai `FramePlate` berlabel "menunggu aset klien"
+  dengan rasio + dimensi final anti-CLS. Saat aset tiba hanya isinya yang ditukar.
+  Tanpa foto stok, AI, atau generate sebagai pengganti dokumentasi nyata.
+- Komponen wedding tinggal langsung di `src/pages/` (file/komponen ber-prefix `_`
+  agar tidak menjadi rute). Core `src/components/`, `src/lib/`, `src/layouts/`
+  hanya diubah bila perlu dan tetap generik; komposisi LEAD selalu di level page.
+- Komponen wedding tidak boleh meng-hardcode nomor, URL brand, atau copy final klien
+  yang belum diterima. Kekosongan data adalah fitur anti-fabrikasi.
+- Validasi: `pnpm check` + `pnpm build` + `pnpm assert:dist` hijau (gate),
+  `pnpm diagnost` informatif.
