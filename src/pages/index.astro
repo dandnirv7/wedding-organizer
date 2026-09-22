@@ -17,6 +17,8 @@ import SelectStrip from './_wedding/SelectStrip.astro';
 import ServiceLedger from './_wedding/ServiceLedger.astro';
 import FaqSheet from './_wedding/FaqSheet.astro';
 import Colophon from './_wedding/Colophon.astro';
+import PalettePicker from './_wedding/PalettePicker.astro';
+import { paletteBootstrap } from './_wedding/palettes';
 import { copy, services, frames, storyFrames } from './_wedding/copy';
 
 const canonicalUrl = resolveCanonical(Astro.url);
@@ -31,6 +33,9 @@ const hasWa = Boolean(siteConfig.contact.whatsapp);
 ---
 
 <BaseLayout title={copy.sheet.title} description={copy.sheet.description} canonical={canonicalUrl} graph={graph}>
+  <!-- Pra-paint: pasang palet tersimpan sebelum gaya pertama dihitung. -->
+  <script slot="head" is:inline set:html={paletteBootstrap} />
+
   <SheetNav slot="header" items={copy.sheet.nav}>
     <WaButton slot="cta" variant="quiet" text="Chat via WhatsApp" message={copy.waMessage} />
   </SheetNav>
@@ -256,5 +261,6 @@ const hasWa = Boolean(siteConfig.contact.whatsapp);
   </section>
 
   <Colophon slot="footer" />
+  <PalettePicker />
   <WaButton variant="floating" text={copy.floatingCta} message={copy.waMessage} />
 </BaseLayout>

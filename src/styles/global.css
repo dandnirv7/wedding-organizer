@@ -43,6 +43,81 @@
   --max-w-sheet: 1240px;
 }
 
+/* ---- Palet alternatif -----------------------------------------------------
+   Dipakai oleh PalettePicker lewat `<html data-palette="…">`. Struktur perannya
+   tidak berubah — dua bidang, satu tanda seleksi, satu pita film — hanya hue yang
+   berpindah. Kontras dijaga sebanding default: ≥4.5:1 teks di atas kertas,
+   ≥3:1 tanda seleksi di atas meja. `meja-seleksi` mengulang nilai @theme supaya
+   barisnya di picker tetap menunjuk warna aslinya. Nilainya ada di sini saja;
+   swatch picker membaca variabel yang sama.
+   ========================================================================== */
+@layer base {
+  /* Meja Seleksi — nilai @theme diulang di sini supaya baris pertamanya di
+     picker tetap menunjuk warna aslinya setelah palet lain dipilih. */
+  [data-palette='meja-seleksi'] {
+    --color-paper: #f2f1ec;
+    --color-paper-deep: #e7e5dd;
+    --color-table: #17181a;
+    --color-table-deep: #101113;
+    --color-ink: #1a1c1e;
+    --color-ink-muted: #5c6066;
+    --color-table-ink: #e9e7e1;
+    --color-table-muted: #a09c94;
+    --color-hairline: #d9d6ce;
+    --color-hairline-table: #2a2c30;
+    --color-select: #c9302b;
+    --color-film: #b8935a;
+  }
+
+  /* Abu Sage — akad taman, dekorasi hijau; aksi tanah liat. */
+  [data-palette='abu-sage'] {
+    --color-paper: #eceee7;
+    --color-paper-deep: #dfe2d8;
+    --color-table: #191d18;
+    --color-table-deep: #121510;
+    --color-ink: #22271f;
+    --color-ink-muted: #5f6659;
+    --color-table-ink: #e6e9df;
+    --color-table-muted: #99a192;
+    --color-hairline: #d2d7ca;
+    --color-hairline-table: #2e352c;
+    --color-select: #b4472f;
+    --color-film: #9c8f5f;
+  }
+
+  /* Kabut Slate — ballroom kota, resepsi malam; aksi tinta biru. */
+  [data-palette='kabut-slate'] {
+    --color-paper: #eceef1;
+    --color-paper-deep: #dee2e7;
+    --color-table: #151b21;
+    --color-table-deep: #0e1318;
+    --color-ink: #1d242b;
+    --color-ink-muted: #5c6672;
+    --color-table-ink: #e6eaee;
+    --color-table-muted: #96a1ab;
+    --color-hairline: #d3d8de;
+    --color-hairline-table: #272f37;
+    --color-select: #2b6f9f;
+    --color-film: #93a3b6;
+  }
+
+  /* Sepia Malam — resepsi klasik, cahaya hangat; aksi wine. */
+  [data-palette='sepia-malam'] {
+    --color-paper: #f3efe9;
+    --color-paper-deep: #e8e1d7;
+    --color-table: #1d1712;
+    --color-table-deep: #15100c;
+    --color-ink: #2a221c;
+    --color-ink-muted: #6b5d52;
+    --color-table-ink: #efe7de;
+    --color-table-muted: #a4948a;
+    --color-hairline: #ded4c8;
+    --color-hairline-table: #342a23;
+    --color-select: #ad4354;
+    --color-film: #c08a4e;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -706,6 +781,251 @@
   .sticky-reserve {
     @media (max-width: 767px) {
       padding-block-end: 5.5rem;
+    }
+  }
+
+  /* ---- Palette picker -----------------------------------------------------
+     Tab folio melayang di kanan-bawah + indeks palet sebagai sheet. Punya
+     posisi sendiri: hanya alat pratinjuan untuk memilih arah warna, jadi ia
+     tidak boleh meniru konten halaman — tetap bidang meja, hairline, radius nol,
+     tanpa bayangan.
+     -------------------------------------------------------------------------- */
+  .pal-dock {
+    --pal-gap: clamp(0.75rem, 3vw, 1.5rem);
+    /* Tinggi bar aksi WhatsApp melayang di mobile (md:hidden). Harus 0px,
+       bukan 0: calc() menolak <number> yang dijumlahkan dengan <length>. */
+    --pal-rise: 0px;
+    height: 0;
+
+    @media (max-width: 767px) {
+      --pal-rise: 4.25rem;
+    }
+  }
+
+  .pal-trigger {
+    position: fixed;
+    z-index: 45;
+    right: var(--pal-gap);
+    bottom: calc(var(--pal-gap) + var(--pal-rise));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    padding-inline: 0.75rem;
+    background-color: var(--color-table);
+    border: 1px solid var(--color-hairline-table);
+    color: var(--color-table-ink);
+    font-family: var(--font-data);
+    font-size: var(--text-strip);
+    font-weight: 700;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:hover .pal-trigger-label,
+    &:focus-visible .pal-trigger-label {
+      color: var(--color-select);
+    }
+  }
+
+  /* Titik trigger mengikuti palet aktif: umpan balik tanpa teks. */
+  .pal-dots {
+    display: flex;
+    gap: 3px;
+
+    & i {
+      display: block;
+      inline-size: 7px;
+      block-size: 14px;
+    }
+
+    & i:nth-child(1) {
+      background-color: var(--color-paper);
+    }
+
+    & i:nth-child(2) {
+      background-color: var(--color-table-muted);
+    }
+
+    & i:nth-child(3) {
+      background-color: var(--color-select);
+    }
+  }
+
+  /* Membawa kelas .field-table dari markup: warna bidang + muting tipenya. */
+  .pal-sheet {
+    position: fixed;
+    inset: auto var(--pal-gap) calc(var(--pal-gap) + var(--pal-rise) + 3.25rem) auto;
+    margin: 0;
+    padding: 0.875rem clamp(1rem, 3vw, 1.25rem) 1.125rem;
+    border: 1px solid var(--color-hairline-table);
+    inline-size: min(24rem, calc(100vw - 2 * var(--pal-gap)));
+    max-inline-size: none;
+    max-block-size: min(72dvh, 36rem);
+    overflow-y: auto;
+    opacity: 0;
+    translate: 0 0.75rem;
+    transition:
+      translate 360ms cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 200ms linear,
+      display 360ms allow-discrete,
+      overlay 360ms allow-discrete;
+
+    &:popover-open {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+
+  @starting-style {
+    .pal-sheet:popover-open {
+      opacity: 0;
+      translate: 0 0.75rem;
+    }
+  }
+
+  .pal-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block-end: 0.5rem;
+  }
+
+  /* Kalimat, bukan label: lepas dari uppercase .strip supaya tetap terbaca. */
+  .pal-foot {
+    margin-block-start: 0.875rem;
+    padding-block-start: 0.625rem;
+    border-top: 1px solid var(--color-hairline-table);
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-table-muted);
+  }
+
+  .pal-field {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+  }
+
+  /* Radio asli: panah kiri/kanan sudah memindahkan pilihan tanpa skrip. */
+  .pal-input:focus-visible + .pal-row {
+    outline: 2px solid var(--color-select);
+    outline-offset: 2px;
+  }
+
+  .pal-row {
+    display: grid;
+    grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.125rem 0.875rem;
+    padding-block: 0.875rem;
+    border-top: 1px solid var(--color-hairline-table);
+    cursor: pointer;
+  }
+
+  .pal-no {
+    grid-row: span 2;
+    font-family: var(--font-data);
+    font-size: var(--text-strip);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-table-muted);
+    transition: color 200ms ease;
+  }
+
+  .pal-name {
+    font-family: var(--font-data);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+  }
+
+  .pal-note {
+    grid-column: 2;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-table-muted);
+  }
+
+  .pal-flag {
+    display: none;
+    color: var(--color-select);
+  }
+
+  .pal-row:hover .pal-no,
+  .pal-input:checked + .pal-row .pal-no {
+    color: var(--color-select);
+  }
+
+  .pal-samples {
+    --pal-sample-edge: var(--color-hairline-table);
+
+    position: relative;
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    border: 1px solid var(--pal-sample-edge);
+  }
+
+  /* Tiap sel membawa data-palette-nya sendiri, jadi warnanya dibaca dari
+     blok token palet itu — tidak ada nilai warna yang dityalis di markup. */
+  .pal-samples i {
+    display: block;
+    inline-size: 1.05rem;
+    block-size: 1.75rem;
+  }
+
+  .pal-samples i:nth-child(1) {
+    background-color: var(--color-paper);
+  }
+
+  .pal-samples i:nth-child(2) {
+    background-color: var(--color-table);
+    outline: 1px solid var(--pal-sample-edge);
+    outline-offset: -1px;
+  }
+
+  .pal-samples i:nth-child(3) {
+    background-color: var(--color-select);
+  }
+
+  /* Lingkaran pensil: tanda pilihan sistem ini, digambar dengan warna seleksinya. */
+  .pal-ring {
+    position: absolute;
+    inset: -8px -10px;
+    display: none;
+    inline-size: calc(100% + 20px);
+    block-size: calc(100% + 16px);
+    overflow: visible;
+    stroke: var(--color-select);
+    stroke-width: 3;
+    fill: none;
+  }
+
+  .pal-input:checked + .pal-row .pal-ring {
+    display: block;
+  }
+
+  .pal-input:checked + .pal-row .pal-flag {
+    display: inline;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pal-sheet {
+      transition: none;
+    }
+  }
+
+  /* Browser tanpa Popover API: picker hilang total, halaman tidak dirusak. */
+  @supports not selector(:popover-open) {
+    .pal-trigger,
+    .pal-sheet {
+      display: none;
     }
   }
 }

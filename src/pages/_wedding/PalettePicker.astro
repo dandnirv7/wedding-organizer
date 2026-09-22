@@ -1,0 +1,106 @@
+---
+/**
+ * PalettePicker — alat pratinjuan untuk klien: satu tab melayang membuka indeks
+ * palet, dan halaman seketika memakai palet itu.
+ *
+ * Tanpa React dan tanpa library drawer: buka/tutup lewat Popover API bawaan,
+ * pilihan lewat radio native (panah kiri/kanan sudah memindahkan pilihan).
+ * Skrip hanya melakukan dua hal yang HTML tidak bisa: menulis `data-palette`
+ * pada <html> dan mengingat pilihan di peramban klien. Nilai warna tinggal di
+ * `global.css`; swatch di bawah ini membaca variabel token palet yang sama.
+ */
+import { defaultPaletteId, palettes } from './palettes';
+
+const triggerLabel = 'Pilih palet warna untuk pratinjau';
+---
+
+<div class="pal-dock">
+  <button
+    type="button"
+    class="pal-trigger"
+    popovertarget="pal-sheet"
+    aria-label={triggerLabel}
+  >
+    <span class="pal-dots" aria-hidden="true"><i /><i /><i /></span>
+    <span class="pal-trigger-label">palet</span>
+  </button>
+
+  <div id="pal-sheet" class="pal-sheet field-table" popover aria-label="Daftar palet warna">
+    <div class="pal-head">
+      <p class="folio">palet warna</p>
+      <p class="strip">{palettes.length} pilihan</p>
+    </div>
+
+    <fieldset class="pal-field">
+      <legend class="sr-only">{triggerLabel}</legend>
+      {
+        palettes.map((palette, i) => (
+          <>
+            <input
+              class="pal-input sr-only"
+              type="radio"
+              name="palet"
+              id={`pal-${palette.id}`}
+              value={palette.id}
+              checked={palette.id === defaultPaletteId}
+              data-palette-input
+            />
+            <label class="pal-row" for={`pal-${palette.id}`}>
+              <span class="pal-no">{String(i + 1).padStart(2, '0')}</span>
+              <span class="pal-name">
+                {palette.name}
+                <span class="pal-flag">— aktif</span>
+              </span>
+              <span class="pal-note">{palette.note}</span>
+              <span class="pal-samples">
+                <i data-palette={palette.id} />
+                <i data-palette={palette.id} />
+                <i data-palette={palette.id} />
+                <svg
+                  class="pal-ring"
+                  data-palette={palette.id}
+                  viewBox="0 0 44 44"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <ellipse cx="22" cy="22" rx="18" ry="16" transform="rotate(-7 22 22)" />
+                </svg>
+              </span>
+            </label>
+          </>
+        ))
+      }
+    </fieldset>
+
+    <p class="pal-foot">
+      Pilihan hanya tersimpan di peramban ini untuk bahan diskusi — belum mengubah berkas situs.
+    </p>
+  </div>
+</div>
+
+<script>
+  import { paletteStorageKey } from './palettes';
+
+  const root = document.documentElement;
+  const inputs = Array.from(document.querySelectorAll<HTMLInputElement>('[data-palette-input]'));
+
+  // Skrip bootstrap di <head> sudah menentukan palet aktif; kelompok radio harus
+  // ikut nilai itu supaya tanda "aktif" tidak menunjuk baris yang salah.
+  const stored = root.dataset.palette;
+  if (stored) {
+    for (const input of inputs) input.checked = input.value === stored;
+  }
+
+  for (const input of inputs) {
+    input.addEventListener('change', () => {
+      if (!input.checked) return;
+      root.dataset.palette = input.value;
+      try {
+        localStorage.setItem(paletteStorageKey, input.value);
+      } catch {
+        // Peramban tanpa penyimpanan: pratinjau tetap jalan selama halaman terbuka.
+      }
+    });
+  }
+</script>

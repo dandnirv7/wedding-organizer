@@ -1,10 +1,10 @@
 ---
 /**
  * SheetNav — folio tepi lembar, bukan bar navigasi SaaS.
- * ≥1024px: indeks tampil inline. <1024px: satu tombol hamburger membuka
- * "indeks lembar" sebagai sheet dari sisi kanan lewat Popover API bawaan HTML
- * (tutup dengan Esc / klik luar / tombol tutup, fokus kembali ke toggle) —
- * tanpa React, tanpa library drawer.
+ * ≥768px (tablet dan desktop): indeks tampil inline. <768px: satu tombol
+ * hamburger membuka "indeks lembar" sebagai sheet dari sisi kanan lewat Popover
+ * API bawaan HTML (tutup dengan Esc / klik luar / tombol tutup, fokus kembali ke
+ * toggle) — tanpa React, tanpa library drawer.
  */
 import { siteConfig } from '../../config/site';
 
@@ -17,18 +17,18 @@ const { items, class: className = '' } = Astro.props;
 ---
 
 <header class={`sheet-nav field-table ${className}`}>
-  <div class="sheet flex items-center gap-6 py-3 md:py-4">
+  <div class="sheet flex items-center gap-x-4 py-3 md:gap-x-6 md:py-4">
     <a
       href="#main-content"
       class="folio inline-flex min-h-11 items-center hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8"
     >
       {siteConfig.name}
-      <span class="ms-2 opacity-70">lembar seleksi</span>
+      <span class="ms-2 hidden opacity-70 lg:inline">lembar seleksi</span>
     </a>
 
-    <!-- Desktop: indeks inline -->
-    <nav aria-label="Navigasi lembar" class="ml-auto hidden lg:flex">
-      <ul class="flex items-center gap-9">
+    <!-- Tablet + desktop: indeks inline -->
+    <nav aria-label="Navigasi lembar" class="ml-auto hidden md:flex">
+      <ul class="flex items-center gap-x-5 md:gap-x-6 lg:gap-x-9">
         {items.map((item) => (
           <li>
             <a
@@ -43,7 +43,7 @@ const { items, class: className = '' } = Astro.props;
     </nav>
 
     <!-- Fallback bila Popover API tidak ada -->
-    <nav aria-label="Navigasi lembar (cadangan)" class="nav-fallback ml-auto hidden flex-wrap gap-x-5 py-2 lg:hidden">
+    <nav aria-label="Navigasi lembar (cadangan)" class="nav-fallback ml-auto hidden flex-wrap gap-x-5 py-2 md:hidden">
       {items.map((item) => (
         <a href={item.href} class="strip inline-flex min-h-11 items-center hover:text-table-ink">{item.label}</a>
       ))}
@@ -51,7 +51,7 @@ const { items, class: className = '' } = Astro.props;
 
     <button
       type="button"
-      class="nav-toggle lg:hidden"
+      class="nav-toggle md:hidden"
       popovertarget="nav-sheet"
       aria-label="Buka indeks lembar"
     >
