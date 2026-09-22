@@ -1,0 +1,25 @@
+---
+/**
+ * EdgeBand — pita film tercetak (roll, orientasi, tahun).
+ * Satu-satunya tempat Amber pudar boleh muncul, dan hanya tercetak
+ * di dalam pita, bukan untuk teks bidang kertas.
+ */
+export interface Props {
+  roll?: string;
+  class?: string;
+}
+
+const { roll = 'ROLL 01 · MENUNGGU ASET', class: className = '' } = Astro.props;
+---
+
+<div class={`overflow-hidden border-y border-[#2a2c30] bg-[#17181a] ${className}`} aria-hidden="true">
+  <div class="flex items-center gap-6 px-5 py-2">
+    <span class="font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#8a6a2f]">{roll}</span>
+    <span class="flex gap-1.5" aria-hidden="true">
+      {Array.from({ length: 12 }).map(() => (
+        <span class="inline-block h-2 w-2 bg-[#2a2c30]"></span>
+      ))}
+    </span>
+    <span class="font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#8a6a2f]">35MM</span>
+  </div>
+</div>

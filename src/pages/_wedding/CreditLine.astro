@@ -1,0 +1,19 @@
+---
+/**
+ * CreditLine — kapsel data pendek: `07 · MENUNGGU ASET · —`.
+ * Nomor dan lokasi adalah bagian estetika; tanpa data klien, tampilkan
+ * penanda kosong yang terlihat disengaja. Tanpa fabrikasi.
+ */
+export interface Props {
+  no: string;
+  place?: string;
+  year?: string;
+  class?: string;
+}
+
+const { no, place = 'MENUNGGU ASET', year = '—', class: className = '' } = Astro.props;
+---
+
+<p class={`font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#5c6066] ${className}`}>
+  {no} · {place} · {year}
+</p>

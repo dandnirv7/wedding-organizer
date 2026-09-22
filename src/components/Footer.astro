@@ -7,43 +7,41 @@ const hasContact = Boolean(
 );
 ---
 
-<footer class="bg-slate-900 text-slate-300 pt-16 pb-12 border-t border-slate-800">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-slate-800">
-      <!-- Col 1: Brand & Bio -->
-      <div class="md:col-span-2 space-y-4">
-        <a href="/" class="flex items-center gap-2 font-bold text-xl text-white tracking-tight">
-          <span class="w-8 h-8 rounded-lg bg-emerald-500 text-slate-950 flex items-center justify-center font-black text-lg">Z</span>
-          <span>{siteConfig.name}</span>
-        </a>
-        <p class="text-sm text-slate-400 max-w-md leading-relaxed">
-          {siteConfig.description}
-        </p>
-      </div>
+<footer class="bg-[#17181a] text-[#e9e7e1] pt-16 pb-12 border-t border-[#2a2c30]">
+  <div class="max-w-[1240px] mx-auto px-5 md:px-8">
+    <div class="pb-12 border-b border-[#2a2c30]">
+      <!-- Brand -->
+      <p class="font-label text-sm font-semibold tracking-[0.14em] uppercase">
+        <a href="/">{siteConfig.name}</a>
+      </p>
+      <p class="mt-4 text-base leading-relaxed max-w-[66ch]">
+        {siteConfig.description}
+      </p>
 
-      <!-- Col 2: Navigasi Cepat -->
-      <div>
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-white mb-4">Navigasi</h3>
-        <ul class="space-y-2.5 text-sm">
-          <li><a href="/" class="hover:text-emerald-400 transition-colors">Beranda</a></li>
+      <!-- Navigasi -->
+      <nav aria-label="Navigasi Footer" class="mt-8">
+        <ul class="flex flex-wrap gap-x-8 gap-y-3 font-label text-sm font-semibold tracking-[0.14em] uppercase">
+          <li><a href="/#work" class="hover:opacity-80">Kerja</a></li>
+          <li><a href="/#services" class="hover:opacity-80">Layanan</a></li>
+          <li><a href="/#about" class="hover:opacity-80">Tentang</a></li>
         </ul>
-      </div>
+      </nav>
 
-      <!-- Col 3: Kontak (only when contact facts are configured) -->
+      <!-- Kontak (only when contact facts are configured) -->
       {hasContact && (
-      <div>
-        <h3 class="text-sm font-semibold uppercase tracking-wider text-white mb-4">Kontak</h3>
-        <ul class="space-y-2.5 text-sm">
+      <div class="mt-8">
+        <h2 class="font-label text-sm font-semibold tracking-[0.14em] uppercase">Kontak</h2>
+        <ul class="mt-3 space-y-2.5 text-base">
           {siteConfig.contact.email && (
             <li>
-              <a href={`mailto:${siteConfig.contact.email}`} class="hover:text-emerald-400 transition-colors">
+              <a href={`mailto:${siteConfig.contact.email}`} class="underline decoration-[#c9302b] decoration-2 underline-offset-8 hover:opacity-80">
                 {siteConfig.contact.email}
               </a>
             </li>
           )}
           {siteConfig.contact.phone && (
             <li>
-              <a href={`tel:${siteConfig.contact.phone.replace(/[^0-9+]/g, '')}`} class="hover:text-emerald-400 transition-colors">
+              <a href={`tel:${siteConfig.contact.phone.replace(/[^0-9+]/g, '')}`} class="underline decoration-[#c9302b] decoration-2 underline-offset-8 hover:opacity-80">
                 {siteConfig.contact.phone}
               </a>
             </li>
@@ -54,11 +52,11 @@ const hasContact = Boolean(
     </div>
 
     <!-- Bottom copyright -->
-    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+    <div class="pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm">
       <p>&copy; {currentYear} {siteConfig.name}. Hak Cipta Dilindungi Undang-Undang.</p>
-      <div class="flex items-center gap-6">
-        <a href="/sitemap-index.xml" class="hover:text-slate-400">Sitemap</a>
-        <a href="/llms.txt" class="hover:text-slate-400">LLMs Discovery</a>
+      <div class="flex items-center gap-6 font-label text-sm tracking-[0.08em] uppercase">
+        <a href="/sitemap-index.xml" class="hover:opacity-80">Sitemap</a>
+        <a href="/llms.txt" class="hover:opacity-80">LLMs Discovery</a>
       </div>
     </div>
   </div>

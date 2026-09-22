@@ -2,18 +2,19 @@
 import { siteConfig } from '../config/site';
 ---
 
-<header class="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+<header class="sticky top-0 z-40 w-full border-b border-[#2a2c30] bg-[#17181a] text-[#e9e7e1]">
+  <div class="max-w-[1240px] mx-auto px-5 md:px-8 h-16 flex items-center justify-between">
     <!-- Brand -->
-    <a href="/" class="flex items-center gap-2 font-bold text-xl text-slate-900 tracking-tight hover:text-emerald-700 transition-colors">
-      <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-black text-lg">Z</span>
+    <a href="/" class="font-label font-semibold text-lg tracking-[0.08em] uppercase hover:opacity-80">
       <span>{siteConfig.name}</span>
     </a>
 
     <!-- Nav links (override via the "nav" slot per project) -->
     <nav aria-label="Navigasi Utama" class="hidden md:flex items-center gap-8">
       <slot name="nav">
-        <a href="/" class="text-sm font-medium text-slate-700 hover:text-emerald-600 transition-colors">Beranda</a>
+        <a href="/#work" class="font-label text-sm font-semibold tracking-[0.14em] uppercase hover:opacity-80">Kerja</a>
+        <a href="/#services" class="font-label text-sm font-semibold tracking-[0.14em] uppercase hover:opacity-80">Layanan</a>
+        <a href="/#about" class="font-label text-sm font-semibold tracking-[0.14em] uppercase hover:opacity-80">Tentang</a>
       </slot>
     </nav>
 
@@ -24,16 +25,18 @@ import { siteConfig } from '../config/site';
     <details class="md:hidden" data-mobile-nav>
       <summary
         aria-label="Buka menu navigasi"
-        class="flex items-center justify-center w-10 h-10 rounded-lg text-slate-700 hover:bg-slate-100 cursor-pointer list-none [&::-webkit-details-marker]:hidden focus-visible:ring-2 focus-visible:ring-emerald-600"
+        class="flex items-center justify-center w-11 h-11 text-[#e9e7e1] hover:opacity-80 cursor-pointer list-none [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-[#c9302b]"
       >
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </summary>
-      <nav aria-label="Navigasi Seluler" class="absolute top-16 inset-x-0 bg-white border-b border-slate-200 shadow-lg">
-        <ul class="px-4 sm:px-6 py-4 space-y-1">
+      <nav aria-label="Navigasi Seluler" class="absolute top-16 inset-x-0 bg-[#17181a] border-b border-[#2a2c30]">
+        <ul class="px-5 py-4 space-y-1">
           <slot name="nav">
-            <li><a href="/" class="block px-3 py-2.5 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-emerald-600">Beranda</a></li>
+            <li><a href="/#work" class="font-label block px-3 py-3 text-base font-semibold tracking-[0.14em] uppercase hover:opacity-80">Kerja</a></li>
+            <li><a href="/#services" class="font-label block px-3 py-3 text-base font-semibold tracking-[0.14em] uppercase hover:opacity-80">Layanan</a></li>
+            <li><a href="/#about" class="font-label block px-3 py-3 text-base font-semibold tracking-[0.14em] uppercase hover:opacity-80">Tentang</a></li>
           </slot>
         </ul>
       </nav>

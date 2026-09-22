@@ -1,0 +1,64 @@
+---
+/**
+ * FramePlate — pelat persegi radius-0 untuk slot foto/video.
+ * Slot kosong berlabel "menunggu aset klien" dengan rasio + dimensi final
+ * anti-CLS. Saat aset tiba hanya `src` yang diisi; layout tidak bergeser.
+ */
+export interface Props {
+  frameNo: string;
+  caption?: string;
+  ratio?: '4/5' | '3/2' | '16/9' | '1/1';
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  class?: string;
+}
+
+const {
+  frameNo,
+  caption = 'menunggu aset klien',
+  ratio = '3/2',
+  src,
+  alt = '',
+  width = 1200,
+  height = 800,
+  class: className = '',
+} = Astro.props;
+
+const ratioClass =
+  ratio === '4/5' ? 'aspect-[4/5]' : ratio === '16/9' ? 'aspect-[16/9]' : ratio === '1/1' ? 'aspect-square' : 'aspect-[3/2]';
+---
+
+<figure class={`border border-[#d9d6ce] bg-[#f2f1ec] ${className}`}>
+  <div class={`relative w-full overflow-hidden ${ratioClass}`}>
+    {src ? (
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading="lazy"
+        decoding="async"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+    ) : (
+      <div
+        role="img"
+        aria-label={`Frame ${frameNo} ${caption}`}
+        class="absolute inset-0 flex flex-col items-center justify-center gap-2 border-b border-[#d9d6ce] px-6 text-center"
+      >
+        <span class="font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#5c6066]">
+          {frameNo} · {caption}
+        </span>
+        {/* Satu-satunya lingkaran seleksi yang sah: SVG, bukan border-radius */}
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+          <ellipse cx="22" cy="22" rx="19" ry="17" stroke="#c9302b" stroke-width="3" stroke-linecap="round" />
+        </svg>
+      </div>
+    )}
+  </div>
+  <figcaption class="font-label px-4 py-3 text-xs font-semibold tracking-[0.14em] uppercase text-[#5c6066]">
+    {frameNo} · {caption}
+  </figcaption>
+</figure>
