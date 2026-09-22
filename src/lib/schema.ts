@@ -1,20 +1,30 @@
-import type { Thing, WebSite, Organization, BreadcrumbList, FAQPage, WebPage } from 'schema-dts';
-import { siteConfig } from '../config/site';
+import type {
+  Thing,
+  WebSite,
+  Organization,
+  BreadcrumbList,
+  FAQPage,
+  WebPage,
+} from "schema-dts";
+import { siteConfig } from "../config/site";
 
 /**
  * Return an absolute URL given a path or full URL.
  */
-export function absoluteUrl(pathOrUrl: string, baseUrl: string = siteConfig.url): string {
-  if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+export function absoluteUrl(
+  pathOrUrl: string,
+  baseUrl: string = siteConfig.url,
+): string {
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
     return pathOrUrl;
   }
   try {
     const origin = new URL(baseUrl).origin;
-    const cleanPath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+    const cleanPath = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
     return `${origin}${cleanPath}`;
   } catch {
-    const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-    const cleanPath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+    const base = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+    const cleanPath = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
     return `${base}${cleanPath}`;
   }
 }
@@ -25,19 +35,21 @@ export function absoluteUrl(pathOrUrl: string, baseUrl: string = siteConfig.url)
  * (schema output must never throw during build).
  */
 export function makeId(base: string, suffix: string): string {
-  if (suffix.startsWith('#')) {
+  if (suffix.startsWith("#")) {
     // Keep directory trailing slash intact before the hash
     let hasExtension = false;
     try {
-      hasExtension = /\.[a-zA-Z0-9]+$/.test(new URL(base, siteConfig.url).pathname);
+      hasExtension = /\.[a-zA-Z0-9]+$/.test(
+        new URL(base, siteConfig.url).pathname,
+      );
     } catch {
       hasExtension = false;
     }
-    const cleanBase = !hasExtension && !base.endsWith('/') ? `${base}/` : base;
+    const cleanBase = !hasExtension && !base.endsWith("/") ? `${base}/` : base;
     return `${cleanBase}${suffix}`;
   }
-  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  const cleanSuffix = suffix.startsWith('/') ? suffix : `/${suffix}`;
+  const cleanBase = base.endsWith("/") ? base.slice(0, -1) : base;
+  const cleanSuffix = suffix.startsWith("/") ? suffix : `/${suffix}`;
   return `${cleanBase}${cleanSuffix}`;
 }
 
@@ -55,26 +67,29 @@ export function toJsonLd(graph: (Thing | null | undefined)[]): string {
   const activeNodes = graph.filter((node): node is Thing => Boolean(node));
 
   const jsonLdObj = {
-    '@context': 'https://schema.org',
-    '@graph': activeNodes,
+    "@context": "https://schema.org",
+    "@graph": activeNodes,
   };
 
   return JSON.stringify(jsonLdObj, null, 2)
-    .replace(/</g, '\\u003c')
-    .replace(/>/g, '\\u003e')
-    .replace(/&/g, '\\u0026')
-    .replace(/\u2028/g, '\\u2028')
-    .replace(/\u2029/g, '\\u2029');
+    .replace(/</g, "\\u003c")
+    .replace(/>/g, "\\u003e")
+    .replace(/&/g, "\\u0026")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
 }
 
 /**
  * Standard WebSite schema node with deterministic @id: /#website
  */
-export function buildWebSiteSchema(siteUrl: string = siteConfig.url, name: string = siteConfig.name): WebSite {
-  const url = siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`;
+export function buildWebSiteSchema(
+  siteUrl: string = siteConfig.url,
+  name: string = siteConfig.name,
+): WebSite {
+  const url = siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`;
   return {
-    '@type': 'WebSite',
-    '@id': makeId(url, '#website'),
+    "@type": "WebSite",
+    "@id": makeId(url, "#website"),
     url,
     name,
     description: siteConfig.description,
@@ -94,20 +109,22 @@ export function buildWebSiteSchema(siteUrl: string = siteConfig.url, name: strin
 export function buildOrganizationSchema(
   siteUrl: string = siteConfig.url,
   name: string = siteConfig.name,
-  socials: Record<string, string | undefined> = siteConfig.socials
+  socials: Record<string, string | undefined> = siteConfig.socials,
 ): Organization | null {
-  const url = siteUrl.endsWith('/') ? siteUrl : `${siteUrl}/`;
+  const url = siteUrl.endsWith("/") ? siteUrl : `${siteUrl}/`;
   const sameAs = Object.values(socials).filter((s): s is string => Boolean(s));
-  const hasContact = Boolean(siteConfig.contact.email || siteConfig.contact.phone);
+  const hasContact = Boolean(
+    siteConfig.contact.email || siteConfig.contact.phone,
+  );
 
   if (!hasContact && sameAs.length === 0) return null;
 
   return {
-    '@type': 'Organization',
-    '@id': makeId(url, '#org'),
+    "@type": "Organization",
+    "@id": makeId(url, "#org"),
     name,
     url,
-    logo: absoluteUrl('/favicon.svg', url),
+    logo: absoluteUrl("/favicon.svg", url),
     description: siteConfig.description,
     ...(siteConfig.contact.email && { email: siteConfig.contact.email }),
     ...(siteConfig.contact.phone && { telephone: siteConfig.contact.phone }),
@@ -123,12 +140,15 @@ export interface BreadcrumbItem {
 /**
  * Standard BreadcrumbList schema with deterministic @id: {canonical}/#breadcrumb
  */
-export function buildBreadcrumbSchema(items: BreadcrumbItem[], canonicalUrl: string): BreadcrumbList {
+export function buildBreadcrumbSchema(
+  items: BreadcrumbItem[],
+  canonicalUrl: string,
+): BreadcrumbList {
   return {
-    '@type': 'BreadcrumbList',
-    '@id': makeId(canonicalUrl, '#breadcrumb'),
+    "@type": "BreadcrumbList",
+    "@id": makeId(canonicalUrl, "#breadcrumb"),
     itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: index + 1,
       name: item.name,
       item: absoluteUrl(item.url, canonicalUrl),
@@ -145,17 +165,20 @@ export interface FaqItem {
  * Standard FAQPage schema with deterministic @id: {canonical}/#faq
  * Strictly ensures question and answer match visible HTML.
  */
-export function buildFaqSchema(faqs: FaqItem[], canonicalUrl: string): FAQPage | null {
+export function buildFaqSchema(
+  faqs: FaqItem[],
+  canonicalUrl: string,
+): FAQPage | null {
   if (!faqs || faqs.length === 0) return null;
 
   return {
-    '@type': 'FAQPage',
-    '@id': makeId(canonicalUrl, '#faq'),
+    "@type": "FAQPage",
+    "@id": makeId(canonicalUrl, "#faq"),
     mainEntity: faqs.map((faq) => ({
-      '@type': 'Question',
+      "@type": "Question",
       name: faq.question,
       acceptedAnswer: {
-        '@type': 'Answer',
+        "@type": "Answer",
         text: faq.answer,
       },
     })),
@@ -171,22 +194,24 @@ export function buildWebPageSchema(
   description: string,
   options?: {
     breadcrumbId?: string;
-    hasPart?: Array<{ '@id': string }>;
+    hasPart?: Array<{ "@id": string }>;
     datePublished?: string;
     dateModified?: string;
-  }
+  },
 ): WebPage {
-  const websiteId = makeId(siteConfig.url, '#website');
+  const websiteId = makeId(siteConfig.url, "#website");
 
   return {
-    '@type': 'WebPage',
-    '@id': makeId(canonicalUrl, '#webpage'),
+    "@type": "WebPage",
+    "@id": makeId(canonicalUrl, "#webpage"),
     url: canonicalUrl,
     name,
     description,
-    isPartOf: { '@id': websiteId },
+    isPartOf: { "@id": websiteId },
     inLanguage: siteConfig.locale,
-    ...(options?.breadcrumbId && { breadcrumb: { '@id': options.breadcrumbId } }),
+    ...(options?.breadcrumbId && {
+      breadcrumb: { "@id": options.breadcrumbId },
+    }),
     ...(options?.hasPart && { hasPart: options.hasPart }),
     ...(options?.datePublished && { datePublished: options.datePublished }),
     ...(options?.dateModified && { dateModified: options.dateModified }),

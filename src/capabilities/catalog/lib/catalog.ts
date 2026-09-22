@@ -1,14 +1,13 @@
-import type { Product } from 'schema-dts';
-import type { ImageMetadata } from 'astro';
-import { absoluteUrl, makeId } from '../../../lib/schema';
-import { stripExtension } from '../../../lib/content';
-import type { CatalogItem, CatalogPrice } from '../types';
+import type { Product } from "schema-dts";
+import type { ImageMetadata } from "astro";
+import { absoluteUrl, makeId } from "../../../lib/schema";
+import { stripExtension } from "../../../lib/content";
+import type { CatalogItem, CatalogPrice } from "../types";
 
-export type CatalogSortKey = 'name' | 'price-asc' | 'price-desc';
+export type CatalogSortKey = "name" | "price-asc" | "price-desc";
 
 export interface CatalogFilter {
   category?: string;
-  /** When true, keep only items with `available === true`. Unknown stays excluded too. */
   availableOnly?: boolean;
 }
 
@@ -19,10 +18,10 @@ export interface CatalogFilter {
  * - Absent price/availability/category stay absent (never fabricated).
  */
 export function normalizeItem(
-  input: Partial<CatalogItem> & Pick<CatalogItem, 'id' | 'slug' | 'name'>,
-  basePath = '/katalog/'
+  input: Partial<CatalogItem> & Pick<CatalogItem, "id" | "slug" | "name">,
+  basePath = "/katalog/",
 ): CatalogItem {
-  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  const base = basePath.endsWith("/") ? basePath : `${basePath}/`;
   return {
     ...input,
     images: input.images ?? (input.image ? [input.image] : []),
@@ -31,21 +30,32 @@ export function normalizeItem(
 }
 
 /** Sort a copy of the array. Items without price sort after priced items. */
-export function sortItems(items: CatalogItem[], key: CatalogSortKey = 'name'): CatalogItem[] {
+export function sortItems(
+  items: CatalogItem[],
+  key: CatalogSortKey = "name",
+): CatalogItem[] {
   const copy = [...items];
   switch (key) {
-    case 'price-asc':
-      return copy.sort((a, b) => (a.price?.amount ?? Infinity) - (b.price?.amount ?? Infinity));
-    case 'price-desc':
-      return copy.sort((a, b) => (b.price?.amount ?? -Infinity) - (a.price?.amount ?? -Infinity));
-    case 'name':
+    case "price-asc":
+      return copy.sort(
+        (a, b) => (a.price?.amount ?? Infinity) - (b.price?.amount ?? Infinity),
+      );
+    case "price-desc":
+      return copy.sort(
+        (a, b) =>
+          (b.price?.amount ?? -Infinity) - (a.price?.amount ?? -Infinity),
+      );
+    case "name":
     default:
-      return copy.sort((a, b) => a.name.localeCompare(b.name, 'id'));
+      return copy.sort((a, b) => a.name.localeCompare(b.name, "id"));
   }
 }
 
 /** Pure build-time filter for future reuse. No UI, no URL state. */
-export function filterItems(items: CatalogItem[], filter: CatalogFilter = {}): CatalogItem[] {
+export function filterItems(
+  items: CatalogItem[],
+  filter: CatalogFilter = {},
+): CatalogItem[] {
   return items.filter((item) => {
     if (filter.category && item.category !== filter.category) return false;
     if (filter.availableOnly && item.available !== true) return false;
@@ -55,8 +65,8 @@ export function filterItems(items: CatalogItem[], filter: CatalogFilter = {}): C
 
 /** Resolve an item detail URL under a base path. No query state. */
 export function itemUrl(basePath: string, slug: string): string {
-  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
-  const clean = slug.replace(/^\/+/, '').replace(/\/+$/, '');
+  const base = basePath.endsWith("/") ? basePath : `${basePath}/`;
+  const clean = slug.replace(/^\/+/, "").replace(/\/+$/, "");
   return `${base}${clean}/`;
 }
 
@@ -85,7 +95,7 @@ export interface CatalogEntryLike {
  */
 export function entryToCatalogItem(
   entry: CatalogEntryLike,
-  basePath = '/katalog/'
+  basePath = "/katalog/",
 ): CatalogItem {
   const slug = stripExtension(entry.id);
   const data = entry.data;
@@ -103,14 +113,14 @@ export function entryToCatalogItem(
       price: data.price,
       available: data.available,
     },
-    basePath
+    basePath,
   );
 }
 
 /** Display-only price formatting. No calculation of any kind. */
-export function formatPrice(price: CatalogPrice, locale = 'id-ID'): string {
+export function formatPrice(price: CatalogPrice, locale = "id-ID"): string {
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
+    style: "currency",
     currency: price.currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
@@ -125,14 +135,19 @@ export function formatPrice(price: CatalogPrice, locale = 'id-ID'): string {
  * - Image URLs only from string sources (optimized metadata has no stable
  *   public URL at data level, so it is rendering-only).
  */
-export function buildProductSchema(item: CatalogItem, canonicalUrl: string): Product {
+export function buildProductSchema(
+  item: CatalogItem,
+  canonicalUrl: string,
+): Product {
   const stringImages = (item.images ?? [])
-    .map((img) => (typeof img.src === 'string' ? absoluteUrl(img.src, canonicalUrl) : null))
+    .map((img) =>
+      typeof img.src === "string" ? absoluteUrl(img.src, canonicalUrl) : null,
+    )
     .filter((src): src is string => src !== null);
 
   return {
-    '@type': 'Product',
-    '@id': makeId(canonicalUrl, '#product'),
+    "@type": "Product",
+    "@id": makeId(canonicalUrl, "#product"),
     name: item.name,
     url: canonicalUrl,
     ...(item.description && { description: item.description }),
@@ -140,12 +155,16 @@ export function buildProductSchema(item: CatalogItem, canonicalUrl: string): Pro
     ...(stringImages.length > 0 && { image: stringImages }),
     ...(item.price && {
       offers: {
-        '@type': 'Offer',
+        "@type": "Offer",
         url: canonicalUrl,
         price: item.price.amount,
         priceCurrency: item.price.currency,
-        ...(item.available === true && { availability: 'https://schema.org/InStock' }),
-        ...(item.available === false && { availability: 'https://schema.org/OutOfStock' }),
+        ...(item.available === true && {
+          availability: "https://schema.org/InStock",
+        }),
+        ...(item.available === false && {
+          availability: "https://schema.org/OutOfStock",
+        }),
       },
     }),
   };
