@@ -1,0 +1,42 @@
+---
+/**
+ * SheetNav — folio tepi lembar, bukan bar navigasi SaaS.
+ * Transparan di atas meja gelap, tercetak solid setelah keluar dari hero
+ * (CSS scroll-driven; tanpa skrip, konten tetap terbaca tanpa JS).
+ */
+import { siteConfig } from '../../config/site';
+
+export interface Props {
+  items: readonly { href: string; label: string }[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+---
+
+<header class={`sheet-nav field-table ${className}`}>
+  <nav
+    aria-label="Navigasi lembar"
+    class="sheet flex flex-wrap items-center gap-x-6 gap-y-1 py-3 md:py-4"
+  >
+    <a
+      href="#main-content"
+      class="folio inline-flex min-h-11 items-center hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8"
+    >
+      {siteConfig.name}
+      <span class="ms-2 opacity-70">lembar seleksi</span>
+    </a>
+    <ul class="ml-auto flex flex-wrap items-center gap-x-5 gap-y-1 md:gap-x-9">
+      {items.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class="strip inline-flex min-h-11 items-center hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8"
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>

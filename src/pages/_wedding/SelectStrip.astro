@@ -1,7 +1,7 @@
 ---
 /**
- * SelectStrip — tulang punggung kerapatan bukti berkelompok.
- * 5 kolom ≥1024, 3 kolom 768–1023, 2 kolom <768. Tanpa kartu/pill/radius.
+ * SelectStrip — baris kontak 5/3/2 kolom dengan pelat yang bertingkat,
+ * bukan grid seragam. Lingkaran seleksi hanya pada pelat terpilih.
  */
 export interface Props {
   class?: string;
@@ -10,6 +10,6 @@ export interface Props {
 const { class: className = '' } = Astro.props;
 ---
 
-<div class={`grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 md:gap-6 ${className}`}>
+<div class={`story-strip ${className}`}>
   <slot />
 </div>

@@ -1,28 +1,29 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SheetNav from './_wedding/SheetNav.astro';
+import SelectMark from './_wedding/SelectMark.astro';
+import { copy } from './_wedding/copy';
 ---
 
 <BaseLayout
-  title="Halaman Tidak Ditemukan (404)"
-  description="Maaf, halaman yang Anda tuju tidak dapat ditemukan atau mungkin telah dipindahkan."
+  title="Lembar tidak ditemukan (404)"
+  description="Halaman yang Anda tuju tidak ada di lembar ini. Kembali ke daftar seleksi dokumentasi wedding."
+  canonical={new URL('/', Astro.site).href}
   robots={{ index: false, follow: true }}
 >
-  <div class="max-w-3xl mx-auto px-4 py-24 text-center">
-    <p class="text-sm font-semibold uppercase tracking-wider text-emerald-600">Kesalahan 404</p>
-    <h1 class="mt-2 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-      Halaman Tidak Ditemukan
-    </h1>
-    <p class="mt-4 text-base text-slate-600 leading-relaxed">
-      Tautan yang Anda tuju mungkin telah berpindah lokasi atau terdapat kekeliruan pengetikan alamat URL.
-    </p>
+  <SheetNav slot="header" items={copy.sheet.nav} />
 
-    <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
-      <a
-        href="/"
-        class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-slate-900 hover:bg-slate-800 transition-colors"
-      >
-        Kembali ke Beranda
-      </a>
+  <section class="field-table grow">
+    <div class="sheet flex grow flex-col justify-center py-28">
+      <p class="folio">lembar 00 — tidak terdaftar</p>
+      <h1 class="display mt-5 max-w-none">Lembar ini tidak ada.</h1>
+      <p class="lede mt-5 opacity-90">
+        Alamat yang Anda buka tidak termasuk dalam lembar seleksi ini. Kembali ke awal lembar untuk membaca
+        dokumentasi, layanan, dan prosesnya dari frame 00.
+      </p>
+      <div class="mt-8">
+        <SelectMark href="/" label="Kembali ke lembar utama" />
+      </div>
     </div>
-  </div>
+  </section>
 </BaseLayout>

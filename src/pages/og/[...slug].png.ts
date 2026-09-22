@@ -1,81 +1,74 @@
+import { existsSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { OGImageRoute } from 'astro-og-canvas';
-import { getCollection } from 'astro:content';
 import { siteConfig } from '../../config/site';
 import { ogSlugFromPath } from '../../lib/og';
-import { stripExtension } from '../../lib/content';
+import { copy } from '../../pages/_wedding/copy';
 
-interface OgPageData {
-  title: string;
-  description?: string;
+const FONT_FILES = ['Inter_400Regular.ttf', 'Inter_700Bold.ttf'];
+
+/**
+ * canvaskit hanya membaca TTF. Paket font bisa tertaut langsung di
+ * node_modules atau hanya ada di store virtual pnpm; keduanya valid di mesin
+ * berbeda, jadi carinya dua jalur lalu gagal keras daripada merender kartu kosong.
+ */
+function resolveFont(name: string): string {
+  const direct = join('node_modules', '@expo-google-fonts', 'inter', name);
+  if (existsSync(direct)) return direct;
+  const store = join('node_modules', '.pnpm');
+  if (existsSync(store)) {
+    for (const dir of readdirSync(store)) {
+      if (!dir.includes('@expo-google-fonts+inter')) continue;
+      const candidate = join(store, dir, 'node_modules', '@expo-google-fonts', 'inter', name);
+      if (existsSync(candidate)) return candidate;
+    }
+  }
+  throw new Error(
+    `[og] ${name} tidak ditemukan. Pasang @expo-google-fonts/inter atau taruh TTF-nya di node_modules/@expo-google-fonts/inter/.`
+  );
 }
 
-// Fetch all collections (non-draft only).
-const articles = (await getCollection('articles')).filter((a) => !a.data.draft);
-const pages = (await getCollection('pages')).filter((p) => !p.data.draft);
+/**
+ * OG 1200×630 dalam dunia Selects Table: bidang meja gelap, garis seleksi
+ * merah di tepi bawah, tipografi serif yang sama dengan halaman. Satu rute
+ * publik (`/`) plus `default` untuk tautan tanpa halaman sendiri.
+ */
+const PAPER: [number, number, number] = [242, 241, 236];
+const TABLE: [number, number, number] = [23, 24, 26];
+const MUTED: [number, number, number] = [160, 156, 148];
+const SELECT: [number, number, number] = [201, 48, 43];
 
-// Key OG = slug hasil ogSlugFromPath (kontrak yang sama dipakai SeoHead).
-// No hardcoded project routes: entries derive from collections.
-const ogPages: Record<string, OgPageData> = {
-  default: {
-    title: siteConfig.name,
-    description: siteConfig.description,
-  },
+const pages: Record<string, { title: string; description: string }> = {
+  default: { title: siteConfig.name, description: copy.sheet.description },
+  [ogSlugFromPath('/')]: { title: copy.sheet.title, description: copy.sheet.description },
 };
 
-for (const article of articles) {
-  const cleanId = stripExtension(article.id);
-  ogPages[ogSlugFromPath(`/articles/${cleanId}/`)] = {
-    title: article.data.title,
-    description: article.data.description,
-  };
-}
-
-for (const page of pages) {
-  const cleanId = stripExtension(page.id);
-  const key = ogSlugFromPath(`/${cleanId}/`);
-  if (!ogPages[key]) {
-    ogPages[key] = {
-      title: page.data.title,
-      description: page.data.description,
-    };
-  }
-}
-
 export const { getStaticPaths, GET } = await OGImageRoute({
-  pages: ogPages,
+  pages,
   getSlug: (path) => path.replace(/\.png$/, ''),
   getImageOptions: (_path, page) => ({
     title: page.title,
     description: page.description,
-    bgGradient: [
-      [15, 23, 42],
-      [6, 78, 59],
-    ],
-    border: {
-      color: [16, 185, 129],
-      width: 14,
-      side: 'block-end',
-    },
-    padding: 70,
+    bgColor: TABLE,
+    border: { color: SELECT, width: 18, side: 'block-end' },
+    padding: 88,
     font: {
       title: {
-        size: 54,
+        size: 64,
         weight: 'Bold',
-        color: [255, 255, 255],
+        color: PAPER,
         families: ['Inter'],
       },
       description: {
-        size: 26,
-        lineHeight: 1.4,
-        color: [226, 232, 240],
+        size: 27,
+        lineHeight: 1.45,
+        color: MUTED,
         families: ['Inter'],
       },
     },
-    // Inter OFL (SIL Open Font License) via @expo-google-fonts/inter.
-    // Jangan komit font proprietary (mis. Arial/Microsoft) ke repo.
-    fonts: [
-      'node_modules/@expo-google-fonts/inter/Inter_400Regular.ttf',
-      'node_modules/@expo-google-fonts/inter/Inter_700Bold.ttf',
-    ],
+    // OG card dirender dengan TTF yang tersedia di node_modules (canvaskit tidak
+    // membaca woff2). Interface web tetap Source Serif 4; lihat docs/ASSET-MANIFEST.md.
+    // Inter OFL (SIL Open Font License). Font proprietary tidak dikomit ke repo.
+    fonts: FONT_FILES.map(resolveFont),
   }),
 });

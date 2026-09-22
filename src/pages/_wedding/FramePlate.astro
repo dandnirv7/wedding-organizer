@@ -1,64 +1,71 @@
 ---
 /**
- * FramePlate — pelat persegi radius-0 untuk slot foto/video.
- * Slot kosong berlabel "menunggu aset klien" dengan rasio + dimensi final
- * anti-CLS. Saat aset tiba hanya `src` yang diisi; layout tidak bergeser.
+ * FramePlate — pelat radius-0 untuk slot foto/video.
+ * Sadar-bidang: di kertas pelat sedikit lebih terang dari bidangnya, di meja
+ * sedikit lebih gelap. Slot kosong memakai rasio + dimensi piksel final
+ * (anti-CLS) dan berlabel "menunggu aset klien". Saat aset tiba, hanya
+ * `src` yang diisi — susunan tidak bergeser.
  */
 export interface Props {
-  frameNo: string;
+  no: string;
+  width: number;
+  height: number;
   caption?: string;
-  ratio?: '4/5' | '3/2' | '16/9' | '1/1';
   src?: string;
   alt?: string;
-  width?: number;
-  height?: number;
+  /** Lingkaran seleksi merah: satu per kelompok, bukan per pelat. */
+  selected?: boolean;
+  eager?: boolean;
   class?: string;
 }
 
 const {
-  frameNo,
+  no,
+  width,
+  height,
   caption = 'menunggu aset klien',
-  ratio = '3/2',
   src,
   alt = '',
-  width = 1200,
-  height = 800,
+  selected = false,
+  eager = false,
   class: className = '',
 } = Astro.props;
-
-const ratioClass =
-  ratio === '4/5' ? 'aspect-[4/5]' : ratio === '16/9' ? 'aspect-[16/9]' : ratio === '1/1' ? 'aspect-square' : 'aspect-[3/2]';
 ---
 
-<figure class={`border border-[#d9d6ce] bg-[#f2f1ec] ${className}`}>
-  <div class={`relative w-full overflow-hidden ${ratioClass}`}>
+<figure class={`plate ${className}`}>
+  <div class="plate-media" style={`aspect-ratio: ${width} / ${height}`}>
     {src ? (
       <img
         src={src}
         alt={alt}
         width={width}
         height={height}
-        loading="lazy"
+        loading={eager ? 'eager' : 'lazy'}
         decoding="async"
-        class="absolute inset-0 h-full w-full object-cover"
+        {...eager && { fetchpriority: 'high' }}
       />
     ) : (
-      <div
-        role="img"
-        aria-label={`Frame ${frameNo} ${caption}`}
-        class="absolute inset-0 flex flex-col items-center justify-center gap-2 border-b border-[#d9d6ce] px-6 text-center"
-      >
-        <span class="font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#5c6066]">
-          {frameNo} · {caption}
-        </span>
-        {/* Satu-satunya lingkaran seleksi yang sah: SVG, bukan border-radius */}
-        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
-          <ellipse cx="22" cy="22" rx="19" ry="17" stroke="#c9302b" stroke-width="3" stroke-linecap="round" />
-        </svg>
+      <div class="plate-empty" role="img" aria-label={`Frame ${no} — ${caption}`}>
+        <span class="strip">{no} · menunggu aset klien</span>
+        <span class="folio">{width} × {height} px</span>
       </div>
     )}
   </div>
-  <figcaption class="font-label px-4 py-3 text-xs font-semibold tracking-[0.14em] uppercase text-[#5c6066]">
-    {frameNo} · {caption}
+  <figcaption class="plate-caption">
+    <span class="strip">{no} · {caption}</span>
+    {selected ? (
+      <svg width="20" height="20" viewBox="0 0 44 44" role="img" aria-label="Seleksi utama">
+        <ellipse
+          cx="22" cy="22" rx="18" ry="16"
+          fill="none"
+          stroke="var(--color-select)"
+          stroke-width="5"
+          stroke-linecap="round"
+          transform="rotate(-7 22 22)"
+        />
+      </svg>
+    ) : (
+      <span class="folio" aria-hidden="true">{Math.round((width / height) * 100) / 100}:1</span>
+    )}
   </figcaption>
 </figure>

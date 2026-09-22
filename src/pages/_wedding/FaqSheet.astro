@@ -1,0 +1,34 @@
+---
+/**
+ * FaqSheet — disclosure bawaan <details name> (akordeon tanpa skrip).
+ * Butir yang jawabannya masih menunggu data klien ditandai jujur.
+ */
+export interface FaqItem {
+  no: string;
+  q: string;
+  a: string;
+  pending?: boolean;
+}
+
+export interface Props {
+  items: readonly FaqItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="mt-2">
+  {items.map((item, i) => (
+    <details class="faq-item" name="faq" open={i === 0}>
+      <summary>
+        <span class="strip">{item.no}</span>
+        <span class="faq-q h-item">{item.q}</span>
+        <span class="faq-mark strip justify-self-end" aria-hidden="true"></span>
+      </summary>
+      <div class="ms-10 pe-2 pb-6">
+        <p class="lede">{item.a}</p>
+        {item.pending && <p class="strip mt-3">jawabannya menunggu konfirmasi klien</p>}
+      </div>
+    </details>
+  ))}
+</div>

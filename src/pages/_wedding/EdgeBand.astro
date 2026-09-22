@@ -1,25 +1,20 @@
 ---
 /**
- * EdgeBand — pita film tercetak (roll, orientasi, tahun).
- * Satu-satunya tempat Amber pudar boleh muncul, dan hanya tercetak
- * di dalam pita, bukan untuk teks bidang kertas.
+ * EdgeBand — pita tepi film (nomor roll + perforasi + format).
+ * Satu-satunya tempat amber tercetak; ia pita, bukan latar bidang.
  */
 export interface Props {
   roll?: string;
+  frame?: string;
   class?: string;
 }
 
-const { roll = 'ROLL 01 · MENUNGGU ASET', class: className = '' } = Astro.props;
+const { roll = 'roll 01', frame = '35 mm', class: className = '' } = Astro.props;
 ---
 
-<div class={`overflow-hidden border-y border-[#2a2c30] bg-[#17181a] ${className}`} aria-hidden="true">
-  <div class="flex items-center gap-6 px-5 py-2">
-    <span class="font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#8a6a2f]">{roll}</span>
-    <span class="flex gap-1.5" aria-hidden="true">
-      {Array.from({ length: 12 }).map(() => (
-        <span class="inline-block h-2 w-2 bg-[#2a2c30]"></span>
-      ))}
-    </span>
-    <span class="font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#8a6a2f]">35MM</span>
-  </div>
+<div class={`edge-band ${className}`} aria-hidden="true">
+  <span class="folio">{roll}</span>
+  <span class="edge-perf">{Array.from({ length: 10 }).map(() => <i />)}</span>
+  <span class="folio">{frame}</span>
+  <span class="edge-perf" style="margin-inline-start:auto">{Array.from({ length: 10 }).map(() => <i />)}</span>
 </div>

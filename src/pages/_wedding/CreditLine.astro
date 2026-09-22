@@ -1,8 +1,8 @@
 ---
 /**
- * CreditLine — kapsel data pendek: `07 · MENUNGGU ASET · —`.
- * Nomor dan lokasi adalah bagian estetika; tanpa data klien, tampilkan
- * penanda kosong yang terlihat disengaja. Tanpa fabrikasi.
+ * CreditLine — kapsel data satu baris lembar: `07 · LOKASI · 2026`.
+ * Nomor dan lokasi adalah bagian estetika folio. Tanpa data klien, penandanya
+ * dirender sebagai "menunggu data" — tidak ada nama pasangan atau tahun karangan.
  */
 export interface Props {
   no: string;
@@ -11,9 +11,7 @@ export interface Props {
   class?: string;
 }
 
-const { no, place = 'MENUNGGU ASET', year = '—', class: className = '' } = Astro.props;
+const { no, place = 'menunggu data', year = '', class: className = '' } = Astro.props;
 ---
 
-<p class={`font-label text-xs font-semibold tracking-[0.14em] uppercase text-[#5c6066] ${className}`}>
-  {no} · {place} · {year}
-</p>
+<p class={`strip ${className}`}>{[no, place, year].filter(Boolean).join(' · ')}</p>

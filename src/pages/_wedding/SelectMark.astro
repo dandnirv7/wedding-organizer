@@ -1,0 +1,27 @@
+---
+/**
+ * SelectMark — satu baris aksi lembar: teks data + lingkaran seleksi merah
+ * yang menutup saat hover/fokus. Ini-satunya kosakata aksi di halaman ini;
+ * tidak ada tombol berlatar, tidak ada pill.
+ */
+export interface Props {
+  href: string;
+  label: string;
+  quiet?: boolean;
+  external?: boolean;
+  class?: string;
+}
+
+const { href, label, quiet = false, external = false, class: className = '' } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={['select-line', { 'select-line--quiet': quiet }, className]}
+  {...external ? { target: '_blank', rel: 'noopener noreferrer' } : {}}
+>
+  <svg width="18" height="18" viewBox="0 0 44 44" aria-hidden="true">
+    <ellipse class="ring" cx="22" cy="22" rx="18" ry="16" transform="rotate(-7 22 22)" />
+  </svg>
+  <span>{label}</span>
+</a>

@@ -1,0 +1,57 @@
+---
+/**
+ * ServiceLedger — daftar layanan bernomor dengan pelat preview yang bertukar.
+ * Pertukaran digerakkan CSS (:hover / :focus-within lewat :has), tanpa JavaScript.
+ * Tiap baris punya aksi WhatsApp sendiri sehingga pesan pertama sudah menyebut
+ * layanan yang ditanya — inquiry masuk lebih qualified.
+ */
+import FramePlate from './FramePlate.astro';
+import { WaButton } from '../../capabilities/lead/index.js';
+import { serviceWaMessage, type ServiceItem } from './serviceTypes';
+
+export interface Props {
+  items: ServiceItem[];
+  note?: string;
+}
+
+const { items, note } = Astro.props;
+---
+
+<div class="ledger">
+  <ol>
+    {items.map((item) => (
+      <li class="ledger-row">
+        <span class="strip ledger-no">{item.no}</span>
+        <div>
+          <h3 class="h-item">{item.name}</h3>
+          <p class="mt-2 lede">{item.desc}</p>
+          <div class="mt-4">
+            <WaButton variant="quiet" text={item.waLabel} message={serviceWaMessage(item.name)} />
+          </div>
+          <FramePlate
+            class="ledger-inline mt-6"
+            no={item.plateNo}
+            caption={item.name}
+            width={item.plateWidth}
+            height={item.plateHeight}
+          />
+        </div>
+      </li>
+    ))}
+  </ol>
+
+  {/* Pelat desktop mengulang isi baris: dekoratif bagi pembaca layar. */}
+  <div class="ledger-view" aria-hidden="true">
+    {items.map((item, i) => (
+      <FramePlate
+        no={item.plateNo}
+        caption={item.name}
+        width={item.plateWidth}
+        height={item.plateHeight}
+        selected={i === 0}
+      />
+    ))}
+  </div>
+
+  {note && <p class="strip md:col-span-2">{note}</p>}
+</div>
