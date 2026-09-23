@@ -1,0 +1,41 @@
+---
+/**
+ * SheetKop — kepala lembar yang menempel di atas: nama WO, baris chip cue sebagai
+ * navigasi (jam + section), dan satu aksi. Di layar sempit chip menjadi baris geser.
+ * Tanpa `items`, kop hanya menampilkan nama (halaman di luar lembar, mis. 404).
+ */
+import { siteConfig } from '../../config/site';
+
+export interface CueItem {
+  href: string;
+  time: string;
+  label: string;
+}
+
+export interface Props {
+  items?: readonly CueItem[];
+}
+
+const { items = [] } = Astro.props;
+---
+
+<header class="kop">
+  <div class="sheet kop-grid">
+    <a class="kop-name" href="/">{siteConfig.name}</a>
+    {
+      items.length > 0 && (
+        <nav class="cue-chips" aria-label="Lompat ke cue lembar">
+          {items.map((item) => (
+            <a class="cue-chip" href={item.href}>
+              <span aria-hidden="true">{item.time}</span>
+              <span>{item.label}</span>
+            </a>
+          ))}
+        </nav>
+      )
+    }
+    <span class="kop-cta">
+      <slot name="cta" />
+    </span>
+  </div>
+</header>
