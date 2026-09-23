@@ -1,29 +1,34 @@
 ---
+/**
+ * 404 — barisnya tidak terdaftar di lembar ini. Tetap memakai anatomi cue yang
+ * sama supaya halaman galat tidak terasa seperti situs lain; dinonindexkan.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SheetNav from './_wedding/SheetNav.astro';
-import SelectMark from './_wedding/SelectMark.astro';
-import { copy } from './_wedding/copy';
+import SheetKop from './_wedding/SheetKop.astro';
 ---
 
 <BaseLayout
-  title="Lembar tidak ditemukan (404)"
-  description="Halaman yang Anda tuju tidak ada di lembar ini. Kembali ke daftar seleksi dokumentasi wedding."
+  title="Baris tidak ditemukan (404)"
+  description="Alamat yang Anda buka tidak ada di lembar rundown ini. Kembali ke awal lembar untuk membaca dokumentasi, lingkup kerja, dan urutan hari-H."
   canonical={new URL('/', Astro.site).href}
   robots={{ index: false, follow: true }}
 >
-  <SheetNav slot="header" items={copy.sheet.nav} />
+  <SheetKop slot="header" />
 
-  <section class="field-table grow">
-    <div class="sheet flex grow flex-col justify-center py-28">
-      <p class="folio">lembar 00 — tidak terdaftar</p>
-      <h1 class="display mt-5 max-w-none">Lembar ini tidak ada.</h1>
-      <p class="lede mt-5 opacity-90">
-        Alamat yang Anda buka tidak termasuk dalam lembar seleksi ini. Kembali ke awal lembar untuk membaca
-        dokumentasi, layanan, dan prosesnya dari frame 00.
-      </p>
-      <div class="mt-8">
-        <SelectMark href="/" label="Kembali ke lembar utama" />
+  <div class="sheet grow">
+    <section class="cue-row">
+      <div class="cue-mark">
+        <span class="cue-time">—</span>
+        <span class="cue-label">tidak terdaftar</span>
       </div>
-    </div>
-  </section>
+      <div class="cue-body">
+        <h1 class="display">Baris ini tidak ada.</h1>
+        <p class="lede">
+          Alamat yang Anda buka bukan bagian dari lembar ini. Kembali ke awal lembar untuk membaca dokumentasi,
+          lingkup kerja, dan contoh urutan hari-H dari cue 00.00.
+        </p>
+        <a class="cue-link mt-2" href="/">Kembali ke awal lembar</a>
+      </div>
+    </section>
+  </div>
 </BaseLayout>

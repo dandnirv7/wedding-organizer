@@ -1,10 +1,10 @@
 ---
 /**
  * FramePlate — pelat radius-0 untuk slot foto/video.
- * Sadar-bidang: di kertas pelat sedikit lebih terang dari bidangnya, di meja
- * sedikit lebih gelap. Slot kosong memakai rasio + dimensi piksel final
- * (anti-CLS) dan berlabel "menunggu aset klien". Saat aset tiba, hanya
- * `src` yang diisi — susunan tidak bergeser.
+ * Satu bidang: di kertas pelat sedikit lebih terang dari bidangnya, di tinta sedikit
+ * lebih gelap. Slot kosong memakai rasio + dimensi piksel final (anti-CLS) dan
+ * berlabel "menunggu aset klien" — saat aset tiba hanya isinya yang berganti.
+ * Penanda `tick` hijau cuma satu per lembar: cue yang sudah pasti terisi.
  */
 export interface Props {
   no: string;
@@ -13,8 +13,8 @@ export interface Props {
   caption?: string;
   src?: string;
   alt?: string;
-  /** Lingkaran seleksi merah: satu per kelompok, bukan per pelat. */
-  selected?: boolean;
+  /** Tick hijau #2f6b57: baris ini sudah dikonfirmasi, bukan lingkaran seleksi. */
+  tick?: boolean;
   eager?: boolean;
   class?: string;
 }
@@ -26,7 +26,7 @@ const {
   caption = 'menunggu aset klien',
   src,
   alt = '',
-  selected = false,
+  tick = false,
   eager = false,
   class: className = '',
 } = Astro.props;
@@ -45,27 +45,20 @@ const {
         {...eager && { fetchpriority: 'high' }}
       />
     ) : (
-      <div class="plate-empty" role="img" aria-label={`Frame ${no} — ${caption}`}>
-        <span class="strip">{no} · menunggu aset klien</span>
+      <div class="plate-empty" role="img" aria-label={`Pelat ${no} — ${caption}`}>
+        <span class="strip">menunggu aset klien</span>
         <span class="folio">{width} × {height} px</span>
       </div>
     )}
   </div>
   <figcaption class="plate-caption">
     <span class="strip">{no} · {caption}</span>
-    {selected ? (
-      <svg width="20" height="20" viewBox="0 0 44 44" role="img" aria-label="Seleksi utama">
-        <ellipse
-          cx="22" cy="22" rx="18" ry="16"
-          fill="none"
-          stroke="var(--color-select)"
-          stroke-width="5"
-          stroke-linecap="round"
-          transform="rotate(-7 22 22)"
-        />
+    {tick ? (
+      <svg width="18" height="18" viewBox="0 0 24 24" role="img" aria-label="Cue dikonfirmasi">
+        <path class="plate-tick" d="M4 13.5 L9.5 19 L20 5.5" />
       </svg>
     ) : (
-      <span class="folio" aria-hidden="true">{Math.round((width / height) * 100) / 100}:1</span>
+      <span class="folio" aria-hidden="true">{width}×{height}</span>
     )}
   </figcaption>
 </figure>

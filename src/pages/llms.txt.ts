@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { siteConfig } from '../config/site';
-import { copy } from '../pages/_wedding/copy';
+import { copy } from './_wedding/runsheet-copy';
 
 /**
  * llms.txt untuk satu rute. Direktif AI bersifat advisory; tidak ada jaminan

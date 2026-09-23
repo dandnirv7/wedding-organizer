@@ -1,12 +1,15 @@
-/** Kontrak data untuk ServiceLedger + pesan WhatsApp per layanan. */
+/** Kontrak data ledger lingkup kerja + pesan WhatsApp per layanan. */
 export interface ServiceItem {
   no: string;
   name: string;
   desc: string;
   waLabel: string;
-  plateNo: string;
-  plateWidth: number;
-  plateHeight: number;
+  /** Hanya layanan yang memang punya bukti foto yang membawa pelat. */
+  plate?: {
+    no: string;
+    width: number;
+    height: number;
+  };
 }
 
 export function serviceWaMessage(name: string): string {

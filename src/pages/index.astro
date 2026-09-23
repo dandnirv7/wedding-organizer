@@ -1,4 +1,11 @@
 ---
+/**
+ * `/` — lembar rundown hari-H.
+ * Punggung halaman = baris cue: sel kiri menyimpan jam + nama cue, sel kanan
+ * menyimpan isinya. Pita stabilo hanya dua kali (cue 00.00 + baris konfirmasi);
+ * sisanya tinta di atas kertas dingin. Pelat kosong adalah slot aset klien dengan
+ * ukuran final, bukan penghias, jadi layout tidak bergeser saat foto tiba.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { resolveCanonical } from '../lib/seo';
 import {
@@ -8,16 +15,12 @@ import {
 } from '../lib/schema';
 import { WaButton } from '../capabilities/lead/index.js';
 import { siteConfig } from '../config/site';
-import SheetNav from './_wedding/SheetNav.astro';
+import SheetKop from './_wedding/SheetKop.astro';
 import FramePlate from './_wedding/FramePlate.astro';
-import CreditLine from './_wedding/CreditLine.astro';
-import SelectMark from './_wedding/SelectMark.astro';
-import EdgeBand from './_wedding/EdgeBand.astro';
-import SelectStrip from './_wedding/SelectStrip.astro';
-import ServiceLedger from './_wedding/ServiceLedger.astro';
 import FaqSheet from './_wedding/FaqSheet.astro';
 import Colophon from './_wedding/Colophon.astro';
-import { copy, services, frames, storyFrames } from './_wedding/copy';
+import { copy, services, frames, storyFrames, runSheet } from './_wedding/runsheet-copy';
+import { serviceWaMessage } from './_wedding/serviceTypes';
 
 const canonicalUrl = resolveCanonical(Astro.url);
 const graph = [
@@ -26,235 +29,307 @@ const graph = [
   buildWebPageSchema(canonicalUrl, copy.sheet.title, copy.sheet.description),
 ];
 
-/** Baris kepala section: aturan cetak + data folio, bukan kicker marketing. */
+/** Jam cue yang dipanggil chip navigasi; barisnya memakai angka yang sama. */
+const cues = {
+  work: '09.00',
+  services: '11.30',
+  process: '13.00',
+  story: '14.30',
+  video: '15.00',
+  testimonial: '16.00',
+  faq: '16.30',
+  about: '17.00',
+} as const;
+
+const navItems = copy.sheet.nav.map((item) => ({
+  href: item.href,
+  label: item.label,
+  time: cues[item.href.slice(1) as keyof typeof cues] ?? '',
+}));
+
 const hasWa = Boolean(siteConfig.contact.whatsapp);
 ---
 
 <BaseLayout title={copy.sheet.title} description={copy.sheet.description} canonical={canonicalUrl} graph={graph}>
-  <SheetNav slot="header" items={copy.sheet.nav}>
-    <WaButton slot="cta" variant="quiet" text="Chat via WhatsApp" message={copy.waMessage} />
-  </SheetNav>
+  <SheetKop slot="header" items={navItems}>
+    <WaButton
+      slot="cta"
+      text="Chat WhatsApp"
+      message={copy.waMessage}
+      class="text-table-ink hover:border-table-ink"
+    />
+  </SheetKop>
 
-  {/* 01 HERO — bidang meja penuh; pelat menguasai, teks di tepi kiri */}
-  <section class="field-table">
-    <div class="sheet grid items-end gap-x-8 gap-y-10 pt-10 pb-12 lg:grid-cols-12 lg:pt-16 lg:pb-16">
-      <div class="lg:col-span-5 lg:pb-6">
-        <p class="folio">{copy.hero.folio}</p>
-        <h1 class="display mt-5">{copy.hero.title}</h1>
-        <p class="lede mt-6 opacity-90">{copy.hero.lede}</p>
-        <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
-          <SelectMark href="#work" label={copy.hero.action} />
-          {hasWa && <WaButton variant="quiet" text="Chat via WhatsApp" message={copy.waMessage} />}
-        </div>
+  <div class="sheet">
+    {/* 00.00 — CUE UTAMA: nama, H1, satu aksi, dan pelat yang memecah gutter */}
+    <section class="cue-row" data-current="true" id="top">
+      <div class="cue-mark">
+        <span class="cue-time">00.00</span>
+        <span class="cue-label">{runSheet.rows[0].cue}</span>
       </div>
-      <div class="lg:col-span-7">
+      <div class="cue-body lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8">
+        <div class="max-w-measure lg:col-span-5">
+          <p class="folio">{copy.hero.folio}</p>
+          <h1 class="display mt-5">{copy.hero.title}</h1>
+          <p class="lede mt-6">{copy.hero.lede}</p>
+          <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
+            <a class="cue-link" href="#work">{copy.hero.action}</a>
+            <p class="strip">{runSheet.note}</p>
+          </div>
+        </div>
         <FramePlate
+          class="lg:col-span-7 plate-bleed"
           no={frames.hero.no}
           caption={frames.hero.caption}
           width={frames.hero.width}
           height={frames.hero.height}
-          selected
+          tick
           eager
         />
-        <CreditLine no={frames.hero.no} class="mt-3" />
       </div>
-    </div>
-    <EdgeBand roll="roll 01 · menunggu aset" />
-  </section>
+    </section>
 
-  {/* 02 SIKAP — bidang kertas */}
-  <section class="field-paper">
-    <div class="sheet sheet-block">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">02 · {copy.statement.label}</span>
-        <span class="strip ml-auto">satu halaman</span>
+    {/* 07.00 — PERSIAPAN: sikap + baris contoh urutan */}
+    <section class="cue-row" data-auto-current="true">
+      <div class="cue-mark">
+        <span class="cue-time">{runSheet.rows[1].time}</span>
+        <span class="cue-label">{runSheet.rows[1].cue}</span>
       </div>
-      <h2 class="h-section mt-8">{copy.statement.headline}</h2>
-      <p class="lede mt-5">{copy.statement.body}</p>
-    </div>
-  </section>
-
-  {/* 03 FEATURED WEDDING — pelat dominan memecah gutter */}
-  <section id="work" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet pb-16 md:pb-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">03 · {copy.featured.label}</span>
-        <span class="strip ml-auto">#work</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.featured.headline}</h2>
-      <div class="mt-10 grid gap-x-8 gap-y-10 lg:grid-cols-12">
-        <figure class="lg:col-span-7 lg:-ms-10">
-          <FramePlate
-            no={frames.featured.no}
-            caption={frames.featured.caption}
-            width={frames.featured.width}
-            height={frames.featured.height}
-            selected
-          />
-          <CreditLine no={frames.featured.no} class="mt-3" />
-        </figure>
-        <div class="lg:col-span-5 lg:pt-14">
-          <FramePlate
-            no={frames.support.no}
-            caption={frames.support.caption}
-            width={frames.support.width}
-            height={frames.support.height}
-          />
-          <CreditLine no={frames.support.no} class="mt-3" />
-          <p class="lede mt-7">{copy.featured.pending}</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* 04 LAYANAN — daftar, bukan kartu; pelat desktop bertukar tanpa JS */}
-  <section id="services" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">04 · {copy.services.label}</span>
-        <span class="strip ml-auto">#services</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.services.headline}</h2>
-      <div class="mt-10">
-        <ServiceLedger items={services} note={copy.services.note} />
-      </div>
-    </div>
-  </section>
-
-  {/* 05 PROSES — empat langkah sebagai folio, tanpa ikon */}
-  <section id="process" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">05 · {copy.process.label}</span>
-        <span class="strip ml-auto">04 langkah</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.process.headline}</h2>
-      <ol class="mt-10 grid gap-x-8 gap-y-10 md:grid-cols-4">
-        {copy.process.steps.map((step) => (
-          <li class="border-t border-hairline pt-5">
-            <p class="strip">{step.no}</p>
-            <h3 class="h-item mt-3">{step.name}</h3>
-            <p class="lede mt-2 text-[1rem]">{step.desc}</p>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  {/* 06 VIDEO BREAK — bidang meja, satu caption pendek */}
-  <section class="field-table">
-    <div class="sheet py-16 md:py-24">
-      <FramePlate no={frames.video.no} caption={frames.video.caption} width={frames.video.width} height={frames.video.height} />
-      <div class="mt-6 flex flex-wrap items-baseline gap-x-8 gap-y-3">
-        <CreditLine no={frames.video.no} />
-        <h2 class="h-section text-[clamp(1.35rem,3vw,1.9rem)]">{copy.video.headline}</h2>
-      </div>
-      <p class="strip mt-4">{copy.video.pending}</p>
-    </div>
-  </section>
-
-  {/* 07 VISUAL STORY — strip asimetris, satu lingkaran seleksi */}
-  <section class="field-paper">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">07 · {copy.story.label}</span>
-        <span class="strip ml-auto">05 pelat</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.story.headline}</h2>
-      <div class="mt-10">
-        <SelectStrip>
-          {storyFrames.map((frame, i) => (
-            <FramePlate
-              no={frame.no}
-              caption={frame.caption}
-              width={frame.width}
-              height={frame.height}
-              selected={i === 2}
-            />
+      <div class="cue-body">
+        <h2 class="h-section">{copy.statement.headline}</h2>
+        <p class="lede">{copy.statement.body}</p>
+        <ul class="mt-4">
+          {runSheet.rows.map((row) => (
+            <li class="hairline-top flex flex-wrap items-baseline gap-x-4 gap-y-1 py-3">
+              <span class="cue-time">{row.time}</span>
+              <span class="h-item">{row.item}</span>
+              <span class="cue-label">{row.cue}</span>
+              <dl class="cue-meta ms-auto">
+                <div>
+                  <dt>PIC</dt>
+                  <dd>{row.pic}</dd>
+                </div>
+                <div>
+                  <dt>Durasi</dt>
+                  <dd>{row.durasi}</dd>
+                </div>
+              </dl>
+            </li>
           ))}
-        </SelectStrip>
-        <p class="lede mt-8">{copy.story.pending}</p>
+        </ul>
       </div>
-    </div>
-    <EdgeBand roll="roll 02 · menunggu aset" frame="detail" />
-  </section>
+    </section>
 
-  {/* 08 TESTIMONI — tipe baca besar di kertas, tanpa carousel/rating */}
-  <section class="field-paper">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">08 · {copy.testimonial.label}</span>
-        <span class="strip ml-auto">maks 03</span>
+    {/* 09.00 — UPACARA: satu cerita unggulan, pelat dominan memecah gutter */}
+    <section class="cue-row scroll-mt-28" data-auto-current="true" id="work" aria-labelledby="work-h">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.work}</span>
+        <span class="cue-label">{runSheet.rows[2].cue}</span>
       </div>
-      <h2 class="h-section mt-8">{copy.testimonial.headline}</h2>
-      <figure class="mt-10 border-t border-hairline pt-8">
-        <blockquote class="h-section text-[clamp(1.5rem,3.5vw,2.125rem)] font-normal italic opacity-70">
-          “Kutipan menunggu izin tertulis dari pasangan.”
-        </blockquote>
-        <figcaption class="mt-6">
-          <CreditLine no="T1" place="menunggu izin" />
-          <p class="lede mt-4">{copy.testimonial.pending}</p>
-        </figcaption>
-      </figure>
-    </div>
-  </section>
-
-  {/* 09 TENTANG — pelat tim + cerita yang belum dikonfirmasi */}
-  <section id="about" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="grid gap-x-8 gap-y-10 lg:grid-cols-12">
-        <div class="lg:col-span-5">
-          <FramePlate no={frames.team.no} caption={frames.team.caption} width={frames.team.width} height={frames.team.height} />
-          <CreditLine no={frames.team.no} class="mt-3" />
-        </div>
-        <div class="lg:col-span-7 lg:pt-10">
-          <div class="flex items-center gap-5 border-t border-hairline pt-3">
-            <span class="folio">09 · {copy.about.label}</span>
-            <span class="strip ml-auto">#about</span>
+      <div class="cue-body">
+        <h2 class="h-section" id="work-h">{copy.featured.headline}</h2>
+        <div class="grid gap-x-8 gap-y-10 lg:grid-cols-12">
+          <div class="lg:col-span-7 lg:-ms-6">
+            <FramePlate
+              no={frames.featured.no}
+              caption={frames.featured.caption}
+              width={frames.featured.width}
+              height={frames.featured.height}
+            />
           </div>
-          <h2 class="h-section mt-8">{copy.about.headline}</h2>
-          <p class="lede mt-5">{copy.about.pending}</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* 10 TANYA — disclosure native, tanpa skrip */}
-  <section id="faq" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">10 · {copy.faq.label}</span>
-        <span class="strip ml-auto">#faq</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.faq.headline}</h2>
-      <FaqSheet items={copy.faq.items} />
-    </div>
-  </section>
-
-  {/* 11 AKHIR — bidang meja, satu aksi, pelat penutup */}
-  <section class="field-table">
-    <div class="sheet py-16 md:py-24">
-      <div class="grid gap-x-8 gap-y-10 lg:grid-cols-12 lg:items-end">
-        <div class="lg:col-span-5">
-          <p class="folio">11 · akhir lembar</p>
-          <h2 class="h-section mt-5">{copy.finalCta.headline}</h2>
-          <p class="lede mt-5 opacity-90">{copy.finalCta.body}</p>
-          <div class="mt-8">
-            {hasWa ? (
-              <WaButton text={copy.finalCta.action} message={copy.waMessage} />
-            ) : (
-              <p class="strip">{copy.finalCta.noNumber}</p>
-            )}
+          <div class="lg:col-span-5">
+            <FramePlate
+              no={frames.support.no}
+              caption={frames.support.caption}
+              width={frames.support.width}
+              height={frames.support.height}
+            />
+            <p class="lede mt-7">{copy.featured.pending}</p>
           </div>
         </div>
-        <div class="lg:col-span-7">
-          <FramePlate no={frames.closing.no} caption={frames.closing.caption} width={frames.closing.width} height={frames.closing.height} />
-          <CreditLine no={frames.closing.no} class="mt-3" />
+      </div>
+    </section>
+
+    {/* 11.30 — RECEPSI: lingkup kerja sebagai baris, bukti masuk ke dalam baris */}
+    <section class="cue-row scroll-mt-28" data-auto-current="true" id="services" aria-labelledby="services-h">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.services}</span>
+        <span class="cue-label">{runSheet.rows[3].cue}</span>
+      </div>
+      <div class="cue-body">
+        <h2 class="h-section" id="services-h">{copy.services.headline}</h2>
+        <div class="service-rows">
+          {services.map((service) => (
+            <article class:list={['service-row', service.plate && 'service-row--plate']}>
+              <div class="service-row-copy">
+                <div class="cue-item-title">
+                  <span class="cue-no">{service.no}</span>
+                  <h3 class="h-item">{service.name}</h3>
+                </div>
+                <p class="lede">{service.desc}</p>
+                <WaButton
+                  text={service.waLabel}
+                  message={serviceWaMessage(service.name)}
+                  ariaLabel={`Tanya ${service.name} via WhatsApp`}
+                />
+              </div>
+              {service.plate && (
+                <FramePlate
+                  class="service-plate"
+                  no={service.plate.no}
+                  caption={service.name}
+                  width={service.plate.width}
+                  height={service.plate.height}
+                />
+              )}
+            </article>
+          ))}
+        </div>
+        <p class="strip">{copy.services.note}</p>
+      </div>
+    </section>
+
+    {/* 13.00 — ALUR: empat langkah bernomor, tanpa ikon dan tanpa kartu */}
+    <section class="cue-row scroll-mt-28" data-auto-current="true" id="process" aria-labelledby="process-h">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.process}</span>
+        <span class="cue-label">{copy.process.label}</span>
+      </div>
+      <div class="cue-body">
+        <h2 class="h-section" id="process-h">{copy.process.headline}</h2>
+        <ol class="grid gap-x-8 gap-y-10 md:grid-cols-2 xl:grid-cols-4">
+          {copy.process.steps.map((step) => (
+            <li class="cue-item">
+              <div class="cue-item-title">
+                <span class="cue-no">{step.no}</span>
+                <h3 class="h-item">{step.name}</h3>
+              </div>
+              <p class="lede text-[1rem]">{step.desc}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    {/* 14.30 — DETAIL: mosaic kolom tak sama, rata bawah, pita dua bergeser kanan */}
+    <section class="cue-row" data-auto-current="true">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.story}</span>
+        <span class="cue-label">{copy.story.label}</span>
+      </div>
+      <div class="cue-body">
+        <h2 class="h-section">{copy.story.headline}</h2>
+        <div class="detail-mosaic">
+          {storyFrames.map((frame) => (
+            <FramePlate no={frame.no} caption={frame.caption} width={frame.width} height={frame.height} />
+          ))}
+        </div>
+        <p class="lede">{copy.story.pending}</p>
+      </div>
+    </section>
+
+    {/* 15.00 — GERAK: satu pelat video, diputar hanya atas tekanan pengunjung */}
+    <section class="cue-row" data-auto-current="true">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.video}</span>
+        <span class="cue-label">{copy.video.label}</span>
+      </div>
+      <div class="cue-body">
+        <h2 class="h-section">{copy.video.headline}</h2>
+        <FramePlate
+          class="lg:-ms-6"
+          no={frames.video.no}
+          caption={frames.video.caption}
+          width={frames.video.width}
+          height={frames.video.height}
+        />
+        <p class="strip">{copy.video.pending}</p>
+      </div>
+    </section>
+
+    {/* 16.00 — SAKSI: tanpa kutipan sampai izin tertulis datang */}
+    <section class="cue-row" data-auto-current="true">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.testimonial}</span>
+        <span class="cue-label">{copy.testimonial.label}</span>
+      </div>
+      <div class="cue-body">
+        <h2 class="h-section">{copy.testimonial.headline}</h2>
+        <p class="lede">{copy.testimonial.pending}</p>
+      </div>
+    </section>
+
+    {/* 16.30 — TANYA: disclosure bawaan, tanpa skrip */}
+    <section class="cue-row scroll-mt-28" data-auto-current="true" id="faq" aria-labelledby="faq-h">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.faq}</span>
+        <span class="cue-label">{copy.faq.label}</span>
+      </div>
+      <div class="cue-body">
+        <h2 class="h-section" id="faq-h">{copy.faq.headline}</h2>
+        <FaqSheet items={copy.faq.items} />
+      </div>
+    </section>
+
+    {/* 17.00 — TENTANG: pelat tim + cerita yang datanya belum diterima */}
+    <section class="cue-row scroll-mt-28" data-auto-current="true" id="about" aria-labelledby="about-h">
+      <div class="cue-mark">
+        <span class="cue-time">{cues.about}</span>
+        <span class="cue-label">{copy.about.label}</span>
+      </div>
+      <div class="cue-body">
+        <h2 class="h-section" id="about-h">{copy.about.headline}</h2>
+        <div class="grid gap-x-8 gap-y-10 lg:grid-cols-12">
+          <div class="lg:col-span-5">
+            <FramePlate
+              no={frames.team.no}
+              caption={frames.team.caption}
+              width={frames.team.width}
+              height={frames.team.height}
+            />
+          </div>
+          <div class="lg:col-span-7 lg:pt-6">
+            <p class="lede">{copy.about.pending}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  {/* 17.30 — KONFIRMASI: bidang tinta, satu baris aksi stabilo */}
+  <section class="field-table" aria-labelledby="cta-h">
+    <div class="sheet">
+      <div class="cue-row">
+        <div class="cue-mark">
+          <span class="cue-time">17.30</span>
+          <span class="cue-label">Konfirmasi</span>
+        </div>
+        <div class="cue-body lg:grid lg:grid-cols-12 lg:items-end lg:gap-x-8">
+          <div class="lg:col-span-6">
+            <h2 class="h-section" id="cta-h">{copy.finalCta.headline}</h2>
+            <p class="lede mt-5">{copy.finalCta.body}</p>
+            {
+              !hasWa && (
+                <p class="strip mt-8" role="note">
+                  {copy.finalCta.noNumber}
+                </p>
+              )
+            }
+          </div>
+          <div class="lg:col-span-6">
+            <FramePlate
+              no={frames.closing.no}
+              caption={frames.closing.caption}
+              width={frames.closing.width}
+              height={frames.closing.height}
+            />
+          </div>
         </div>
       </div>
     </div>
+    {hasWa && <WaButton variant="band" text={copy.finalCta.action} message={copy.waMessage} />}
   </section>
 
   <Colophon slot="footer" />
-  <WaButton variant="floating" text={copy.floatingCta} message={copy.waMessage} />
+  {hasWa && <WaButton variant="floating" text={copy.floatingCta} message={copy.waMessage} />}
 </BaseLayout>

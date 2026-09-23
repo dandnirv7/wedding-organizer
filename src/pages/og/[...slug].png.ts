@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { OGImageRoute } from 'astro-og-canvas';
 import { siteConfig } from '../../config/site';
 import { ogSlugFromPath } from '../../lib/og';
-import { copy } from '../../pages/_wedding/copy';
+import { copy } from '../../pages/_wedding/runsheet-copy';
 
 const FONT_FILES = ['Inter_400Regular.ttf', 'Inter_700Bold.ttf'];
 
@@ -29,14 +29,14 @@ function resolveFont(name: string): string {
 }
 
 /**
- * OG 1200×630 dalam dunia Selects Table: bidang meja gelap, garis seleksi
- * merah di tepi bawah, tipografi serif yang sama dengan halaman. Satu rute
- * publik (`/`) plus `default` untuk tautan tanpa halaman sendiri.
+ * OG 1200×630 dalam dunia Run of Show: bidang tinta, satu garis stabilo cue di
+ * tepi bawah, tipografi data yang sama dengan halaman. Satu rute publik (`/`)
+ * plus `default` untuk tautan tanpa halaman sendiri.
  */
-const PAPER: [number, number, number] = [242, 241, 236];
-const TABLE: [number, number, number] = [23, 24, 26];
-const MUTED: [number, number, number] = [160, 156, 148];
-const SELECT: [number, number, number] = [201, 48, 43];
+const PAPER: [number, number, number] = [240, 241, 238];
+const TABLE: [number, number, number] = [27, 29, 27];
+const MUTED: [number, number, number] = [154, 160, 150];
+const CUE: [number, number, number] = [219, 226, 74];
 
 const pages: Record<string, { title: string; description: string }> = {
   default: { title: siteConfig.name, description: copy.sheet.description },
@@ -50,7 +50,7 @@ export const { getStaticPaths, GET } = await OGImageRoute({
     title: page.title,
     description: page.description,
     bgColor: TABLE,
-    border: { color: SELECT, width: 18, side: 'block-end' },
+    border: { color: CUE, width: 18, side: 'block-end' },
     padding: 88,
     font: {
       title: {
@@ -67,7 +67,8 @@ export const { getStaticPaths, GET } = await OGImageRoute({
       },
     },
     // OG card dirender dengan TTF yang tersedia di node_modules (canvaskit tidak
-    // membaca woff2). Interface web tetap Source Serif 4; lihat docs/ASSET-MANIFEST.md.
+    // membaca woff2). Interface web tetap Anybody + Familjen Grotesk; Inter dipakai
+    // di sini karena OG butuh TTF, lihat docs/ASSET-MANIFEST.md.
     // Inter OFL (SIL Open Font License). Font proprietary tidak dikomit ke repo.
     fonts: FONT_FILES.map(resolveFont),
   }),
