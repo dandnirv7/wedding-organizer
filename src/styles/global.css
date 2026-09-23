@@ -1,46 +1,51 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   THE SELECTS TABLE — Meja Seleksi
-   Paper reads; the dark table is for looking. No gradient between them.
-   Radius is zero everywhere except the SVG selection circle.
+   RUNDOWN HARI-H — The Run of Show
+   Halaman adalah lembar kerja WO: gutter jam sebagai tulang punggung, baris
+   sebagai section, satu stabilo penanda cue yang sedang dibaca.
+   Kertas dingin, tanpa serif, tanpa lingkaran. Penanda = kurung siku + tab.
+   Stabilo HANYA dipakai pada (1) cue aktif di gutter dan (2) satu baris
+   konfirmasi. Selain itu ia tidak ada. Radius nol. Bayangan nol.
    ========================================================================== */
 @theme {
-  /* Grounds */
-  --color-paper: #f2f1ec;
-  --color-paper-deep: #e7e5dd;
-  --color-table: #17181a;
-  --color-table-deep: #101113;
+  /* Grounds: one continuous cool sheet; ink only for kop + konfirmasi bands */
+  --color-paper: #f0f1ee;
+  --color-paper-deep: #e2e4de;
+  --color-table: #1b1d1b;
+  --color-table-deep: #141614;
 
   /* Ink */
-  --color-ink: #1a1c1e;
-  --color-ink-muted: #5c6066;
-  --color-table-ink: #e9e7e1;
-  --color-table-muted: #a09c94;
+  --color-ink: #1b1d1b;
+  --color-ink-muted: #5b6059;
+  --color-table-ink: #eef0ea;
+  --color-table-muted: #9aa096;
 
-  /* Lines + the single accent */
-  --color-hairline: #d9d6ce;
-  --color-hairline-table: #2a2c30;
-  --color-select: #c9302b;
-  --color-film: #b8935a;
+  /* Rules + the single accent (cue) + the confirmed state */
+  --color-hairline: #c9cdc5;
+  --color-hairline-table: #33372f;
+  --color-select: #dbe24a;
+  --color-film: #2f6b57;
 
-  /* Type: one serif for words, one narrow grotesque for data */
-  --font-reading: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
-  --font-data: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  /* Type: condensed variable for the form, grotesk for reading. No serif. */
+  --font-data: "Anybody Variable", "Arial Narrow", system-ui, sans-serif;
+  --font-reading: "Familjen Grotesk Variable", "Helvetica Neue", system-ui, sans-serif;
 
   --text-lede: 1.0625rem;
   --text-lede-lg: 1.125rem;
   --text-strip: 0.75rem;
-  --text-section: clamp(1.75rem, 4.5vw, 2.75rem);
-  --text-display: clamp(2.4rem, 7.5vw, 5rem);
+  --text-section: clamp(1.65rem, 4.4vw, 2.625rem);
+  --text-display: clamp(2.1rem, 6.6vw, 4.25rem);
 
-  --leading-reading: 1.7;
-  --leading-tight: 1.08;
-  --tracking-strip: 0.14em;
-  --tracking-folio: 0.22em;
+  --leading-reading: 1.68;
+  --leading-tight: 0.98;
+  --tracking-strip: 0.1em;
+  --tracking-folio: 0.2em;
 
-  --max-w-measure: 66ch;
-  --max-w-sheet: 1240px;
+  --max-w-measure: 62ch;
+  --max-w-sheet: 1180px;
+  --sheet-pad-inline: clamp(1.25rem, 4vw, 2rem);
+  --gutter: clamp(4.25rem, 13vw, 8.5rem);
 }
 
 @layer base {
@@ -50,6 +55,7 @@
     color: var(--color-ink);
     font-family: var(--font-reading);
     font-optical-sizing: auto;
+    caret-color: var(--color-film);
     -webkit-text-size-adjust: 100%;
   }
 
@@ -70,16 +76,13 @@
 
   ::selection {
     background: var(--color-select);
-    color: var(--color-paper);
+    color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-select);
+    outline: 2px solid var(--color-ink);
     outline-offset: 3px;
   }
-
-  /* Browser surfaces the page never draws: caret, scrollbar */
-  caret-color: var(--color-select);
 
   @media (prefers-reduced-motion: no-preference) {
     html {
@@ -106,6 +109,8 @@
 
 @layer components {
   /* ---- Fields ----------------------------------------------------------- */
+  /* The sheet is one ground. `field-table` is the printed-ink band (kop,
+     konfirmasi, colophon) — not a second page colour that alternates. */
   .field-paper {
     background-color: var(--color-paper);
     color: var(--color-ink);
@@ -117,23 +122,23 @@
     scrollbar-color: var(--color-hairline-table) transparent;
 
     ::selection {
-      background: var(--color-table-ink);
-      color: var(--color-table);
+      background: var(--color-select);
+      color: var(--color-ink);
     }
   }
 
   .sheet {
     max-width: var(--max-w-sheet);
     margin-inline: auto;
-    padding-inline: clamp(1.25rem, 4vw, 2rem);
+    padding-inline: var(--sheet-pad-inline);
   }
 
-  /* One rhythm: more air above a section heading than below it. */
   .sheet-block {
-    padding-block: clamp(4.5rem, 11vw, 8.5rem) clamp(3.5rem, 8vw, 6rem);
+    padding-block: clamp(3.5rem, 9vw, 6.5rem) clamp(2.5rem, 6vw, 4.5rem);
   }
 
-  /* ---- Data type -------------------------------------------------------- */
+  /* ---- Type roles ------------------------------------------------------- */
+  /* The form voice: condensed, uppercase, tabular. Every data atom uses it. */
   .strip {
     font-family: var(--font-data);
     font-size: var(--text-strip);
@@ -142,6 +147,7 @@
     letter-spacing: var(--tracking-strip);
     text-transform: uppercase;
     font-variant-numeric: tabular-nums;
+    font-stretch: 75%;
     color: var(--color-ink-muted);
   }
 
@@ -155,6 +161,7 @@
     font-weight: 700;
     letter-spacing: var(--tracking-folio);
     text-transform: uppercase;
+    font-stretch: 66%;
     color: var(--color-ink-muted);
   }
 
@@ -162,29 +169,35 @@
     color: var(--color-table-muted);
   }
 
-  /* ---- Reading type ----------------------------------------------------- */
   .display {
+    font-family: var(--font-data);
     font-size: var(--text-display);
-    font-weight: 600;
+    font-weight: 700;
+    font-stretch: 70%;
     line-height: var(--leading-tight);
-    letter-spacing: -0.02em;
-    max-width: 16ch;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    max-width: 15ch;
     text-wrap: balance;
   }
 
   .h-section {
+    font-family: var(--font-reading);
     font-size: var(--text-section);
     font-weight: 600;
     line-height: 1.12;
-    letter-spacing: -0.015em;
-    max-width: 24ch;
+    letter-spacing: -0.02em;
+    max-width: 26ch;
     text-wrap: balance;
   }
 
   .h-item {
+    font-family: var(--font-data);
     font-size: 1.0625rem;
-    font-weight: 600;
-    line-height: 1.35;
+    font-weight: 700;
+    font-stretch: 82%;
+    line-height: 1.28;
+    letter-spacing: 0.005em;
   }
 
   .lede {
@@ -206,62 +219,253 @@
     border-top-color: var(--color-hairline-table);
   }
 
-  /* ---- The one action vocabulary: a line + a red selection mark --------- */
-  .select-line {
-    display: inline-flex;
+  /* ---- Kop / navigasi baris waktu --------------------------------------- */
+  .kop {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: var(--color-table);
+    color: var(--color-table-ink);
+    border-bottom: 1px solid var(--color-hairline-table);
+  }
+
+  .kop-grid {
+    display: flex;
     align-items: center;
-    gap: 0.75rem;
-    min-height: 44px;
+    gap: clamp(1rem, 3vw, 2rem);
+    min-block-size: 3.25rem;
+
+    @media (max-width: 767px) {
+      flex-wrap: wrap;
+      row-gap: 0;
+      padding-block-end: 0.25rem;
+    }
+  }
+
+  .kop-name {
+    flex: none;
     font-family: var(--font-data);
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     font-weight: 700;
+    font-stretch: 66%;
+    letter-spacing: var(--tracking-folio);
+    text-transform: uppercase;
+  }
+
+  /* Cue chips = the gutter, lifted to the top on small screens. */
+  .cue-chips {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    display: flex;
+    gap: 0.75rem;
+    margin-inline-start: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-block: 0.5rem;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    @media (max-width: 767px) {
+      margin-inline-start: 0;
+      inline-size: 100%;
+    }
+  }
+
+  .cue-chip {
+    flex: none;
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    min-block-size: 44px;
+    padding-inline: 0.125rem;
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-stretch: 75%;
     letter-spacing: var(--tracking-strip);
     text-transform: uppercase;
-    color: currentColor;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-table-muted);
     text-decoration: none;
     border-bottom: 2px solid transparent;
-    transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 220ms ease;
 
     &:hover,
     &:focus-visible {
+      color: var(--color-table-ink);
       border-bottom-color: var(--color-select);
     }
+  }
 
-    & svg {
-      flex: none;
-      overflow: visible;
-    }
+  .kop-cta {
+    flex: none;
+    display: none;
 
-    & .ring {
-      stroke: var(--color-select);
-      stroke-width: 3;
-      fill: none;
-      stroke-dasharray: 118;
-      stroke-dashoffset: 0;
-      transform-origin: center;
-      transition: stroke-dashoffset 420ms cubic-bezier(0.16, 1, 0.3, 1),
-        transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* The authored moment: the pencil circle closes as the row is entered. */
-    &:hover .ring,
-    &:focus-visible .ring {
-      stroke-dashoffset: -118;
-      transform: rotate(-8deg);
+    @media (min-width: 1024px) {
+      display: inline-flex;
     }
   }
 
-  .select-line--quiet {
+  /* ---- The row: gutter + body. This IS the page's grid. ------------------ */
+  .cue-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--gutter) minmax(0, 1fr);
+    gap: 0 clamp(1rem, 4vw, 2.5rem);
+    border-top: 1px solid var(--color-hairline);
+    padding-block: clamp(1.75rem, 4vw, 2.75rem);
+    align-items: start;
+
+    @media (max-width: 767px) {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+  }
+
+  .cue-row:last-of-type {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .field-table .cue-row {
+    border-top-color: var(--color-hairline-table);
+
+    &:last-of-type {
+      border-bottom-color: var(--color-hairline-table);
+    }
+  }
+
+  /* The gutter cell: time above, cue label below, bracket at the left edge. */
+  .cue-mark {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding-inline-start: 0.75rem;
+
+    @media (max-width: 767px) {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 0.75rem;
+      padding-inline-start: 1rem;
+    }
+
+    /* [ ] drawn, not typed: two square rules hugging the time. */
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: 0.125rem;
+      inset-inline-start: 0;
+      inline-size: 0.4375rem;
+      border: 1px solid var(--color-hairline);
+    }
+
+    &::before {
+      border-inline-end: 0;
+    }
+
+    &::after {
+      inset-inline-start: auto;
+      inset-inline-end: calc(100% - 0.4375rem);
+      border-inline-start: 0;
+      opacity: 0;
+    }
+  }
+
+  .cue-time {
+    font-family: var(--font-data);
+    font-size: 1.125rem;
+    font-weight: 700;
+    font-stretch: 70%;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
+  .cue-label {
+    font-family: var(--font-data);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    font-stretch: 75%;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .field-table .cue-label {
+    color: var(--color-table-muted);
+  }
+
+  /* The single accent, under a law: the cue band is print behind the time. */
+  .cue-row[data-current="true"] .cue-time {
+    background-color: var(--color-select);
+    color: var(--color-ink);
+    padding-inline: 0.25rem;
+    margin-inline-start: -0.25rem;
+  }
+
+  .cue-row[data-current="true"] .cue-mark::after {
+    opacity: 1;
+  }
+
+  .cue-body {
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.75rem);
+  }
+
+  /* Right-hand rail of the row: PIC + durasi, printed small. */
+  .cue-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem clamp(1rem, 3vw, 2rem);
+    align-items: baseline;
+  }
+
+  .cue-meta dt {
+    font-family: var(--font-data);
+    font-size: 0.625rem;
+    font-weight: 700;
+    font-stretch: 66%;
+    letter-spacing: var(--tracking-folio);
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .cue-meta dd {
+    margin: 0;
+    font-family: var(--font-data);
     font-size: 0.8125rem;
-    min-height: 40px;
+    font-weight: 700;
+    font-stretch: 78%;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
   }
 
-  /* ---- Frames ----------------------------------------------------------- */
+  .cue-meta > div {
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+
+  /* ---- Frame plate: the slot that is not filled yet ---------------------- */
+  /* Absence is designed as deliberately as presence: a blank insert panel,
+     not an apology. Corner ticks are the form's own registration marks. */
   .plate {
     display: block;
+    container-type: inline-size;
     border: 1px solid var(--color-hairline);
     background-color: var(--color-paper-deep);
+  }
+
+  /* Master cues reach the sheet's true outer edge — on large screens only, so
+     the plate never looks clipped where the column already fills the page.
+     The offset is the sheet's own inline padding: bleed, not overflow. */
+  .plate-bleed {
+    @media (min-width: 1024px) {
+      margin-inline-end: calc(var(--sheet-pad-inline) * -1);
+    }
   }
 
   .field-table .plate {
@@ -290,149 +494,165 @@
     display: grid;
     place-content: center;
     justify-items: center;
-    gap: 0.875rem;
+    gap: 0.75rem;
     padding-inline: 1.25rem;
     text-align: center;
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in oklab, var(--color-hairline) 55%, transparent) 0 1px,
-      transparent 1px 11px
-    );
+
+    /* Registration ticks in the four corners: the printer's own marks. */
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: 0.5rem;
+      inset-inline: 0.5rem;
+      border-block: 1px dashed color-mix(in oklab, var(--color-hairline) 85%, transparent);
+      border-inline: 0;
+    }
+
+    &::after {
+      inset-block: 0.5rem;
+      inset-inline: 0.5rem;
+      border-block: 0;
+      border-inline: 1px dashed color-mix(in oklab, var(--color-hairline) 85%, transparent);
+    }
   }
 
-  .field-table .plate-empty {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in oklab, var(--color-hairline-table) 90%, transparent) 0 1px,
-      transparent 1px 11px
-    );
+  .field-table .plate-empty::before,
+  .field-table .plate-empty::after {
+    border-color: color-mix(in oklab, var(--color-hairline-table) 90%, transparent);
   }
 
   .plate-caption {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 0.625rem 0.875rem;
+    flex-wrap: wrap;
+    gap: 0.125rem 1rem;
+    padding: 0.5rem 0.75rem;
     border-top: 1px solid var(--color-hairline);
+  }
+
+  /* Narrow mosaic cells: the two atoms stack instead of colliding mid-line. */
+  @container (max-width: 20rem) {
+    .plate-caption {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.125rem;
+    }
   }
 
   .field-table .plate-caption {
     border-top-color: var(--color-hairline-table);
   }
 
-  /* Film edge: the only place the faded amber is printed. */
-  .edge-band {
-    display: flex;
-    align-items: center;
-    gap: clamp(1rem, 3vw, 2rem);
-    overflow: hidden;
-    padding-block: 0.5rem;
-    border-block: 1px solid var(--color-hairline-table);
-    background-color: var(--color-table-deep);
-    color: var(--color-film);
+  /* Current-cue plate carries a green confirmed tick, never a red circle. */
+  .plate-tick {
+    stroke: var(--color-film);
+    stroke-width: 3;
+    fill: none;
+    stroke-linecap: square;
   }
 
-  .edge-perf {
-    display: flex;
-    gap: 0.375rem;
-
-    & i {
-      display: block;
-      width: 0.5rem;
-      height: 0.4375rem;
-      background-color: color-mix(in oklab, var(--color-film) 22%, transparent);
-    }
-  }
-
-  /* ---- Ledger (Services) ------------------------------------------------ */
-  .ledger {
+  /* ---- Ledger of services, as cue rows ---------------------------------- */
+  /* Dua baris pertama membawa bukti, dua baris berikutnya teks murni: bobot
+     baris beda-beda, jadi lingkup kerja tidak pernah terbaca sebagai kartu. */
+  .service-rows {
     display: grid;
-    gap: clamp(2rem, 5vw, 3.5rem);
+  }
 
-    @media (min-width: 1024px) {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  .service-row {
+    display: grid;
+    gap: 0.5rem;
+    border-top: 1px solid var(--color-hairline);
+    padding-block: clamp(1.25rem, 3vw, 2rem);
+  }
+
+  .service-row:last-of-type {
+    border-bottom: 1px solid var(--color-hairline);
+  }
+
+  .service-row--plate {
+    @media (min-width: 768px) {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      column-gap: clamp(2rem, 5vw, 3.5rem);
       align-items: start;
     }
   }
 
-  .ledger-row {
-    display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr);
-    gap: 0.25rem 1rem;
-    align-items: baseline;
-    padding-block: clamp(1.25rem, 3vw, 1.75rem);
-    border-top: 1px solid var(--color-hairline);
-    transition: background-color 260ms ease;
+  .service-plate {
+    /* Phone: a definite width, not a cap — the plate's media is absolutely
+       positioned, so a max-width alone collapses the figure to 1px. */
+    inline-size: 50%;
+    margin-inline-start: auto;
 
-    &:last-of-type {
-      border-bottom: 1px solid var(--color-hairline);
+    @media (min-width: 768px) {
+      inline-size: auto;
+      margin-inline-start: 0;
+      margin-block-start: 0.25rem;
     }
+  }
+
+  .service-row-copy {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .service-plate {
+    @media (min-width: 1024px) {
+      margin-block-start: 0.25rem;
+    }
+  }
+
+  .cue-item {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .cue-item-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .cue-no {
+    font-family: var(--font-data);
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-stretch: 70%;
+    letter-spacing: var(--tracking-strip);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  /* The row is a link target: it prints its own underline in ink, not accent. */
+  .cue-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-data);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    font-stretch: 78%;
+    letter-spacing: var(--tracking-strip);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-ink);
+    border-bottom: 1px solid var(--color-hairline);
+    padding-block-end: 0.1875rem;
 
     &:hover,
-    &:focus-within {
-      background-color: color-mix(in oklab, var(--color-paper-deep) 70%, transparent);
+    &:focus-visible {
+      border-bottom-color: var(--color-ink);
+    }
+
+    &::before {
+      content: "\2192";
+      font-stretch: 100%;
     }
   }
 
-  .ledger-view {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    max-height: 68vh;
-
-    @media (max-width: 1023px) {
-      display: none;
-    }
-  }
-
-  .ledger-view > * {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transform: translateY(0.5rem);
-    transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .ledger-view > :first-child {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* The rows drive the plate; :has() keeps it JavaScript-free. */
-  .ledger:has(.ledger-row:nth-child(2):hover) .ledger-view > :nth-child(2),
-  .ledger:has(.ledger-row:nth-child(2):focus-within) .ledger-view > :nth-child(2),
-  .ledger:has(.ledger-row:nth-child(3):hover) .ledger-view > :nth-child(3),
-  .ledger:has(.ledger-row:nth-child(3):focus-within) .ledger-view > :nth-child(3),
-  .ledger:has(.ledger-row:nth-child(4):hover) .ledger-view > :nth-child(4),
-  .ledger:has(.ledger-row:nth-child(4):focus-within) .ledger-view > :nth-child(4),
-  .ledger:has(.ledger-row:nth-child(5):hover) .ledger-view > :nth-child(5),
-  .ledger:has(.ledger-row:nth-child(5):focus-within) .ledger-view > :nth-child(5),
-  .ledger:has(.ledger-row:nth-child(6):hover) .ledger-view > :nth-child(6),
-  .ledger:has(.ledger-row:nth-child(6):focus-within) .ledger-view > :nth-child(6) {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* On paper: a selected row prints its number in red. */
-  .ledger-row .ledger-no {
-    color: var(--color-ink-muted);
-    transition: color 220ms ease;
-  }
-
-  .ledger-row:hover .ledger-no,
-  .ledger-row:focus-within .ledger-no {
-    color: var(--color-select);
-  }
-
-  /* Mobile: the plate rides inside its own row, inline. */
-  .ledger-inline {
-    @media (min-width: 1024px) {
-      display: none;
-    }
-  }
-
-  /* ---- FAQ (native disclosure, no script) ------------------------------- */
+  /* ---- FAQ: native disclosure, styled as a note in the margin ----------- */
   .faq-item {
     border-top: 1px solid var(--color-hairline);
 
@@ -442,11 +662,11 @@
 
     & summary {
       display: grid;
-      grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+      grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
       align-items: baseline;
       gap: 0.25rem 1rem;
       min-height: 44px;
-      padding-block: 1.25rem;
+      padding-block: 1rem;
       cursor: pointer;
       list-style: none;
 
@@ -458,9 +678,9 @@
     & summary:hover .faq-q,
     & summary:focus-visible .faq-q {
       text-decoration: underline;
-      text-decoration-color: var(--color-select);
+      text-decoration-color: var(--color-film);
       text-decoration-thickness: 2px;
-      text-underline-offset: 0.35em;
+      text-underline-offset: 0.3em;
     }
 
     & .faq-mark::after {
@@ -476,229 +696,98 @@
     }
   }
 
-  /* ---- Story strip: asymmetric, not a uniform grid ---------------------- */
-  .story-strip {
+  /* ---- Detail: mosaic kolom tak sama ------------------------------------ */
+  /* Lebar tiap pelat datang dari span grid, bukan margin kosmetik. Semua pelat
+     rata bawah, jadi tepi yang bergerigi ada di atas — susunan tempelan kliping,
+     bukan baris seragam. Pita kedua bergeser ke kanan dan meninggalkan kertas
+     kosong di kiri. */
+  .detail-mosaic {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(0.75rem, 2vw, 1.25rem);
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(0.625rem, 1.5vw, 1rem);
+    align-items: end;
 
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    @media (min-width: 640px) {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     }
 
-    @media (min-width: 1200px) {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
 
-    & > :nth-child(2) {
-      @media (min-width: 768px) {
-        margin-top: clamp(2rem, 6vw, 5rem);
+      & > :nth-child(1) {
+        grid-column: span 4;
       }
-    }
 
-    & > :nth-child(4) {
-      @media (min-width: 1200px) {
-        margin-top: clamp(2rem, 6vw, 5rem);
+      & > :nth-child(2) {
+        grid-column: span 3;
       }
-    }
-  }
 
-  /* ---- Nav: folio tepi lembar + sheet indeks dari kanan ---------------- */
-  /* Bidang meja solid: di atas hero warnanya sama sehingga terbaca menyatu,
-     lalu hairline memisahkannya sendiri saat bertemu bidang kertas. */
-  .sheet-nav {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    background-color: var(--color-table);
-    border-bottom: 1px solid var(--color-hairline-table);
-  }
+      & > :nth-child(3) {
+        grid-column: span 5;
+      }
 
-  .nav-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    min-height: 44px;
-    padding-inline: 0.25rem;
-    background: none;
-    border: 0;
-    color: var(--color-table-ink);
-    cursor: pointer;
-  }
+      & > :nth-child(4) {
+        grid-row: 2;
+        grid-column: 5 / span 4;
+      }
 
-  /* Tiga helai hairline: ikon digambar, bukan glyph unicode. */
-  .nav-bars {
-    display: grid;
-    gap: 4px;
-    inline-size: 1.125rem;
-
-    & i {
-      display: block;
-      block-size: 1px;
-      inline-size: 100%;
-      background-color: currentColor;
-      transition: inline-size 200ms ease;
-    }
-
-    & i:nth-child(2) {
-      inline-size: 70%;
-    }
-  }
-
-  .nav-toggle:active .nav-bars i:nth-child(2) {
-    inline-size: 0.5rem;
-  }
-
-  .nav-sheet {
-    position: fixed;
-    inset: 0 0 0 auto;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    border-left: 1px solid var(--color-hairline-table);
-    block-size: 100dvh;
-    inline-size: min(20rem, 86vw);
-    max-inline-size: none;
-    max-block-size: none;
-    overflow-y: auto;
-    background-color: var(--color-table);
-    color: var(--color-table-ink);
-    translate: 100% 0;
-    transition:
-      translate 420ms cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 200ms linear,
-      display 420ms allow-discrete,
-      overlay 420ms allow-discrete;
-
-    &::backdrop {
-      background-color: rgb(5 6 7 / 0.58);
-      opacity: 0;
-      transition: opacity 320ms ease, overlay 320ms allow-discrete;
-    }
-
-    &:popover-open {
-      translate: 0 0;
-      padding-block: 1rem max(1.5rem, env(safe-area-inset-bottom));
-      padding-inline: clamp(1.25rem, 6vw, 2rem);
-
-      &::backdrop {
-        opacity: 1;
+      & > :nth-child(5) {
+        grid-row: 2;
+        grid-column: 9 / span 4;
       }
     }
   }
 
-  @starting-style {
-    .nav-sheet:popover-open {
-      translate: 100% 0;
-    }
-
-    .nav-sheet:popover-open::backdrop {
-      opacity: 0;
-    }
-  }
-
-  /* Sheet di atas konten: kunci scroll halaman selama terbuka. */
-  body:has(.nav-sheet:popover-open) {
-    overflow: clip;
-  }
-
-  .nav-row {
-    display: grid;
-    grid-template-columns: 2.75rem minmax(0, 1fr);
-    align-items: center;
-    gap: 0.5rem 1rem;
-    min-height: 56px;
-    border-top: 1px solid var(--color-hairline-table);
-    font-family: var(--font-data);
-    font-size: 0.9375rem;
-    font-weight: 700;
-    letter-spacing: var(--tracking-strip);
-    text-transform: uppercase;
-    color: var(--color-table-ink);
-
-    &:last-of-type {
-      border-bottom: 1px solid var(--color-hairline-table);
-    }
-
-    &:hover .nav-no,
-    &:focus-visible .nav-no {
-      color: var(--color-select);
-    }
-  }
-
-  .nav-no {
-    font-family: var(--font-data);
-    font-size: var(--text-strip);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-table-muted);
-    transition: color 200ms ease;
-  }
-
-  .nav-close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    inline-size: 44px;
-    block-size: 44px;
-    margin-inline-end: -0.625rem;
-    background: none;
-    border: 0;
-    color: var(--color-table-ink);
-    cursor: pointer;
-
-    & svg {
-      stroke: currentColor;
-      stroke-width: 1.5;
-      transition: stroke 200ms ease;
-    }
-
-    &:hover svg,
-    &:focus-visible svg {
-      stroke: var(--color-select);
-    }
-  }
-
-  /* Browser tanpa Popover API: navigasi tetap ada, sebagai baris inline. */
-  @supports not selector(:popover-open) {
-    .nav-toggle,
-    .nav-sheet {
-      display: none;
-    }
-
-    .nav-fallback {
-      display: flex !important;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-sheet,
-    .nav-sheet::backdrop {
-      transition: none;
-    }
-  }
-
-  /* ---- Reveal: a folio strip wipe, content visible by default ----------- */
+  /* ---- Signature motion: the stage-manager's marker travels once -------- */
+  /* One orchestrated event, not scattered hover effects: the bracket + cue
+     band ignites as its row enters reading position, then goes dark again.
+     Rows are fully legible by default; nothing is hidden if this never runs. */
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
-      .reveal {
-        animation: folio-wipe linear both;
+      .cue-row[data-auto-current="true"] .cue-time {
+        animation: cue-ignite linear both;
         animation-timeline: view();
-        animation-range: entry 2% entry 34%;
+        animation-range: cover 18% cover 46%;
+      }
+
+      .cue-row[data-auto-current="true"] .cue-mark::after {
+        animation: cue-bracket linear both;
+        animation-timeline: view();
+        animation-range: cover 18% cover 46%;
       }
     }
   }
 
-  @keyframes folio-wipe {
-    from {
-      opacity: 0;
-      transform: translateY(1.25rem);
-      clip-path: inset(0 0 100% 0);
+  @keyframes cue-ignite {
+    0%,
+    100% {
+      background-color: transparent;
+      color: var(--color-ink);
     }
-    to {
+    22%,
+    78% {
+      background-color: var(--color-select);
+      color: var(--color-ink);
+    }
+  }
+
+  @keyframes cue-bracket {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    22%,
+    78% {
       opacity: 1;
-      transform: none;
-      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  /* Rows the JS-free fallback must still mark: the first cue stays lit. */
+  @supports not (animation-timeline: view()) {
+    .cue-row[data-auto-current="true"] .cue-time {
+      background-color: var(--color-select);
+      color: var(--color-ink);
+      padding-inline: 0.25rem;
     }
   }
 

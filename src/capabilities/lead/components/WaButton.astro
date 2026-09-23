@@ -1,8 +1,10 @@
 ---
 /**
- * WaButton — aksi WhatsApp LEAD. Penomoran hanya dari konfigurasi proyek;
- * tanpa nomor, komponen tidak merender apa pun (tidak pernah href="#").
- * Styling visual milik design system halaman lewat kelas `.select-line`.
+ * WaButton — aksi WhatsApp LEAD. Nomor hanya dari konfigurasi proyek; tanpa nomor,
+ * komponen tidak merender apa pun (tidak pernah href="#").
+ * `line`  = baris teks beranak panah di bidang kertas ( kelas `.cue-link`).
+ * `band`  = baris aksi rata kiri di bidang tinta, satu-satunya tempat stabilo dipakai.
+ * `floating` = band yang menempel di bawah, hanya layar sempit.
  */
 import { buildWaLink } from '../lib/whatsapp';
 
@@ -10,7 +12,7 @@ export interface Props {
   text?: string;
   message?: string;
   number?: string;
-  variant?: 'line' | 'quiet' | 'floating';
+  variant?: 'line' | 'band' | 'floating';
   class?: string;
   ariaLabel?: string;
 }
@@ -26,39 +28,47 @@ const {
 
 const waUrl = buildWaLink({ number, text: message });
 const hasNumber = waUrl !== '#';
+const bandClass =
+  'flex min-h-11 w-full items-center justify-between gap-4 bg-table px-[clamp(1.25rem,4vw,2rem)] py-3 font-data text-[0.8125rem] font-bold uppercase tracking-[0.1em] text-select';
 ---
 
 {
   hasNumber &&
-    (variant === 'floating' ? (
-      <aside
-        aria-label="Aksi cepat kontak"
-        class="field-table fixed inset-x-0 bottom-0 z-50 border-t border-hairline-table md:hidden"
-      >
-        <div class="sheet flex justify-center py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={ariaLabel}
-            data-event="lead_whatsapp_click"
-            class:list={['select-line', 'select-line--quiet', className]}
-          >
-            <span>{text}</span>
-          </a>
-        </div>
-      </aside>
-    ) : (
+    (variant === 'line' ? (
       <a
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={ariaLabel}
         data-event="lead_whatsapp_click"
-        class:list={['select-line', { 'select-line--quiet': variant === 'quiet' }, className]}
+        class:list={['cue-link', className]}
       >
         <span>{text}</span>
       </a>
+    ) : (
+      <div
+        aria-label="Aksi cepat kontak"
+        class:list={[
+          'border-t border-hairline-table',
+          variant === 'floating' && 'fixed inset-x-0 bottom-0 z-50 md:hidden',
+        ]}
+      >
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={ariaLabel}
+          data-event="lead_whatsapp_click"
+          class:list={[
+            bandClass,
+            variant === 'floating' && 'pb-[max(0.75rem,env(safe-area-inset-bottom))]',
+            className,
+          ]}
+        >
+          <span>{text}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
     ))
 }
 
