@@ -1,7 +1,7 @@
 ---
 import type { Thing } from 'schema-dts';
 import { ClientRouter } from 'astro:transitions';
-import '@fontsource-variable/source-serif-4';
+import '@fontsource-variable/inter';
 import '@fontsource/archivo-narrow/400.css';
 import '@fontsource/archivo-narrow/600.css';
 import '@fontsource/archivo-narrow/700.css';
@@ -32,21 +32,18 @@ const { graph, ...seoProps } = Astro.props;
   </head>
   <body
     class="field-paper flex min-h-full flex-col"
-    data-contract="c37c4509 · THESIS lembar seleksi bernomor, bukan hero default · WORLD kertas #f2f1ec / meja #17181a / merah #c9302b, radius 0 · FIRST-VIEWPORT folio kiri-atas + pelat 00 dominan kanan + H1 di tepi kiri + satu SelectMark ke #work · FINISH unreviewed and undocumented is unfinished"
+    data-contract="layar-utama · THESIS video dulu, sisanya bukti · WORLD layar gelap + kertas baca + bara hanya tanda putar · FIRST-VIEWPORT H1 kiri + tombol WA + layar 16:9 · FINISH unreviewed and undocumented is unfinished"
   >
-    <!-- IMPECCABLE SEED c37c4509 — kontrak arah `/` (audit saat finish)
-      THESIS: halaman membuktikan kualitas eksekusi lewat frame bernomor seperti
-        lembar seleksi studio; menolak susunan default kategori (hero foto besar +
-        judul di tengah + tiga kartu layanan + carousel testimoni).
-      OWN-WORLD: kertas #f2f1ec dan meja #17181a berselang-seling; Source Serif 4
-        untuk kalimat, Archivo Narrow untuk data; merah #c9302b hanya lingkaran
-        seleksi dan satu baris aksi; radius nol; tanpa bayangan kabur.
-      STORY: pengunjung melihat hasil nyata, mengenali gaya, percaya pada detail,
-        lalu tahu pesan apa yang akan terkirim ke WhatsApp.
-      FIRST VIEWPORT: bidang meja penuh; folio nama kiri-atas; FramePlate 00
-        dominan di kanan (~60% viewport) + kapsel kredit; H1 di tepi kiri bawah
-        folio; satu SelectMark merah "Lihat lembaran lengkap" ke #work.
-      FORM: lembar kontak fotografis; ritme baca dari strip ke pelat ke teks.
+    <!-- IMPECCABLE layar-utama — kontrak arah `/` (audit saat finish)
+      THESIS: halaman membuka dengan film — layar video utama dulu, baru bukti
+        tertulis; menolak grid tanggal, kartu layanan, dan carousel.
+      OWN-WORLD: putih cerah untuk membaca, hitam hangat untuk menonton; emas
+        terang hanya tanda putar dan garis aksi; aksi utama balok tegas.
+      STORY: pengunjung menonton dulu, membaca bukti bernomor, lalu mengirim
+        satu pesan WA yang sudah terisi.
+      FIRST VIEWPORT: eyebrow + H1 rata kiri + tombol WA + tautan hasil; layar
+        video 16:9 penuh di bawahnya; tanpa tanggal, tanpa heading tengah.
+      FORM: babak berjarak lega; ritme baca tonton ke baca ke aksi.
       FINISH: unreviewed and undocumented is unfinished; this build ends with the
         finish review, the verdict, and DESIGN.md. -->
     <a

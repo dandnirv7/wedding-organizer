@@ -1,0 +1,38 @@
+---
+/**
+ * TestimonialLedger — baris editorial testimoni pasangan bernomor.
+ * Menyajikan ragam cerita hari-H tanpa kartu (cards), tanpa bayangan (shadows),
+ * dan tanpa carousel. Format editorial ledger yang tenang dan teratur.
+ */
+export interface TestimonialItem {
+  no: string;
+  quote: string;
+  couple: string;
+  meta: string;
+}
+
+export interface Props {
+  items: readonly TestimonialItem[];
+  disclaimer?: string;
+}
+
+const { items, disclaimer } = Astro.props;
+---
+
+<div class="mt-12">
+  <div class="tst-ledger">
+    {items.map((item) => (
+      <figure class="tst-body">
+        <blockquote class="tst-quote">
+          “{item.quote.replace(/^[“"]|[”"]$/g, '')}”
+        </blockquote>
+        <figcaption class="tst-meta mt-2">
+          <cite class="tst-couple not-italic font-semibold text-ink">{item.couple}</cite>
+          <span class="tst-sep" aria-hidden="true">·</span>
+          <span class="tst-context text-ink-muted">{item.meta}</span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+  {disclaimer && <p class="kicker mt-12 opacity-60">{disclaimer}</p>}
+</div>

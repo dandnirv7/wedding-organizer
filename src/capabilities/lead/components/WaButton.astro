@@ -10,7 +10,7 @@ export interface Props {
   text?: string;
   message?: string;
   number?: string;
-  variant?: 'line' | 'quiet' | 'floating';
+  variant?: 'line' | 'quiet' | 'floating' | 'solid';
   class?: string;
   ariaLabel?: string;
 }
@@ -33,7 +33,7 @@ const hasNumber = waUrl !== '#';
     (variant === 'floating' ? (
       <aside
         aria-label="Aksi cepat kontak"
-        class="field-table fixed inset-x-0 bottom-0 z-50 border-t border-hairline-table md:hidden"
+        class="field-paper fixed inset-x-0 bottom-0 z-50 border-t border-hairline md:hidden"
       >
         <div class="sheet flex justify-center py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <a
@@ -48,6 +48,17 @@ const hasNumber = waUrl !== '#';
           </a>
         </div>
       </aside>
+    ) : variant === 'solid' ? (
+      <a
+        href={waUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={ariaLabel}
+        data-event="lead_whatsapp_click"
+        class:list={['btn-solid', className]}
+      >
+        <span>{text}</span>
+      </a>
     ) : (
       <a
         href={waUrl}

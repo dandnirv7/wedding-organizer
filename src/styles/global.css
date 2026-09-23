@@ -6,26 +6,28 @@
    Radius is zero everywhere except the SVG selection circle.
    ========================================================================== */
 @theme {
-  /* Grounds */
-  --color-paper: #f2f1ec;
-  --color-paper-deep: #e7e5dd;
-  --color-table: #17181a;
-  --color-table-deep: #101113;
+  /* Grounds — bright white for reading, deep warm black for watching */
+  --color-paper: #ffffff;
+  --color-paper-deep: #f1efe9;
+  --color-table: #141310;
+  --color-table-deep: #0e0d0b;
 
   /* Ink */
-  --color-ink: #1a1c1e;
-  --color-ink-muted: #5c6066;
-  --color-table-ink: #e9e7e1;
-  --color-table-muted: #a09c94;
+  --color-ink: #1c1a16;
+  --color-ink-muted: #5f5a4e;
+  --color-table-ink: #ece7da;
+  --color-table-muted: #a89e8d;
 
-  /* Lines + the single accent */
-  --color-hairline: #d9d6ce;
-  --color-hairline-table: #2a2c30;
-  --color-select: #c9302b;
+  /* Lines + accents: gold text for quiet labels, bright flare for play only */
+  --color-hairline: #e3ded2;
+  --color-hairline-table: #2b2822;
+  --color-select: #c14e24;
+  --color-gold: #9a6206;
+  --color-flare: #f0a500;
   --color-film: #b8935a;
 
-  /* Type: one serif for words, one narrow grotesque for data */
-  --font-reading: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+  /* Type: one modern sans for reading, one narrow grotesque for data and display */
+  --font-reading: "Inter Variable", "Helvetica Neue", Arial, sans-serif;
   --font-data: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
 
   --text-lede: 1.0625rem;
@@ -586,8 +588,8 @@
     position: sticky;
     top: 0;
     z-index: 40;
-    background-color: var(--color-table);
-    border-bottom: 1px solid var(--color-hairline-table);
+    background-color: var(--color-paper);
+    border-bottom: 1px solid var(--color-hairline);
   }
 
   .nav-toggle {
@@ -598,7 +600,7 @@
     padding-inline: 0.25rem;
     background: none;
     border: 0;
-    color: var(--color-table-ink);
+    color: var(--color-ink);
     cursor: pointer;
   }
 
@@ -631,14 +633,14 @@
     margin: 0;
     padding: 0;
     border: 0;
-    border-left: 1px solid var(--color-hairline-table);
+    border-left: 1px solid var(--color-hairline);
     block-size: 100dvh;
     inline-size: min(20rem, 86vw);
     max-inline-size: none;
     max-block-size: none;
     overflow-y: auto;
-    background-color: var(--color-table);
-    color: var(--color-table-ink);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
     translate: 100% 0;
     transition:
       translate 420ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -684,16 +686,16 @@
     align-items: center;
     gap: 0.5rem 1rem;
     min-height: 56px;
-    border-top: 1px solid var(--color-hairline-table);
+    border-top: 1px solid var(--color-hairline);
     font-family: var(--font-data);
     font-size: 0.9375rem;
     font-weight: 700;
     letter-spacing: var(--tracking-strip);
     text-transform: uppercase;
-    color: var(--color-table-ink);
+    color: var(--color-ink);
 
     &:last-of-type {
-      border-bottom: 1px solid var(--color-hairline-table);
+      border-bottom: 1px solid var(--color-hairline);
     }
 
     &:hover .nav-no,
@@ -706,7 +708,7 @@
     font-family: var(--font-data);
     font-size: var(--text-strip);
     font-variant-numeric: tabular-nums;
-    color: var(--color-table-muted);
+    color: var(--color-ink-muted);
     transition: color 200ms ease;
   }
 
@@ -719,7 +721,7 @@
     margin-inline-end: -0.625rem;
     background: none;
     border: 0;
-    color: var(--color-table-ink);
+    color: var(--color-ink);
     cursor: pointer;
 
     & svg {
@@ -775,6 +777,23 @@
       transform: none;
       clip-path: inset(0 0 0 0);
     }
+  }
+
+  /* ---- GSAP Motion (Tier B) — progressive enhancement --------------------
+     JS sets initial autoAlpha:0 + y, then tweens to visible. CSS baseline
+     keeps content visible when JS off. will-change only while .is-animating.
+     Sheet-nav subtle state after scroll for quiet feedback (no shadow-blur).
+     ----------------------------------------------------------------------- */
+  .is-animating {
+    will-change: transform, opacity;
+  }
+
+  .sheet-nav {
+    transition: border-color 220ms ease, background-color 220ms ease;
+  }
+
+  .sheet-nav.is-scrolled {
+    border-bottom-color: var(--color-hairline);
   }
 
   /* Mobile sticky action reserves its own space so it never covers a caption */
@@ -1026,6 +1045,286 @@
     .pal-trigger,
     .pal-sheet {
       display: none;
+    }
+  }
+}
+
+@layer components {
+  /* ---- Layar Sinema ---------------------------------------------------------
+     Satu-satunya dunia halaman ini: film yang menunggu diputar.
+     Bidang gelap untuk menonton, bidang kertas untuk membaca. Aksen bara hanya
+     untuk tanda putar dan garis aksi — tidak pernah untuk teks. Tidak ada
+     lingkaran seleksi, tidak ada label folio, tidak ada grid tanggal.
+     -------------------------------------------------------------------------- */
+  .kicker {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    color: var(--color-gold);
+  }
+
+  .field-table .kicker {
+    color: var(--color-table-muted);
+  }
+
+  /* Bingkai layar: rasio final anti-CLS, gelap seperti bioskop sebelum film. */
+  .screen {
+    display: block;
+    background-color: var(--color-paper-deep);
+    border: 1px solid var(--color-hairline);
+  }
+
+  .screen-media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+
+    & img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .screen-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1.25rem;
+    padding: 2rem clamp(1.25rem, 4vw, 3rem);
+    text-align: center;
+  }
+
+  .screen-empty p {
+    max-width: 46ch;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-ink-muted);
+    text-wrap: pretty;
+  }
+
+  /* Di bawah desktop, layar hero melebar penuh tepi tanpa sisa kolom. */
+  @media (max-width: 1023.5px) {
+    .bleed-mobile {
+      margin-inline: calc(-1 * clamp(1.25rem, 4vw, 2rem));
+    }
+
+    .bleed-mobile .screen {
+      border-inline: 0;
+    }
+  }
+
+  /* Tanda putar: segitiga bara di atas gelang tipis. */
+  .play-mark {
+    display: grid;
+    place-content: center;
+    inline-size: 4.5rem;
+    block-size: 4.5rem;
+    border: 1px solid color-mix(in oklab, var(--color-ink) 30%, transparent);
+    border-radius: 999px;
+
+    & svg {
+      display: block;
+      margin-inline-start: 4px;
+    }
+  }
+
+  /* Satu-satunya momen gerak: teks hero naik sekali saat muat, dari keadaan
+     yang sudah terlihat. Mati total di bawah prefers-reduced-motion. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-rise {
+      animation: hero-rise 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .hero-rise--late {
+      animation-delay: 120ms;
+    }
+  }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Aksi utama: balok tegas, bukan garis + lingkaran. Di bidang gelap ia
+     kertas; di bidang kertas ia tinta. */
+  .btn-solid {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 52px;
+    padding-inline: 1.75rem;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: opacity 200ms ease;
+
+    &:hover,
+    &:focus-visible {
+      opacity: 0.88;
+    }
+  }
+
+  .field-paper .btn-solid {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  /* Tautan aksi di bawah teks: garis bara, bukan cincin. */
+  .ember-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: currentColor;
+    text-decoration: underline;
+    text-decoration-color: var(--color-flare);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.35em;
+  }
+
+  /* Baris layanan: nomor tabular, nama serif, tanpa kartu. */
+  .svc-row {
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr);
+    gap: 0.25rem clamp(1rem, 3vw, 2rem);
+    align-items: baseline;
+    padding-block: clamp(1.5rem, 4vw, 2.25rem);
+    border-top: 1px solid var(--color-hairline);
+
+    &:last-of-type {
+      border-bottom: 1px solid var(--color-hairline);
+    }
+  }
+
+  .svc-no {
+    font-size: 1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  /* Baris testimoni: susunan lembut bertumpuk, tanpa nomor, tanpa kartu. */
+  .tst-ledger {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3.5rem, 8vw, 5rem);
+  }
+
+  .tst-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .tst-no {
+    font-size: 1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-muted);
+  }
+
+  .tst-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: var(--max-w-measure);
+  }
+
+  .tst-quote {
+    font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+    font-weight: 400;
+    line-height: 1.45;
+    color: var(--color-ink);
+    text-wrap: pretty;
+  }
+
+  .tst-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    font-size: var(--text-lede);
+    line-height: 1.5;
+  }
+
+  .tst-couple {
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .tst-sep {
+    color: var(--color-ink-muted);
+    opacity: 0.5;
+  }
+
+  .tst-context {
+    color: var(--color-ink-muted);
+    font-size: 0.9375rem;
+  }
+
+  /* Irama babak: ruang lega di atas judul, rapat di bawahnya. */
+  .act {
+    padding-block: clamp(4.5rem, 11vw, 8rem);
+  }
+
+  /* Mosaik detail: bento dua baris di desktop, susun rapi di bawahnya.
+     Sel ≥1024px tingginya dikunci grid (foto kelak meng-cover), di bawahnya
+     tiap bingkai memakai rasionya sendiri. */
+  .mosaic {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023.5px) {
+    .mosaic {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .mosaic {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-auto-rows: 180px;
+      grid-auto-flow: dense;
+      gap: 1.5rem;
+    }
+
+    .mosaic > * {
+      min-inline-size: 0;
+      min-block-size: 0;
+    }
+
+    .mosaic .screen {
+      block-size: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mosaic .screen-media {
+      flex: 1 1 auto;
+      min-block-size: 0;
+      aspect-ratio: auto !important;
     }
   }
 }

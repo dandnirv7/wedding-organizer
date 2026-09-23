@@ -1,6 +1,6 @@
-# PRD — Wedding Organizer Editorial Landing Page
+# PRD — Wedding Organizer Landing Page
 
-> Status: Draft | Versi: 2.0 (pure PRD)
+> Status: Draft | Versi: 2.1 (pure PRD, arah Cinematic Minimalism)
 > Dokumen pendamping: `DESIGN.md` (art direction + UX), `TECH-SPEC.md` (teknis + SOW)
 > Dokumen ini adalah sumber kebenaran untuk *what & why*. *How* ada di dokumen pendamping.
 
@@ -12,7 +12,11 @@ Dari sisi pemilik WO: memiliki banyak foto dan video wedding berkualitas, tetapi
 
 ## Solution
 
-Satu one-page marketing website dengan alur editorial tunggal: create desire → establish trust → explain service → convert to inquiry.
+Satu one-page marketing website dengan alur naratif visual: create desire → establish trust → explain service → convert to inquiry.
+
+Pengalaman halaman dibangun dengan fotografi wedding sebagai elemen visual utama, didukung satu cinematic video di hero, typography yang kuat, whitespace yang terkontrol, dan navigasi yang sederhana.
+
+Editorial digunakan sebagai pendekatan pacing dan composition, bukan sebagai tampilan dokumen, presentasi, atau magazine layout.
 
 Pengunjung menerima impak visual dulu (foto/video), memahami positioning brand, melihat bukti portfolio, memahami layanan dan proses kerja, membaca testimoni, mengenal pemilik brand, lalu menghubungi via WhatsApp dalam satu klik dengan pesan prefilled. Website bukan sistem booking, bukan CMS, bukan e-commerce — hanya brand presentation + lead generation.
 
@@ -22,13 +26,13 @@ Pengunjung menerima impak visual dulu (foto/video), memahami positioning brand, 
 
 1. As a calon pengantin mobile, I want a membuka satu tautan dan langsung melihat visual wedding yang premium, so that saya cepat merasakan gaya WO tanpa harus scroll katalog acak.
 2. As a calon pengantin, I want a membaca satu kalimat positioning brand yang singkat, so that saya tahu apakah WO ini cocok dengan gaya saya (intimate, luxury, minimal).
-3. As a calon pengantin, I want a melihat satu featured wedding story lengkap (foto utama + pendukung + nama couple + lokasi + tahun), so that saya menilai kualitas eksekusi nyata, bukan sekadar klaim.
-4. As a calon pengantin visual-first, I want a menjelajahi galeri detail (bouquet, ring, dekor, candid), so that saya yakin WO memperhatikan detail kecil.
-5. As a calon pengantin emosional, I want a menonton cuplikan video sinematik 5–15 detik tanpa audio autoplay, so that saya merasakan atmosfer acara secara nyata.
+3. As a calon pengantin, I want a melihat satu featured wedding story dengan rangkaian foto yang kuat (foto utama + pendukung + nama couple + lokasi + tahun), so that saya dapat menilai kualitas eksekusi melalui dokumentasi nyata.
+4. As a calon pengantin visual-first, I want a melihat variasi wide shot, portrait, candid, dan detail, so that saya dapat merasakan keseluruhan atmosfer dan perhatian terhadap detail.
+5. As a calon pengantin emosional, I want a melihat satu cuplikan video sinematik pendek di hero tanpa audio, so that saya langsung memahami atmosphere brand sebelum membaca detail layanan.
 
 ### Calon pengantin — evaluasi layanan & proses
 
-6. As a calon pengantin, I want a melihat daftar layanan (planning, coordination, intimate, full service) dalam format list editorial, so that saya cepat paham apa yang ditawarkan tanpa tabel harga kompleks.
+6. As a calon pengantin, I want a melihat daftar layanan (planning, coordination, intimate, full service) dalam format list sederhana, so that saya cepat paham apa yang ditawarkan tanpa tabel harga kompleks.
 7. As a calon pengantin sensitif harga, I want a melihat label "Starting from" hanya bila pemilik mempublikasikannya, so that saya mendapat gambaran budget tanpa merasa dipaksa.
 8. As a calon pengantin desktop, I want a mengarahkan kursor ke nama layanan dan melihat preview image berubah, so that saya mendapat konteks visual tiap layanan.
 9. As a calon pengantin yang cemas, I want a membaca proses kerja 3–4 langkah (Discover → Plan → Create → Celebrate), so that saya tahu ekspektasi bekerja sama dan merasa aman.
@@ -72,11 +76,32 @@ Keputusan tingkat arsitektur. Tanpa path file atau snippet kode — detail layou
 - **Batas capability LEAD terisolasi.** Pembangun tautan WhatsApp (normalisasi nomor Indonesia `08…` → `62…`, encode pesan) dan abstraksi tracking (`lead_whatsapp_click` via `dataLayer`, no-op bila tanpa analytics) hidup di capability LEAD. Core/catalog tidak pernah mengimpornya langsung; komposisi dilakukan di level page (contoh konseptual: detail katalog + tombol WA). Tanpa nomor terkonfigurasi, CTA tidak dirender — bukan link mati.
 - **Konten config-driven, tanpa CMS/database.** Koleksi data: brand, services, portfolio, testimonials, gallery. Update = ubah data + rebuild. Tidak ada admin, auth, atau API.
 - **Modul SEO generik di core.** Resolusi canonical (strip tracking params, trailing-slash konsisten), resolusi title (`Judul | Nama Situs`), head metadata (title, description, canonical, OG/Twitter), dan satu JSON-LD `@graph` per halaman (`WebSite` + `WebPage`; `Organization`/`LocalBusiness` hanya bila data kontak/alamat nyata tersedia). Tidak ada review/rating/harga fiktif.
-- **Kebijakan media: image-driven, performance > animasi.** Gambar responsif + lazy di bawah fold + format modern; hero image/video tidak boleh memblokir first render. Video: autoplay muted loop inline + poster wajib + fallback image statis. Bila harus memilih antara animasi keren vs loading cepat, pilih loading cepat.
-- **Interaksi editorial minimal.** Yang diizinkan: fade/translate reveal, image scale/hover, smooth anchor scroll, preview image layanan di desktop, sticky nav subtle. Yang dilarang: parallax berlebihan, 3D/WebGL, scroll hijacking, loading screen panjang, cursor effect.
+- **Kebijakan media: image-driven, performance > animasi.** Photography adalah bahasa visual utama. Foto wedding merupakan elemen utama dalam membentuk identitas visual halaman. Layout harus memberi ruang yang cukup bagi foto untuk tampil sebagai konten utama, bukan sekadar thumbnail atau ilustrasi pendamping. Gambar responsif + lazy di bawah fold + format modern; hero image/video tidak boleh memblokir first render. Video: autoplay muted loop inline + poster wajib + fallback image statis. Bila harus memilih antara animasi keren vs loading cepat, pilih loading cepat.
+- **Hero video bersifat tunggal dan disengaja.** Video digunakan khusus pada hero sebagai pembentuk atmosphere awal. Section lain menggunakan photography sebagai medium utama.
+- **Interaksi visual minimal.** Yang diizinkan: fade/reveal ringan, image scale/hover secukupnya, smooth anchor scroll, preview image layanan di desktop, sticky nav subtle, dan interaksi portfolio/media yang tidak mengganggu pembacaan. Yang dilarang: parallax berlebihan, 3D/WebGL, scroll hijacking, loading screen panjang, cursor effect.
 - **Aksesibilitas sebagai syarat, bukan opsional.** HTML semantik, kontras cukup, alt bermakna (kosong hanya untuk dekoratif), label aksesibel, video tanpa audio autoplay, hormati `prefers-reduced-motion`.
 - **Analitik opsional dan vendor-agnostik.** Event yang dilacak: `page_view`, `whatsapp_click` (konversi primer, dengan parameter lokasi CTA: hero/services/final/sticky_mobile), `instagram_click`, `portfolio_interaction`. Komponen memanggil abstraksi `track()`, bukan vendor langsung. Tidak ada data sensitif ke analitik.
 - **Skema netral domain.** Bila katalog/portfolio dibutuhkan, gunakan penamaan netral (`items`/`catalog`/`entries`), bukan asumsi `products`/e-commerce. Tidak ada cart/checkout/payment.
+
+## Creative Direction
+
+**Direction:** Cinematic Minimalism
+
+**North Star:** Image-led Wedding Storytelling
+
+Website harus terasa premium melalui kualitas fotografi, typography, composition, spacing, dan pacing — bukan melalui ornamen UI atau efek visual yang kompleks.
+
+Editorial digunakan sebagai pendekatan composition dan rhythm, bukan sebagai visual metaphor seperti magazine, canvas, presentation deck, rundown, atau dokumen kerja.
+
+Prioritas visual:
+
+1. Photography
+2. Typography
+3. Composition & whitespace
+4. Content
+5. Interface
+
+Prinsip utama: let the wedding documentation become the visual identity.
 
 ## Testing Decisions
 

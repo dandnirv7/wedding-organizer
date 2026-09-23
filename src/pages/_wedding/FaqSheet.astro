@@ -21,13 +21,13 @@ const { items } = Astro.props;
   {items.map((item, i) => (
     <details class="faq-item" name="faq" open={i === 0}>
       <summary>
-        <span class="strip">{item.no}</span>
+        <span class="tabular-nums text-[1rem] font-semibold text-ink-muted">{item.no}</span>
         <span class="faq-q h-item">{item.q}</span>
-        <span class="faq-mark strip justify-self-end" aria-hidden="true"></span>
+        <span class="faq-mark kicker justify-self-end" aria-hidden="true"></span>
       </summary>
       <div class="ms-10 pe-2 pb-6">
         <p class="lede">{item.a}</p>
-        {item.pending && <p class="strip mt-3">jawabannya menunggu konfirmasi klien</p>}
+        {item.pending && <p class="kicker mt-3">jawabannya menunggu konfirmasi klien</p>}
       </div>
     </details>
   ))}

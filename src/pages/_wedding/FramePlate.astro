@@ -1,10 +1,9 @@
 ---
 /**
- * FramePlate — pelat radius-0 untuk slot foto/video.
- * Sadar-bidang: di kertas pelat sedikit lebih terang dari bidangnya, di meja
- * sedikit lebih gelap. Slot kosong memakai rasio + dimensi piksel final
- * (anti-CLS) dan berlabel "menunggu aset klien". Saat aset tiba, hanya
- * `src` yang diisi — susunan tidak bergeser.
+ * FramePlate — bingkai layar untuk slot foto/video.
+ * Slot kosong memakai rasio + dimensi piksel final (anti-CLS) dan satu kalimat
+ * jujur "menunggu dokumentasi klien". Saat aset tiba, hanya `src` yang diisi —
+ * susunan tidak bergeser. Tanpa teks dimensi, tanpa bar keterangan, tanpa tanda.
  */
 export interface Props {
   no: string;
@@ -13,7 +12,9 @@ export interface Props {
   caption?: string;
   src?: string;
   alt?: string;
-  /** Lingkaran seleksi merah: satu per kelompok, bukan per pelat. */
+  /** Tanda putar untuk slot video. */
+  play?: boolean;
+  /** @deprecated dipertahankan agar pemanggil lama tidak rusak; tidak dirender. */
   selected?: boolean;
   eager?: boolean;
   class?: string;
@@ -23,17 +24,17 @@ const {
   no,
   width,
   height,
-  caption = 'menunggu aset klien',
+  caption = 'Menunggu dokumentasi klien',
   src,
   alt = '',
-  selected = false,
+  play = false,
   eager = false,
   class: className = '',
 } = Astro.props;
 ---
 
-<figure class={`plate ${className}`}>
-  <div class="plate-media" style={`aspect-ratio: ${width} / ${height}`}>
+<figure class={`screen ${className}`}>
+  <div class="screen-media" style={`aspect-ratio: ${width} / ${height}`}>
     {src ? (
       <img
         src={src}
@@ -45,27 +46,16 @@ const {
         {...eager && { fetchpriority: 'high' }}
       />
     ) : (
-      <div class="plate-empty" role="img" aria-label={`Frame ${no} — ${caption}`}>
-        <span class="strip">{no} · menunggu aset klien</span>
-        <span class="folio">{width} × {height} px</span>
+      <div class="screen-empty" role="img" aria-label={`Bingkai ${no} — ${caption}`}>
+        {play && (
+          <span class="play-mark" aria-hidden="true">
+            <svg width="26" height="30" viewBox="0 0 26 30" fill="none">
+              <path d="M2 3.5v23l21-11.5L2 3.5Z" fill="#f0a500" />
+            </svg>
+          </span>
+        )}
+        <p>{caption}</p>
       </div>
     )}
   </div>
-  <figcaption class="plate-caption">
-    <span class="strip">{no} · {caption}</span>
-    {selected ? (
-      <svg width="20" height="20" viewBox="0 0 44 44" role="img" aria-label="Seleksi utama">
-        <ellipse
-          cx="22" cy="22" rx="18" ry="16"
-          fill="none"
-          stroke="var(--color-select)"
-          stroke-width="5"
-          stroke-linecap="round"
-          transform="rotate(-7 22 22)"
-        />
-      </svg>
-    ) : (
-      <span class="folio" aria-hidden="true">{Math.round((width / height) * 100) / 100}:1</span>
-    )}
-  </figcaption>
 </figure>

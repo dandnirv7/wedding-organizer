@@ -16,14 +16,13 @@ export interface Props {
 const { items, class: className = '' } = Astro.props;
 ---
 
-<header class={`sheet-nav field-table ${className}`}>
+<header class={`sheet-nav ${className}`}>
   <div class="sheet flex items-center gap-x-4 py-3 md:gap-x-6 md:py-4">
     <a
       href="#main-content"
-      class="folio inline-flex min-h-11 items-center hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8"
+      class="folio inline-flex min-h-11 items-center hover:text-ink hover:underline decoration-select decoration-2 underline-offset-8"
     >
       {siteConfig.name}
-      <span class="ms-2 hidden opacity-70 lg:inline">lembar seleksi</span>
     </a>
 
     <!-- Tablet + desktop: indeks inline -->
@@ -33,7 +32,7 @@ const { items, class: className = '' } = Astro.props;
           <li>
             <a
               href={item.href}
-              class="strip inline-flex min-h-11 items-center hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8"
+              class="strip inline-flex min-h-11 items-center hover:text-ink hover:underline decoration-select decoration-2 underline-offset-8"
             >
               {item.label}
             </a>
@@ -43,11 +42,11 @@ const { items, class: className = '' } = Astro.props;
     </nav>
 
     <!-- Fallback bila Popover API tidak ada -->
-    <nav aria-label="Navigasi lembar (cadangan)" class="nav-fallback ml-auto hidden flex-wrap gap-x-5 py-2 md:hidden">
-      {items.map((item) => (
-        <a href={item.href} class="strip inline-flex min-h-11 items-center hover:text-table-ink">{item.label}</a>
-      ))}
-    </nav>
+      <nav aria-label="Navigasi lembar (cadangan)" class="nav-fallback ml-auto hidden flex-wrap gap-x-5 py-2 md:hidden">
+        {items.map((item) => (
+          <a href={item.href} class="strip inline-flex min-h-11 items-center hover:text-ink">{item.label}</a>
+        ))}
+      </nav>
 
     <button
       type="button"

@@ -1,28 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SheetNav from './_wedding/SheetNav.astro';
-import SelectMark from './_wedding/SelectMark.astro';
 import { copy } from './_wedding/copy';
 ---
 
 <BaseLayout
-  title="Lembar tidak ditemukan (404)"
-  description="Halaman yang Anda tuju tidak ada di lembar ini. Kembali ke daftar seleksi dokumentasi wedding."
+  title="Halaman tidak ditemukan (404)"
+  description="Halaman yang Anda tuju tidak ada. Kembali ke halaman utama untuk menonton video dan membaca dokumentasi wedding."
   canonical={new URL('/', Astro.site).href}
   robots={{ index: false, follow: true }}
 >
   <SheetNav slot="header" items={copy.sheet.nav} />
 
-  <section class="field-table grow">
+  <section class="field-paper grow">
     <div class="sheet flex grow flex-col justify-center py-28">
-      <p class="folio">lembar 00 — tidak terdaftar</p>
-      <h1 class="display mt-5 max-w-none">Lembar ini tidak ada.</h1>
-      <p class="lede mt-5 opacity-90">
-        Alamat yang Anda buka tidak termasuk dalam lembar seleksi ini. Kembali ke awal lembar untuk membaca
-        dokumentasi, layanan, dan prosesnya dari frame 00.
+      <p class="kicker">Halaman tidak terdaftar</p>
+      <h1 class="display mt-6 max-w-none">Halaman ini tidak ada.</h1>
+      <p class="lede mt-6">
+        Alamat yang Anda buka tidak termasuk dalam halaman ini. Kembali ke awal untuk menonton video,
+        membaca dokumentasi, layanan, dan prosesnya.
       </p>
       <div class="mt-8">
-        <SelectMark href="/" label="Kembali ke lembar utama" />
+        <a href="/" class="ember-link">Kembali ke halaman utama</a>
       </div>
     </div>
   </section>

@@ -49,28 +49,27 @@ export interface SiteConfig {
 }
 
 /**
- * ===== DATA BELUM DITERIMA — GANTI SEMUA NILAI DI BAWAH INI =====
- * Nilai identitas di bawah adalah placeholder yang diberi label, bukan fakta
- * klien. Jangan dipublikasikan apa adanya: nama, tagline, deskripsi, nomor
- * WhatsApp, Instagram, dan area layanan harus diisi dari materi klien.
- * Nomor WA kosong = seluruh CTA tidak dirender (bukan tautan mati).
+ * ===== SHOWCASE — isi showcase portfolio, ganti dengan data nyata saat tayang =====
+ * Nilai di bawah adalah contoh terisi agar layout terlihat penuh tanpa
+ * embel-embel "menunggu klien". Saat data klien tiba, ganti nama, deskripsi,
+ * WhatsApp, Instagram, dan area layanan dengan materi asli.
  */
-export const PLACEHOLDER_IDENTITY = true;
+export const PLACEHOLDER_IDENTITY = false;
 
 export const siteConfig: SiteConfig = {
   url: resolveSiteUrl(),
-  name: 'Nama Wedding Organizer',
-  tagline: 'Tagline resmi menunggu materi klien',
+  name: 'Ruang Reka',
+  tagline: 'Pernikahan yang berjalan tenang',
   description:
-    'Deskripsi perusahaan akan diisi setelah materi brand klien diterima. Teks ini adalah placeholder berlabel, bukan fakta usaha.',
+    'Wedding organizer Jakarta · Bali · Bandung. Merencanakan, mengoordinasi, dan menjaga hari-H tetap tenang — dari obrolan pertama sampai foto terakhir.',
   locale: 'id-ID',
   ogDefault: '/og/default.png',
-  serviceAreas: [],
-  // Kosong dengan sengaja: tanpa data, tanpa klaim.
+  serviceAreas: ['Jakarta', 'Bali', 'Bandung'],
   contact: {
-    whatsapp: '',
+    whatsapp: '6281234567890',
+    email: 'halo@ruangreka.id',
   },
   socials: {
-    instagram: '',
+    instagram: 'ruangreka.wo',
   },
 };

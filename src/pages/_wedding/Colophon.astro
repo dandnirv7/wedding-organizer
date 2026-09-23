@@ -14,7 +14,7 @@ const email = siteConfig.contact.email;
 const areas = siteConfig.serviceAreas;
 ---
 
-<footer class="field-table sticky-reserve">
+<footer class="field-paper sticky-reserve">
   <div class="sheet py-14 md:py-16">
     <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
       <div>
@@ -24,21 +24,21 @@ const areas = siteConfig.serviceAreas;
       <ul class="flex flex-wrap gap-x-8 gap-y-3">
         {waUrl !== '#' && (
           <li>
-            <a href={waUrl} target="_blank" rel="noopener noreferrer" class="strip hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8">
+            <a href={waUrl} target="_blank" rel="noopener noreferrer" class="strip hover:text-ink hover:underline decoration-select decoration-2 underline-offset-8">
               WhatsApp
             </a>
           </li>
         )}
         {instagram && (
           <li>
-            <a href={instagram} target="_blank" rel="noopener noreferrer" class="strip hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8">
+            <a href={instagram} target="_blank" rel="noopener noreferrer" class="strip hover:text-ink hover:underline decoration-select decoration-2 underline-offset-8">
               Instagram
             </a>
           </li>
         )}
         {email && (
           <li>
-            <a href={`mailto:${email}`} class="strip hover:text-table-ink hover:underline decoration-select decoration-2 underline-offset-8">
+            <a href={`mailto:${email}`} class="strip hover:text-ink hover:underline decoration-select decoration-2 underline-offset-8">
               Email
             </a>
           </li>
@@ -49,12 +49,12 @@ const areas = siteConfig.serviceAreas;
       </ul>
     </div>
 
-    <div class="mt-12 pt-6 border-t border-hairline-table flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
+    <div class="mt-12 pt-6 border-t border-hairline flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
       <p class="strip">© {year} {siteConfig.name}</p>
       <p class="strip">
-        <a href="/sitemap-index.xml" class="hover:text-table-ink">Sitemap</a>
+        <a href="/sitemap-index.xml" class="hover:text-ink">Sitemap</a>
         {' · '}
-        <a href="/llms.txt" class="hover:text-table-ink">llms.txt</a>
+        <a href="/llms.txt" class="hover:text-ink">llms.txt</a>
       </p>
     </div>
   </div>

@@ -148,13 +148,15 @@ if (!existsSync(join(DIST, 'llms.txt'))) fail('missing dist/llms.txt');
 else if (read('llms.txt').trim().length === 0) fail('llms.txt is empty');
 
 // 7. Performance budgets (reproducible locally; see IMPLEMENTATION-PLAN.md §8).
-// Marketing JS <= 30 KB gzip (third-party scripts excluded: there are none).
-// Budgets fail the gate so regressions are visible, not aspirational.
+// Baseline marketing JS <= 30 KB gzip (third-party excluded: none).
+// Tier B GSAP adds ~18–20 KB gzip (gsap + ScrollTrigger). Budget bumped to
+// 55 KB to keep motion progressive-enhancement while still failing on
+// regressions beyond expected motion cost.
 import { gzipSync } from 'node:zlib';
 import { statSync } from 'node:fs';
 
 const KB = 1024;
-const BUDGETS = { jsGzip: 30 * KB, cssGzip: 20 * KB, htmlRaw: 100 * KB };
+const BUDGETS = { jsGzip: 55 * KB, cssGzip: 20 * KB, htmlRaw: 100 * KB };
 
 const sumGzip = (files) =>
   files.reduce((total, f) => total + gzipSync(readFileSync(f)).length, 0);
@@ -176,7 +178,7 @@ collectAssets(join(DIST, '_astro'));
 if (jsFiles.length > 0) {
   const jsGzip = sumGzip(jsFiles);
   if (jsGzip > BUDGETS.jsGzip)
-    fail(`JS budget exceeded: ${Math.round(jsGzip / KB)} KB gzip > 30 KB`);
+    fail(`JS budget exceeded: ${Math.round(jsGzip / KB)} KB gzip > ${BUDGETS.jsGzip / KB} KB`);
 }
 if (cssFiles.length > 0) {
   const cssGzip = sumGzip(cssFiles);
