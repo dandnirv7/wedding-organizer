@@ -43,14 +43,17 @@ Yang tidak bisa ditiru tetangga begitu saja: kombinasi "bukti eksekusi nyata ter
 ## Capabilities and Constraints
 
 **Dikonfirmasi:**
-- Satu rute statis `/` dengan prerender penuh. Tidak ada `/portfolio`, `/services`, `/about`, `/blog`, `/contact` pada versi initial; hanya tautan eksternal Instagram dan WhatsApp.
-- Struktur halaman 11 section sudah disepakati di `docs/DESIGN.md` (Hero → Brand Statement → Featured Wedding → Services → Process → Cinematic Video Break → Visual Story → Testimonial → About/Trust → Final CTA → Footer) dengan anchor `#work`, `#services`, `#about`.
+- Satu rute statis `/` dengan prerender penuh (+ `404.astro`). Tidak ada `/portfolio`, `/services`, `/about`, `/blog`, `/contact` pada versi initial; hanya tautan eksternal Instagram dan WhatsApp.
+- Struktur 11 blok sesuai `docs/PRD.md` §7 dan sudah terpasang: Hero → Introduction → Services → Real Weddings → Why Us → How We Work → Packages/Investment → Testimonials → FAQ → Final CTA → Footer. Anchor nyata: `#pengantar`, `#layanan`, `#pernikahan`, `#proses`, `#paket`, `#tanya`, `#rencana`.
+- **Dunia visual = sistem editorial `docs/DESIGN.md`** (Ivory/Charcoal/Beige + Champagne hemat, Cormorant Garamond + Manrope). Dikonfirmasi 2026-09-25: DESIGN.md menang atas tampilan yang sedang terpasang, jadi iterasi "call sheet" sebelumnya **digantikan, bukan digabung**.
 - CTA WhatsApp di hero, daftar layanan, final CTA, dan sticky bawah khusus mobile. Nomor dikelola hanya di `src/config/site.ts`; **bila nomor belum diisi, CTA tidak dirender** — bukan link mati.
 - Bahasa copy: **Indonesia penuh** (dikonfirmasi 2026-09-22). Contoh heading Inggris di `docs/DESIGN.md` ("Discover Our Work", "Let's Make It Yours", "Every Detail Matters") wajib diterjemahkan; locale `id-ID`.
-- Harga hanya ditampilkan bila klien memilih mempublikasikannya, format "Mulai dari Rp…", bukan tabel pricing.
+- **Dua mode harga dirancang keduanya** (dikonfirmasi 2026-09-25) dan dipisahkan satu flag: `siteConfig.wedding.packagesMode`. `'public'` = Mode A (nama paket, cocok untuk, yang termasuk, harga, CTA); `'consultation'` = Mode B (tanpa angka sama sekali, ajakan konsultasi). Default sekarang `'consultation'` karena tarif resmi klien belum diterima — tidak ada harga yang dikarang.
 - Testimonial: 1 unggulan, maksimum 3, hanya yang benar-benar diberikan klien.
 - Media: **bingkai kosong berukuran final, bukan foto pengganti.** Setiap slot foto/video dirender sebagai frame dengan aspect ratio dan ukuran yang sama seperti hasil akhir section-nya (width/height tetap ditetapkan agar bebas CLS), diberi label "menunggu aset klien". Saat aset tiba, hanya isinya yang ditukar — layout, komposisi, dan ritme sudah final sejak build. Tidak ada foto pernikahan placeholder, stok, maupun hasil generate. (dikonfirmasi 2026-09-22)
-- Analytics opsional dan vendor-agnostik lewat abstraksi `track()` (`page_view`, `whatsapp_click` dengan parameter lokasi CTA, `instagram_click`, `portfolio_interaction`); tanpa data sensitif; vendor dipasang di project, tidak di core.
+- **Hero media-agnostic** (dikonfirmasi 2026-09-25): satu bidang 16:9 (1920×1080) yang hari ini berupa bingkai kosong berlabel, besok poster, lusa `<video autoplay muted loop playsinline>` — kotak, rasio, dan posisinya tidak pernah berubah, jadi hero tidak dibangun ulang saat footage tiba. Video tetap bukan-syarat: pesan utama selalu terbaca lewat teks. Daftar kebutuhan per slot ada di `docs/ASSET-MANIFEST.md`.
+- **Form inquiry = penyusun pesan WhatsApp** (dikonfirmasi 2026-09-25): submit membuka `wa.me` dengan pesan terisi, **bukan** ke email atau endpoint. Tidak ada backend. Fallback `method="get"` + `action` = tautan wa.me membuat chat tetap terbuka tanpa JavaScript, dan field wajib punya success/error state plus label aksesibel.
+- Analytics opsional dan vendor-agnostik lewat abstraksi `track()`; event yang benar-benar dipakai halaman ini: `hero_cta_click`, `whatsapp_click` (+ `location: header|hero|services|packages|final_cta|sticky_mobile`), `portfolio_click`, `service_interaction`, `inquiry_form_start`, `inquiry_form_submit`, `email_click`, `instagram_click`. `page_view` milik vendor, bukan emit repo. Tanpa data sensitif; vendor dipasang di project, tidak di core.
 - Terlarang secara arsitektur: React/Vue/Svelte, global state, client-side data fetching, backend, database, CMS, auth, cart/checkout/payment, WhatsApp Business API. JavaScript runtime hanya bawaan Astro (prefetch/transition) + inline script kecil.
 - `SITE_URL` wajib via env (dipakai bersama oleh `astro.config.mjs` dan `src/config/site.ts`); build gagal eksplisit bila absen.
 - Bila butuh listing terstruktur, penamaan tetap netral domain (`items`/`catalog`), dan capability `catalog` tidak boleh bergantung pada WhatsApp — komposisi lead terjadi di level page.
@@ -60,7 +63,7 @@ Yang tidak bisa ditiru tetangga begitu saja: kombinasi "bukti eksekusi nyata ter
 - Identitas brand: nama WO, tagline resmi, deskripsi perusahaan, email, Instagram, nomor WhatsApp, alamat/area layanan, tahun berdiri, jumlah wedding.
 - Segmen wedding yang benar-benar ditangani klien. Per 2026-09-22 brief baru sedikit; kemungkinan modern minimal atau lintas gaya. Sistem visual sengaja dibuat tidak mengunci satu genre supaya tetap benar apa pun jawabannya nanti.
 - Kapan dan dalam bentuk apa aset klien tiba (rasio, orientasi, jumlah, ada/tidaknya video).
-- Apakah situs wedding dibangun di atas `main` (mengubah homepage boilerplate generik) atau di branch/package project terpisah. `AGENTS.md` menuntut core tetap generik, sementara repo ini adalah checkout Starter bersih — konflik ini perlu keputusan eksplisit sebelum ada kode halaman yang ditulis.
+- Branch mana yang jadi rilis produksi (`v4` saat ini vs `main`). Penempatan proyek satu-rute sendiri sudah tercatat sebagai pengecualian disengaja di "Project Overlay" `AGENTS.md`.
 - Vendor analitik mana (bila ada) yang akan dipasang.
 - Domain produksi `SITE_URL`.
 
@@ -76,8 +79,9 @@ Yang tidak bisa ditiru tetangga begitu saja: kombinasi "bukti eksekusi nyata ter
 - `docs/PRD.md` v2.0 — problem, solution, 26 user story, keputusan arsitektur, out-of-scope, budget. Sumber kebenaran what/why.
 - `docs/DESIGN.md` — art direction & spesifikasi 11 section, strategi desktop/tablet/mobile, aturan motion. Sumber kebenaran visual/UX.
 - `docs/TECH-SPEC.md` — stack terkonfirmasi Astro, arsitektur konten, daftar kebutuhan media per section, SEO/a11y/analytics, deliverables, acceptance.
-- Fondasi teknis siap pakai di repo: `src/lib/{seo,schema,og,content}.ts`, `src/components/seo/*`, `src/capabilities/lead/lib/whatsapp.ts` (normalisasi `08…`→`62…` + encode pesan), `src/capabilities/lead/lib/track.ts`, `src/capabilities/catalog/*`, `src/components/{Header,Footer,Faq,Breadcrumbs}.astro`, pipeline OG + sitemap + robots + `llms.txt`.
-- **Kosong — dan tidak boleh diisi karangan:** `src/content/{pages,articles,faqs}/` (`.gitkeep` saja), `src/config/site.ts` masih bernilai boilerplate ("Boilerplate Astro"), `public/` hanya berisi favicon. Foto, video, logo, testimoni, dan kontak klien: **nol aset tersedia** (aset contoh katalog dihapus di commit `e872d53`).
+- Fondasi teknis siap pakai di repo: `src/lib/{seo,schema,og}.ts`, `src/components/seo/*`, `src/capabilities/lead/{index.ts,lib/whatsapp.ts,lib/track.ts,components/WaButton.astro}` (normalisasi `08…`→`62…` + encode pesan, tracking terdelegasi), pipeline OG (`src/pages/og/[...slug].png.ts`) + sitemap + robots + `llms.txt`, dan gerbang `scripts/assert-dist.mjs`.
+- **Lapisan halaman sudah terpasang** (2026-09-26): `src/pages/index.astro` + `src/pages/_wedding/{content.ts,PairRow.astro,MediaStage.astro,FramePlate.astro,SectionHead.astro,SiteHeader.astro,SiteFooter.astro,FaqList.astro,InquiryForm.astro}`, design system editorial di `src/styles/global.css`, `404.astro`, `llms.txt.ts`. Copy tayang hidup di satu sumber: `src/pages/_wedding/content.ts`.
+- **Kosong — dan tidak boleh diisi karangan:** `src/config/site.ts` masih berisi placeholder berlabel ("Nama Wedding Organizer", `whatsapp: ''`, `instagram: ''`, `serviceAreas: []`, deskripsi perusahaan berlabel placeholder), tidak ada `src/content/` sama sekali, dan `public/` hanya berisi favicon. Foto, video, logo, nama pasangan, venue, tahun, testimoni, tarif, dan kontak klien: **nol aset tersedia** — semuanya diminta lewat `docs/ASSET-MANIFEST.md`.
 
 ## Product Principles
 

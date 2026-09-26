@@ -1,0 +1,86 @@
+---
+/**
+ * SiteFooter — bidang charcoal dengan teks terang (DESIGN.md §34).
+ * Baris yang datanya belum diterima klien tidak dirender; tanpa link mati,
+ * termasuk pranala legal yang halamannya memang belum ada.
+ */
+import { siteConfig } from '../../config/site';
+import { buildWaLink } from '../../capabilities/lead/lib/whatsapp';
+
+const year = new Date().getFullYear();
+const waUrl = buildWaLink({ number: siteConfig.contact.whatsapp });
+const instagram = siteConfig.socials.instagram;
+const email = siteConfig.contact.email;
+const areas = siteConfig.serviceAreas;
+---
+
+<footer class="field-ink sticky-reserve">
+  <div class="wrap band-major">
+    <div class="grid gap-x-16 gap-y-12 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+      <div>
+        <p class="t-lead">{siteConfig.name}</p>
+        <p class="lede mt-4 max-w-measure">{siteConfig.tagline}</p>
+        {areas.length > 0 && <p class="meta mt-6 text-on-ink-mute">Area layanan · {areas.join(', ')}</p>}
+      </div>
+
+      <div class="grid gap-10 sm:grid-cols-2">
+        <nav aria-label="Navigasi footer">
+          <h2 class="eyebrow">Halaman ini</h2>
+          <ul class="mt-5 space-y-3">
+            <li><a class="link-quiet" href="#layanan">Layanan</a></li>
+            <li><a class="link-quiet" href="#pernikahan">Pernikahan Kami</a></li>
+            <li><a class="link-quiet" href="#pengantar">Tentang Kami</a></li>
+            <li><a class="link-quiet" href="#tanya">FAQ</a></li>
+            <li><a class="link-quiet" href="#rencana">Mulai Konsultasi</a></li>
+          </ul>
+        </nav>
+
+        <div>
+          <h2 class="eyebrow">Kontak</h2>
+          <ul class="mt-5 space-y-3">
+            {waUrl !== '#' && (
+              <li>
+                <a
+                  class="link-quiet"
+                  href={waUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-event="whatsapp_click"
+                  data-wa-location="footer"
+                >
+                  WhatsApp
+                </a>
+              </li>
+            )}
+            {instagram && (
+              <li>
+                <a class="link-quiet" href={instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+              </li>
+            )}
+            {email && (
+              <li>
+                <a class="link-quiet" href={`mailto:${email}`}>Email</a>
+              </li>
+            )}
+            {waUrl === '#' && !instagram && !email && (
+              <li class="meta text-on-ink-mute">Kontak resmi menunggu materi klien.</li>
+            )}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 border-t border-hairline-ink pt-8">
+      <p class="meta text-on-ink-mute">© {year} {siteConfig.name}</p>
+      <p class="meta max-w-measure text-on-ink-mute">
+        Situs ini tidak menyimpan data kamu — pesan konsultasi disusun di perangkatmu sendiri lalu kamu kirim lewat
+        WhatsApp.
+      </p>
+      <p class="meta text-on-ink-mute">
+        <a class="hover:text-on-ink" href="/sitemap-index.xml">Sitemap</a>
+        <span aria-hidden="true"> · </span>
+        <a class="hover:text-on-ink" href="/llms.txt">llms.txt</a>
+      </p>
+    </div>
+  </div>
+</footer>

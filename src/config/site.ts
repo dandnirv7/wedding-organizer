@@ -46,6 +46,19 @@ export interface SiteConfig {
   serviceAreas: string[];
   contact: SiteContact;
   socials: SiteSocials;
+  wedding: WeddingConfig;
+}
+
+/**
+ * Pilihan klien untuk docs/PRD.md FR-08. Keduanya sudah dibangun, jadi
+ * keputusan klien cukup mengubah satu nilai tanpa desain ulang.
+ * - `consultation`: tanpa angka, CTA minta penawaran.
+ * - `public`: nama paket, cocok untuk, layanan, "Mulai dari Rp…".
+ * Default `consultation`: strategi harga klien belum diputuskan, jadi tidak
+ * ada angka yang tampil sampai angkanya benar.
+ */
+export interface WeddingConfig {
+  packagesMode: 'consultation' | 'public';
 }
 
 /**
@@ -72,5 +85,10 @@ export const siteConfig: SiteConfig = {
   },
   socials: {
     instagram: '',
+  },
+  wedding: {
+    // Strategi harga klien belum diputuskan → tidak ada angka yang tampil.
+    // Ubah ke 'public' setelah tarif resmi diterima.
+    packagesMode: 'consultation',
   },
 };

@@ -1,0 +1,73 @@
+---
+/**
+ * MediaStage — bidang media hero yang tidak peduli isinya apa.
+ * Hari ini bingkai kosong berlabel, besok poster, lusa video autoplay-muted-loop.
+ * Kotak, rasio, dan posisinya tidak pernah berubah, jadi hero tidak perlu
+ * dibangun ulang saat footage klien tiba.
+ *
+ * Video tetap bukan-syarat: pesan utama selalu terbaca lewat teks, playback
+ * berhenti pada prefers-reduced-motion, dan preload diminimalkan.
+ */
+import type { Frame } from './content';
+
+export interface Props {
+  frame: Frame;
+  label: string;
+  /** Poster statis — dipakai juga sebagai fallback video. */
+  poster?: string;
+  /** Sumber video desktop; varian `mobile` dipakai di layar sempit. */
+  video?: string;
+  videoMobile?: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const { frame, label, poster, video, videoMobile, eager = true, class: className = '' } = Astro.props;
+const hasMedia = Boolean(poster || video);
+---
+
+<figure class:list={['stage-wrap', className]}>
+  <div class="stage" style={`aspect-ratio: ${frame.width} / ${frame.height}`}>
+    {
+      hasMedia ? (
+        <div class="stage__media">
+          {video ? (
+            <video
+              autoplay={eager}
+              muted
+              loop
+              playsinline
+              preload={eager ? 'metadata' : 'none'}
+              poster={poster}
+              aria-hidden="true"
+            >
+              {videoMobile && <source src={videoMobile} type="video/mp4" media="(max-width: 767px)" />}
+              <source src={video} type="video/mp4" />
+            </video>
+          ) : (
+            <img
+              src={poster}
+              alt=""
+              width={frame.width}
+              height={frame.height}
+              loading={eager ? 'eager' : 'lazy'}
+              {...(eager && { fetchpriority: 'high' })}
+              decoding="async"
+            />
+          )}
+        </div>
+      ) : (
+        <div class="plate__empty" role="img" aria-label={`Bidang utama ${frame.id} — ${label}`}>
+          <span class="plate__dim figure">
+            {frame.width} × {frame.height} px
+          </span>
+          <span class="plate__tag">{frame.id} · menunggu aset klien</span>
+        </div>
+      )
+    }
+  </div>
+  <figcaption class="stage__cap">
+    <span class="stage__dot" aria-hidden="true"></span>
+    {label}
+  </figcaption>
+</figure>

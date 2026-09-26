@@ -1,71 +1,56 @@
 ---
 /**
- * FramePlate — pelat radius-0 untuk slot foto/video.
- * Sadar-bidang: di kertas pelat sedikit lebih terang dari bidangnya, di meja
- * sedikit lebih gelap. Slot kosong memakai rasio + dimensi piksel final
- * (anti-CLS) dan berlabel "menunggu aset klien". Saat aset tiba, hanya
- * `src` yang diisi — susunan tidak bergeser.
+ * FramePlate — satu slot foto/video berdimensi final.
+ * Kosong pun bingkainya sudah benar: rasio dan piksel ditetapkan sekarang,
+ * jadi saat aset klien tiba hanya isinya yang ditukar dan layout tidak bergeser.
  */
+import type { Frame } from './content';
+
 export interface Props {
-  no: string;
-  width: number;
-  height: number;
-  caption?: string;
+  frame: Frame;
   src?: string;
   alt?: string;
-  /** Lingkaran seleksi merah: satu per kelompok, bukan per pelat. */
-  selected?: boolean;
   eager?: boolean;
+  /** Tanpa baris kredit di bawah pelat. */
+  bare?: boolean;
   class?: string;
 }
 
-const {
-  no,
-  width,
-  height,
-  caption = 'menunggu aset klien',
-  src,
-  alt = '',
-  selected = false,
-  eager = false,
-  class: className = '',
-} = Astro.props;
+const { frame, src, alt = '', eager = false, bare = false, class: className = '' } = Astro.props;
+const ratio = Math.round((frame.width / frame.height) * 100) / 100;
 ---
 
-<figure class={`plate ${className}`}>
-  <div class="plate-media" style={`aspect-ratio: ${width} / ${height}`}>
-    {src ? (
-      <img
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        loading={eager ? 'eager' : 'lazy'}
-        decoding="async"
-        {...eager && { fetchpriority: 'high' }}
-      />
-    ) : (
-      <div class="plate-empty" role="img" aria-label={`Frame ${no} — ${caption}`}>
-        <span class="strip">{no} · menunggu aset klien</span>
-        <span class="folio">{width} × {height} px</span>
-      </div>
-    )}
-  </div>
-  <figcaption class="plate-caption">
-    <span class="strip">{no} · {caption}</span>
-    {selected ? (
-      <svg width="20" height="20" viewBox="0 0 44 44" role="img" aria-label="Seleksi utama">
-        <ellipse
-          cx="22" cy="22" rx="18" ry="16"
-          fill="none"
-          stroke="var(--color-select)"
-          stroke-width="5"
-          stroke-linecap="round"
-          transform="rotate(-7 22 22)"
+<figure class:list={['plate', className]}>
+  <div class="plate__media" style={`aspect-ratio: ${frame.width} / ${frame.height}`}>
+    {
+      src ? (
+        <img
+          src={src}
+          alt={alt}
+          width={frame.width}
+          height={frame.height}
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          {...(eager && { fetchpriority: 'high' })}
         />
-      </svg>
-    ) : (
-      <span class="folio" aria-hidden="true">{Math.round((width / height) * 100) / 100}:1</span>
-    )}
-  </figcaption>
+      ) : (
+        <div
+          class="plate__empty"
+          role="img"
+          aria-label={`Frame ${frame.id} — ${frame.caption}, menunggu aset klien`}
+        >
+          <span class="plate__dim figure">{frame.width} × {frame.height} px · {ratio}:1</span>
+          <span class="plate__tag">{frame.id} · menunggu aset klien</span>
+        </div>
+      )
+    }
+  </div>
+  {
+    !bare && (
+      <figcaption class="plate__cap">
+        <span>{frame.id} · {frame.caption}</span>
+        <span class="figure">{ratio}:1</span>
+      </figcaption>
+    )
+  }
 </figure>

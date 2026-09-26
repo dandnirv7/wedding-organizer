@@ -1,28 +1,28 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SheetNav from './_wedding/SheetNav.astro';
-import SelectMark from './_wedding/SelectMark.astro';
-import { copy } from './_wedding/copy';
+import SiteHeader from './_wedding/SiteHeader.astro';
+import { page } from './_wedding/content';
 ---
 
 <BaseLayout
-  title="Lembar tidak ditemukan (404)"
-  description="Halaman yang Anda tuju tidak ada di lembar ini. Kembali ke daftar seleksi dokumentasi wedding."
+  title="Halaman tidak ditemukan (404)"
+  description="Alamat yang kamu buka bukan bagian dari halaman ini. Kembali untuk membaca layanan, pernikahan yang sudah dikerjakan, dan prosesnya."
   canonical={new URL('/', Astro.site).href}
   robots={{ index: false, follow: true }}
 >
-  <SheetNav slot="header" items={copy.sheet.nav} />
+  <SiteHeader slot="header" items={page.nav} />
 
-  <section class="field-table grow">
-    <div class="sheet flex grow flex-col justify-center py-28">
-      <p class="folio">lembar 00 — tidak terdaftar</p>
-      <h1 class="display mt-5 max-w-none">Lembar ini tidak ada.</h1>
-      <p class="lede mt-5 opacity-90">
-        Alamat yang Anda buka tidak termasuk dalam lembar seleksi ini. Kembali ke awal lembar untuk membaca
-        dokumentasi, layanan, dan prosesnya dari frame 00.
+  <section class="field-ivory grow">
+    <div class="wrap flex grow flex-col justify-center band-major">
+      <p class="eyebrow">404</p>
+      <h1 class="t-section mt-5">Halaman ini tidak ada di sini.</h1>
+      <p class="lede mt-6">
+        Alamat yang kamu buka bukan bagian dari halaman ini. Kembali ke awal untuk membaca layanan, pernikahan yang
+        sudah kami kerjakan, alur kerjanya, dan pertanyaan yang biasa muncul sebelum chat pertama.
       </p>
-      <div class="mt-8">
-        <SelectMark href="/" label="Kembali ke lembar utama" />
+      <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
+        <a class="btn btn--primary" href="/"><span>Kembali ke atas</span></a>
+        <a class="link-quiet" href="/#rencana">Mulai konsultasi</a>
       </div>
     </div>
   </section>

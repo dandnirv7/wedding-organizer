@@ -635,49 +635,77 @@ over abstraction or feature completeness.
 
 ---
 
-# Project Overlay: wedding-organizer (active checkout, branch `main`)
+# Project Overlay: wedding-organizer (pengecualian satu-rute yang disengaja)
 
 Boilerplate ini adalah fondasi **multipage public site** generik (landing, company profile,
-content, catalog). Checkout ini dipakai sebagai **proyek wedding organizer one-page** di
-branch `main` — pengecualian satu-rute yang disengaja, bukan pola default boilerplate.
+content, catalog). Checkout ini dipakai sebagai **proyek wedding organizer one-page** —
+pengecualian satu-rute yang disengaja, bukan pola default boilerplate.
 
 Sumber kebenaran proyek (urutan menang bila konflik):
 
 ```text
 docs/PRD.md (what/why)
   ↓
-docs/DESIGN.md (Selects Table visual/UX)
+docs/PRODUCTS.md (definisi produk)
+  ↓
+docs/DESIGN.md (visual/UX)
+  ↓
+docs/CONTENT.md (draft copy)
+  ↓
+docs/WIREFRAME.md (referensi experience; bukan penambah scope)
   ↓
 docs/TECH-SPEC.md (how teknis + SOW)
   ↓
 PRODUCT.md (keputusan terkonfirmasi vs belum diputuskan)
 ```
 
+Konflik IA yang dicatat: `PRD.md` §7 + `CONTENT.md` §5 (struktur bisnis) menang untuk scope
+initial atas chapter experience `WIREFRAME.md` §40. WIREFRAME dipakai untuk interaksi/motion/ritme.
+
 Aturan proyek yang mengikat (di atas aturan generik):
 
-- Satu rute `/` berisi 11 section: Hero → Brand Statement → Featured Wedding (`#work`)
-  → Services (`#services`) → Process → Cinematic Video Break → Visual Story →
-  Testimonial → About/Trust (`#about`) → Final CTA → Footer. Tidak ada
-  `/portfolio`, `/services`, `/about`, `/blog`, `/contact` pada versi initial.
-- Bahasa copy tayang **Indonesia penuh**, locale `id-ID`. Contoh heading Inggris di
-  `docs/DESIGN.md` wajib diterjemahkan saat implementasi.
-- Tepat 1 H1 per halaman. Klaim di JSON-LD harus terlihat di HTML. Tanpa review,
-  rating, harga, ketersediaan, statistik, atau pasangan fiktif.
-- Nomor WhatsApp hanya dari `siteConfig.contact.whatsapp`. Tanpa nomor → CTA tidak
-  dirender (bukan `href="#"`). Tracking hanya via abstraksi `track()` LEAD
-  (`lead_whatsapp_click` + lokasi CTA). Tanpa `gtag` langsung, tanpa data sensitif.
-- Visual Selects Table: bidang kertas (`#f2f1ec`) untuk baca, meja gelap (`#17181a`)
-  untuk lihat, tanpa gradient di antaranya. Merah (`#c9302b`) hanya lingkaran seleksi
-  / satu baris aksi per bidang (≤3% viewport), tanpa latar merah. Radius nol kecuali
-  lingkaran seleksi SVG. Tanpa kartu, pill, badge, blur, shadow-blur, glassmorphism,
-  emas-cream, italic-broadsheet, font ketiga, WebGL.
-- Slot foto/video kosong dirender sebagai `FramePlate` berlabel "menunggu aset klien"
-  dengan rasio + dimensi final anti-CLS. Saat aset tiba hanya isinya yang ditukar.
+- Satu rute `/` berisi 11 blok: Hero → Introduction → Services → Real Weddings → Why Us →
+  How We Work → Packages/Investment → Testimonials → FAQ → Final CTA → Footer. Tidak ada
+  `/portfolio`, `/services`, `/about`, `/blog`, `/contact` pada versi initial. Story detail/galeri
+  lanjutan = opsional/future (change request). Navigasi mengikuti `PRD.md` FR-13 + `CONTENT.md` §16
+  (anchor minimal, smooth-scroll, tanpa link mati); CTA konsisten per `CONTENT.md` §17.
+- Bahasa copy tayang **Indonesia penuh**, locale `id-ID`, sapa Kamu/Pernikahanmu/Ceritamu,
+  tone Hangat-Personal-Elegan-Natural-Profesional. Contoh heading/CTA Inggris di `DESIGN.md`,
+  `PRODUCTS.md`, `WIREFRAME.md` ("Discover Our Work", "Let's Talk", "Start Planning") wajib
+  diterjemahkan saat implementasi ("Lihat Pernikahan Kami", "Mulai Konsultasi",
+  "Mulai Rencanakan Pernikahanmu").
+- Tepat 1 H1 per halaman. Klaim di JSON-LD harus terlihat di HTML. Tanpa review, rating, harga,
+  ketersediaan, statistik, pasangan/lokasi/tahun, atau testimoni fiktif. Angka (tahun, jumlah wedding)
+  hanya bila terverifikasi. Testimonial autentik saja, jangan ubah makna/konteks. Harga mengikuti
+  strategi klien: Mode A publik (nama/cocok-untuk/layanan/harga/CTA) vs Mode B konsultasi (tanpa harga).
+- Nomor WhatsApp hanya dari `siteConfig.contact.whatsapp`. Tanpa nomor → CTA tidak dirender
+  (bukan `href="#"`); baris kontak/footer menyesuaikan. Form inquiry opsional (`PRD.md` FR-12,
+  progresif `WIREFRAME.md` §20 bila dipakai) wajib punya success/error state + label aksesibel.
+  Tracking hanya via abstraksi `track()` (`page_view`, `hero_cta_click`, `portfolio_click`,
+  `service_interaction`, `whatsapp_click` + `location: hero|services|final_cta|sticky_mobile`,
+  `inquiry_form_start/submit`, `email_click`, `instagram_click`). Tanpa `gtag` langsung, tanpa data sensitif.
+- Visual `DESIGN.md`: Charcoal (`#1E1D1B`) teks/tombol/footer, Ivory (`#F7F3EE`) latar utama,
+  Beige (`#E8DED2`) permukaan sekunder, Champagne (`#B69B72`) aksen hemat (label/eyebrow/garis tipis,
+  bukan latar/blok besar), White (`#FFFFFF`) kontras. Foto memikul warna (70/20/10). Font hanya
+  Cormorant Garamond (display) + Manrope (body); tanpa font ketiga, tanpa italic-broadsheet.
+  Radius restrained (image 0–4, card 4–8, button 0–2). Shadow minimal/none. Tanpa kartu membulat besar,
+  pill, badge, blur, glassmorphism, gold gradient, floral/ornamen berlebih, WebGL.
+  Motion Slow-Elegant-Intentional-Subtle-Cinematic (micro 150–250ms, standard 300–500ms,
+  reveal 600–900ms, hero 800–1200ms); hormati `prefers-reduced-motion`; larang bounce, parallax berlebih,
+  scroll hijack, loading screen panjang, cursor effect.
+- Layanan mengikuti `PRODUCTS.md` §11 (5 kategori potensial) — wajib konfirmasi klien sebelum tayang;
+  jangan mempublikasikan kategori yang tidak ditawarkan. Proses = 4 langkah Konsultasi → Perencanaan →
+  Persiapan → Hari Pernikahan. Portfolio = editorial grid asimetris + feature besar, bukan grid 3-kolom.
+  FAQ = accordion native. Footer dark `#1E1D1B` teks terang.
+- Slot foto/video kosong dirender sebagai bingkai kosong berlabel netral dengan rasio + dimensi final
+  anti-CLS (`width`/`height` + `aspect-ratio`); saat aset tiba hanya isinya yang ditukar.
   Tanpa foto stok, AI, atau generate sebagai pengganti dokumentasi nyata.
+  `docs/ASSET-MANIFEST.md` adalah daftar permintaan aset yang sudah disinkronkan dengan slot
+  terpasang (`H1`, `S1`–`S4`, `W1a`–`W3b`, `F1`); ubah rasio/piksel di kedua tempat sekaligus.
 - Komponen wedding tinggal langsung di `src/pages/` (file/komponen ber-prefix `_`
   agar tidak menjadi rute). Core `src/components/`, `src/lib/`, `src/layouts/`
   hanya diubah bila perlu dan tetap generik; komposisi LEAD selalu di level page.
 - Komponen wedding tidak boleh meng-hardcode nomor, URL brand, atau copy final klien
-  yang belum diterima. Kekosongan data adalah fitur anti-fabrikasi.
+  yang belum diterima. Kekosongan data adalah fitur anti-fabrikasi (tidak dirender, bukan dikarang).
 - Validasi: `pnpm check` + `pnpm build` + `pnpm assert:dist` hijau (gate),
   `pnpm diagnost` informatif.

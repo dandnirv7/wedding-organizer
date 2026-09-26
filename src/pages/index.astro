@@ -8,259 +8,325 @@ import {
 } from '../lib/schema';
 import { WaButton } from '../capabilities/lead/index.js';
 import { siteConfig } from '../config/site';
-import SheetNav from './_wedding/SheetNav.astro';
+import SiteHeader from './_wedding/SiteHeader.astro';
+import SiteFooter from './_wedding/SiteFooter.astro';
+import SectionHead from './_wedding/SectionHead.astro';
+import PairRow from './_wedding/PairRow.astro';
 import FramePlate from './_wedding/FramePlate.astro';
-import CreditLine from './_wedding/CreditLine.astro';
-import SelectMark from './_wedding/SelectMark.astro';
-import EdgeBand from './_wedding/EdgeBand.astro';
-import SelectStrip from './_wedding/SelectStrip.astro';
-import ServiceLedger from './_wedding/ServiceLedger.astro';
-import FaqSheet from './_wedding/FaqSheet.astro';
-import Colophon from './_wedding/Colophon.astro';
-import PalettePicker from './_wedding/PalettePicker.astro';
-import { paletteBootstrap } from './_wedding/palettes';
-import { copy, services, frames, storyFrames } from './_wedding/copy';
+import MediaStage from './_wedding/MediaStage.astro';
+import FaqList from './_wedding/FaqList.astro';
+import InquiryForm from './_wedding/InquiryForm.astro';
+import {
+  page,
+  frames,
+  services,
+  weddings,
+  values,
+  steps,
+  packagesPublic,
+  faq,
+} from './_wedding/content';
 
 const canonicalUrl = resolveCanonical(Astro.url);
 const graph = [
   buildWebSiteSchema(),
   buildOrganizationSchema(),
-  buildWebPageSchema(canonicalUrl, copy.sheet.title, copy.sheet.description),
+  buildWebPageSchema(canonicalUrl, page.meta.title, page.meta.description),
 ];
 
-/** Baris kepala section: aturan cetak + data folio, bukan kicker marketing. */
 const hasWa = Boolean(siteConfig.contact.whatsapp);
+const publicPackages = siteConfig.wedding.packagesMode === 'public';
 ---
 
-<BaseLayout title={copy.sheet.title} description={copy.sheet.description} canonical={canonicalUrl} graph={graph}>
-  <!-- Pra-paint: pasang palet tersimpan sebelum gaya pertama dihitung. -->
-  <script slot="head" is:inline set:html={paletteBootstrap} />
+<BaseLayout title={page.meta.title} description={page.meta.description} canonical={canonicalUrl} graph={graph}>
+  <SiteHeader slot="header" items={page.nav}>
+    {
+      hasWa ? (
+        <WaButton slot="cta" variant="primary" text={page.headerCta} message={page.waMessage} location="header" />
+      ) : (
+        <a slot="cta" class="btn btn--primary" href="#rencana">
+          <span>{page.headerCta}</span>
+        </a>
+      )
+    }
+  </SiteHeader>
 
-  <SheetNav slot="header" items={copy.sheet.nav}>
-    <WaButton slot="cta" variant="quiet" text="Chat via WhatsApp" message={copy.waMessage} />
-  </SheetNav>
-
-  {/* 01 HERO — bidang meja penuh; pelat menguasai, teks di tepi kiri */}
-  <section class="field-table">
-    <div class="sheet grid items-end gap-x-8 gap-y-10 pt-10 pb-12 lg:grid-cols-12 lg:pt-16 lg:pb-16">
-      <div class="lg:col-span-5 lg:pb-6">
-        <p class="folio">{copy.hero.folio}</p>
-        <h1 class="display mt-5">{copy.hero.title}</h1>
-        <p class="lede mt-6 opacity-90">{copy.hero.lede}</p>
-        <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
-          <SelectMark href="#work" label={copy.hero.action} />
-          {hasWa && <WaButton variant="quiet" text="Chat via WhatsApp" message={copy.waMessage} />}
+  <!-- 01 · HERO — klaim di satu sisi sumbu, bidangnya di sisi lain -->
+  <section class="hero field-ivory band-major" aria-labelledby="hero-title">
+    <div class="wrap">
+      <PairRow prepLabel={page.hero.eyebrow} rememberLabel={page.hero.stageSide}>
+        <div slot="prep">
+          <h1 class="t-display mt-5" id="hero-title">{page.hero.title}</h1>
+          <p class="lede mt-7">{page.hero.lede}</p>
+          <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
+            {hasWa ? (
+              <WaButton variant="primary" text={page.hero.primaryCta} message={page.waMessage} location="hero" />
+            ) : (
+              <a class="btn btn--primary" href="#rencana"><span>{page.hero.primaryCta}</span></a>
+            )}
+            <a class="link-quiet" href="#pernikahan">{page.hero.secondaryCta}</a>
+          </div>
         </div>
-      </div>
+        <div slot="remember">
+          <MediaStage frame={frames.stage} label={page.hero.stageLabel} />
+        </div>
+      </PairRow>
+    </div>
+  </section>
+
+  <!-- 02 · INTRODUCTION — bidang sunyi, tanpa sumbu -->
+  <section class="field-beige band-section scroll-mt-24" id="pengantar" aria-labelledby="pengantar-title">
+    <div class="wrap grid items-start gap-x-16 gap-y-12 lg:grid-cols-12">
       <div class="lg:col-span-7">
-        <FramePlate
-          no={frames.hero.no}
-          caption={frames.hero.caption}
-          width={frames.hero.width}
-          height={frames.hero.height}
-          selected
-          eager
-        />
-        <CreditLine no={frames.hero.no} class="mt-3" />
+        <p class="eyebrow">{page.intro.eyebrow}</p>
+        <h2 class="t-section mt-5" id="pengantar-title">{page.intro.headline}</h2>
+        {page.intro.body.map((paragraph) => <p class="prose mt-7">{paragraph}</p>)}
+        <p class="t-lead mt-12 max-w-[22ch]">{page.intro.statement}</p>
       </div>
-    </div>
-    <EdgeBand roll="roll 01 · menunggu aset" />
-  </section>
-
-  {/* 02 SIKAP — bidang kertas */}
-  <section class="field-paper">
-    <div class="sheet sheet-block">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">02 · {copy.statement.label}</span>
-        <span class="strip ml-auto">satu halaman</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.statement.headline}</h2>
-      <p class="lede mt-5">{copy.statement.body}</p>
-    </div>
-  </section>
-
-  {/* 03 FEATURED WEDDING — pelat dominan memecah gutter */}
-  <section id="work" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet pb-16 md:pb-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">03 · {copy.featured.label}</span>
-        <span class="strip ml-auto">#work</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.featured.headline}</h2>
-      <div class="mt-10 grid gap-x-8 gap-y-10 lg:grid-cols-12">
-        <figure class="lg:col-span-7 lg:-ms-10">
-          <FramePlate
-            no={frames.featured.no}
-            caption={frames.featured.caption}
-            width={frames.featured.width}
-            height={frames.featured.height}
-            selected
-          />
-          <CreditLine no={frames.featured.no} class="mt-3" />
-        </figure>
-        <div class="lg:col-span-5 lg:pt-14">
-          <FramePlate
-            no={frames.support.no}
-            caption={frames.support.caption}
-            width={frames.support.width}
-            height={frames.support.height}
-          />
-          <CreditLine no={frames.support.no} class="mt-3" />
-          <p class="lede mt-7">{copy.featured.pending}</p>
-        </div>
+      <div class="lg:col-span-5 lg:mt-24">
+        <FramePlate frame={page.intro.frame} />
       </div>
     </div>
   </section>
 
-  {/* 04 LAYANAN — daftar, bukan kartu; pelat desktop bertukar tanpa JS */}
-  <section id="services" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">04 · {copy.services.label}</span>
-        <span class="strip ml-auto">#services</span>
+  <!-- 03 · SERVICES — pasangan: yang kami siapkan / yang kamu ingat -->
+  <section class="field-ivory band-section scroll-mt-24" id="layanan" aria-labelledby="layanan-title">
+    <div class="wrap">
+      <SectionHead
+        eyebrow={page.services.eyebrow}
+        headline={page.services.headline}
+        lede={page.services.lede}
+        headingId="layanan-title"
+      />
+      <div class="mt-16">
+        {services.map((service, i) => (
+          <PairRow
+            prepLabel={page.services.prepLabel}
+            rememberLabel={page.services.rememberLabel}
+            reverse={i % 2 === 1}
+          >
+            <div slot="prep">
+              <h3 class="t-item">{service.name}</h3>
+              <p class="prose mt-4">{service.benefit}</p>
+              <p class="prose mt-4">{service.prep}</p>
+              {hasWa && (
+                <WaButton
+                  class="mt-7"
+                  variant="ghost"
+                  text={service.waLabel}
+                  message={`Halo, saya ingin bertanya tentang layanan ${service.name}.`}
+                  location="services"
+                />
+              )}
+            </div>
+            <div slot="remember">
+              <FramePlate frame={service.frame} />
+              <p class="prose mt-6">{service.remember}</p>
+            </div>
+          </PairRow>
+        ))}
       </div>
-      <h2 class="h-section mt-8">{copy.services.headline}</h2>
-      <div class="mt-10">
-        <ServiceLedger items={services} note={copy.services.note} />
+      <p class="meta mt-14 max-w-measure">{page.services.note}</p>
+    </div>
+  </section>
+
+  <!-- 04 · REAL WEDDINGS — pelat di balik layar / pelat yang terlihat -->
+  <section class="field-beige band-section scroll-mt-24" id="pernikahan" aria-labelledby="pernikahan-title">
+    <div class="wrap">
+      <SectionHead
+        eyebrow={page.weddings.eyebrow}
+        headline={page.weddings.headline}
+        lede={page.weddings.lede}
+        headingId="pernikahan-title"
+      />
+      <p class="meta mt-6 max-w-measure">{page.weddings.pending}</p>
+      <div class="mt-16">
+        {weddings.map((wedding, i) => (
+          <PairRow
+            prepLabel={page.weddings.prepLabel}
+            rememberLabel={page.weddings.rememberLabel}
+            reverse={i === 1}
+          >
+            <div slot="prep">
+              <FramePlate frame={wedding.frames[0]} />
+              <p class="prose mt-6">{wedding.prep}</p>
+            </div>
+            <div slot="remember">
+              <FramePlate frame={wedding.frames[1]} />
+              <p class="prose mt-6">{wedding.remember}</p>
+              <dl class="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+                <div>
+                  <dt class="meta">Pasangan</dt>
+                  <dd class="t-lead mt-1">{wedding.couple || wedding.note}</dd>
+                </div>
+                <div>
+                  <dt class="meta">Konsep &amp; lokasi</dt>
+                  <dd class="prose mt-2">
+                    {[wedding.concept, wedding.venue, wedding.location].filter(Boolean).join(' · ') || wedding.note}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </PairRow>
+        ))}
+      </div>
+      <div class="mt-14">
+        <a class="link-quiet" href="#pernikahan">{page.weddings.cta}</a>
       </div>
     </div>
   </section>
 
-  {/* 05 PROSES — empat langkah sebagai folio, tanpa ikon */}
-  <section id="process" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">05 · {copy.process.label}</span>
-        <span class="strip ml-auto">04 langkah</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.process.headline}</h2>
-      <ol class="mt-10 grid gap-x-8 gap-y-10 md:grid-cols-4">
-        {copy.process.steps.map((step) => (
-          <li class="border-t border-hairline pt-5">
-            <p class="strip">{step.no}</p>
-            <h3 class="h-item mt-3">{step.name}</h3>
-            <p class="lede mt-2 text-[1rem]">{step.desc}</p>
+  <!-- 05 · WHY US — empat alasan sebagai daftar bernada, bukan kartu -->
+  <section class="field-ivory band-section" aria-labelledby="kenapa-title">
+    <div class="wrap">
+      <SectionHead eyebrow={page.why.eyebrow} headline={page.why.headline} headingId="kenapa-title" />
+      <ul class="rule-list mt-14 grid gap-x-16 lg:grid-cols-2">
+        {values.map((value) => (
+          <li>
+            <h3 class="t-item">{value.name}</h3>
+            <p class="prose mt-3">{value.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- 06 · HOW WE WORK — satu langkah, dua sudut pandang -->
+  <section class="field-beige band-section scroll-mt-24" id="proses" aria-labelledby="proses-title">
+    <div class="wrap">
+      <SectionHead eyebrow={page.process.eyebrow} headline={page.process.headline} headingId="proses-title" />
+      <ol class="mt-16">
+        {steps.map((step, i) => (
+          <li>
+            <PairRow prepLabel={page.process.youLabel} rememberLabel={page.process.usLabel}>
+              <div slot="prep">
+                <h3 class="t-item">
+                  <span class="meta me-3 align-middle figure">{String(i + 1).padStart(2, '0')}</span>
+                  {step.name}
+                </h3>
+                <p class="prose mt-4">{step.you}</p>
+              </div>
+              <div slot="remember">
+                <p class="prose">{step.us}</p>
+              </div>
+            </PairRow>
           </li>
         ))}
       </ol>
     </div>
   </section>
 
-  {/* 06 VIDEO BREAK — bidang meja, satu caption pendek */}
-  <section class="field-table">
-    <div class="sheet py-16 md:py-24">
-      <FramePlate no={frames.video.no} caption={frames.video.caption} width={frames.video.width} height={frames.video.height} />
-      <div class="mt-6 flex flex-wrap items-baseline gap-x-8 gap-y-3">
-        <CreditLine no={frames.video.no} />
-        <h2 class="h-section text-[clamp(1.35rem,3vw,1.9rem)]">{copy.video.headline}</h2>
-      </div>
-      <p class="strip mt-4">{copy.video.pending}</p>
-    </div>
-  </section>
-
-  {/* 07 VISUAL STORY — strip asimetris, satu lingkaran seleksi */}
-  <section class="field-paper">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">07 · {copy.story.label}</span>
-        <span class="strip ml-auto">05 pelat</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.story.headline}</h2>
-      <div class="mt-10">
-        <SelectStrip>
-          {storyFrames.map((frame, i) => (
-            <FramePlate
-              no={frame.no}
-              caption={frame.caption}
-              width={frame.width}
-              height={frame.height}
-              selected={i === 2}
-            />
-          ))}
-        </SelectStrip>
-        <p class="lede mt-8">{copy.story.pending}</p>
-      </div>
-    </div>
-    <EdgeBand roll="roll 02 · menunggu aset" frame="detail" />
-  </section>
-
-  {/* 08 TESTIMONI — tipe baca besar di kertas, tanpa carousel/rating */}
-  <section class="field-paper">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">08 · {copy.testimonial.label}</span>
-        <span class="strip ml-auto">maks 03</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.testimonial.headline}</h2>
-      <figure class="mt-10 border-t border-hairline pt-8">
-        <blockquote class="h-section text-[clamp(1.5rem,3.5vw,2.125rem)] font-normal italic opacity-70">
-          “Kutipan menunggu izin tertulis dari pasangan.”
-        </blockquote>
-        <figcaption class="mt-6">
-          <CreditLine no="T1" place="menunggu izin" />
-          <p class="lede mt-4">{copy.testimonial.pending}</p>
-        </figcaption>
-      </figure>
-    </div>
-  </section>
-
-  {/* 09 TENTANG — pelat tim + cerita yang belum dikonfirmasi */}
-  <section id="about" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="grid gap-x-8 gap-y-10 lg:grid-cols-12">
-        <div class="lg:col-span-5">
-          <FramePlate no={frames.team.no} caption={frames.team.caption} width={frames.team.width} height={frames.team.height} />
-          <CreditLine no={frames.team.no} class="mt-3" />
-        </div>
-        <div class="lg:col-span-7 lg:pt-10">
-          <div class="flex items-center gap-5 border-t border-hairline pt-3">
-            <span class="folio">09 · {copy.about.label}</span>
-            <span class="strip ml-auto">#about</span>
-          </div>
-          <h2 class="h-section mt-8">{copy.about.headline}</h2>
-          <p class="lede mt-5">{copy.about.pending}</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* 10 TANYA — disclosure native, tanpa skrip */}
-  <section id="faq" class="field-paper scroll-mt-24 border-t border-hairline">
-    <div class="sheet py-16 md:py-24">
-      <div class="flex items-center gap-5 border-t border-hairline pt-3">
-        <span class="folio">10 · {copy.faq.label}</span>
-        <span class="strip ml-auto">#faq</span>
-      </div>
-      <h2 class="h-section mt-8">{copy.faq.headline}</h2>
-      <FaqSheet items={copy.faq.items} />
-    </div>
-  </section>
-
-  {/* 11 AKHIR — bidang meja, satu aksi, pelat penutup */}
-  <section class="field-table">
-    <div class="sheet py-16 md:py-24">
-      <div class="grid gap-x-8 gap-y-10 lg:grid-cols-12 lg:items-end">
-        <div class="lg:col-span-5">
-          <p class="folio">11 · akhir lembar</p>
-          <h2 class="h-section mt-5">{copy.finalCta.headline}</h2>
-          <p class="lede mt-5 opacity-90">{copy.finalCta.body}</p>
-          <div class="mt-8">
+  <!-- 07 · PACKAGES / INVESTMENT — satu flag konfigurasi, dua pembacaan -->
+  <section class="field-ivory band-section scroll-mt-24" id="paket" aria-labelledby="paket-title">
+    <div class="wrap">
+      {publicPackages ? (
+        <>
+          <SectionHead
+            eyebrow={page.packages.eyebrowPublic}
+            headline={page.packages.headlinePublic}
+            headingId="paket-title"
+          />
+          <ul class="mt-16">
+            {packagesPublic.map((pkg) => (
+              <li class="pair">
+                <div class="pair__a">
+                  <span class="pair__side">Cocok untuk</span>
+                  <h3 class="t-item">{pkg.name ?? page.packages.pendingName}</h3>
+                  <p class="prose mt-4">{pkg.bestFor ?? 'Menunggu konfirmasi lingkup paket dari klien.'}</p>
+                </div>
+                <div class="pair__axis" aria-hidden="true"></div>
+                <div class="pair__b">
+                  <span class="pair__side">Yang termasuk</span>
+                  <ul class="prose mt-1 space-y-1">
+                    {pkg.includes.map((item) => <li>{item}</li>)}
+                  </ul>
+                  <p class="t-lead mt-6">{pkg.price ?? page.packages.pendingPrice}</p>
+                  {hasWa && (
+                    <WaButton class="mt-7" variant="ghost" text={pkg.ctaLabel} message={page.waMessage} location="packages" />
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+          <p class="meta mt-14 max-w-measure">{page.packages.priceNote}</p>
+        </>
+      ) : (
+        <>
+          <SectionHead
+            eyebrow={page.packages.eyebrowConsult}
+            headline={page.packages.headlineConsult}
+            lede={page.packages.bodyConsult}
+            headingId="paket-title"
+          />
+          <div class="mt-10">
             {hasWa ? (
-              <WaButton text={copy.finalCta.action} message={copy.waMessage} />
+              <WaButton variant="primary" text={page.packages.ctaConsult} message={page.waMessage} location="packages" />
             ) : (
-              <p class="strip">{copy.finalCta.noNumber}</p>
+              <a class="btn btn--primary" href="#rencana"><span>{page.packages.ctaConsult}</span></a>
             )}
           </div>
+        </>
+      )}
+    </div>
+  </section>
+
+  <!-- 08 · TESTIMONIALS — belum ada yang boleh ditayangkan -->
+  <section class="field-beige band-section" aria-labelledby="testimoni-title">
+    <div class="wrap max-w-4xl">
+      <SectionHead
+        eyebrow={page.testimonials.eyebrow}
+        headline={page.testimonials.headline}
+        headingId="testimoni-title"
+      />
+      <p class="lede mt-10 border-t border-hairline pt-7">{page.testimonials.pending}</p>
+    </div>
+  </section>
+
+  <!-- 09 · FAQ — disclosure bawaan, tanpa skrip -->
+  <section class="field-ivory band-section scroll-mt-24" id="tanya" aria-labelledby="tanya-title">
+    <div class="wrap">
+      <SectionHead eyebrow={page.faq.eyebrow} headline={page.faq.headline} headingId="tanya-title" />
+      <FaqList
+        items={faq}
+        pendingAnswer={page.faq.pendingAnswer}
+        ctaLabel={page.faq.cta}
+        waMessage={page.waMessage}
+      />
+    </div>
+  </section>
+
+  <!-- 10 · FINAL CTA + form kualifikasi yang menyusun pesan WhatsApp -->
+  <section class="field-ink band-section scroll-mt-24" id="rencana" aria-labelledby="rencana-title">
+    <div class="wrap grid items-start gap-x-16 gap-y-14 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <p class="eyebrow">{page.finalCta.eyebrow}</p>
+        <h2 class="t-section mt-5" id="rencana-title">{page.finalCta.headline}</h2>
+        <p class="lede mt-6">{page.finalCta.lede}</p>
+        {hasWa && (
+          <div class="mt-9">
+            <WaButton variant="onink" text={page.finalCta.secondaryCta} message={page.waMessage} location="final_cta" />
+          </div>
+        )}
+        <div class="mt-14 hidden lg:block">
+          <FramePlate frame={page.intro.frame} bare />
         </div>
-        <div class="lg:col-span-7">
-          <FramePlate no={frames.closing.no} caption={frames.closing.caption} width={frames.closing.width} height={frames.closing.height} />
-          <CreditLine no={frames.closing.no} class="mt-3" />
-        </div>
+      </div>
+      <div class="lg:col-span-7">
+        {hasWa ? (
+          <InquiryForm headline={page.finalCta.primaryCta} lede={page.finalCta.formIntro} />
+        ) : (
+          <>
+            <h3 class="t-item">{page.finalCta.primaryCta}</h3>
+            <p class="lede mt-5">{page.finalCta.formIntro}</p>
+            <p class="inq__status mt-8">{page.finalCta.needsNumber}</p>
+          </>
+        )}
       </div>
     </div>
   </section>
 
-  <Colophon slot="footer" />
-  <PalettePicker />
-  <WaButton variant="floating" text={copy.floatingCta} message={copy.waMessage} />
+  <SiteFooter slot="footer" />
+  {hasWa && (
+    <WaButton variant="floating" text={page.floatingCta} message={page.waMessage} location="sticky_mobile" />
+  )}
 </BaseLayout>

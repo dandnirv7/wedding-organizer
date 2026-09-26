@@ -8,7 +8,33 @@
  *   caller-supplied non-sensitive payload.
  */
 
-export type LeadEventName = "lead_whatsapp_click";
+/**
+ * Event names this project reports. Vocabulary per docs/AGENTS.md:
+ * `whatsapp_click` always carries a `location`, so a conversion can be read
+ * back to the block that earned it.
+ *
+ * `page_view` is deliberately absent: it belongs to whoever installs the
+ * analytics vendor, not to a click helper that runs after the page is visible.
+ */
+export type LeadEventName =
+  | 'whatsapp_click'
+  | 'portfolio_click'
+  | 'service_interaction'
+  | 'inquiry_form_start'
+  | 'inquiry_form_submit'
+  | 'email_click'
+  | 'instagram_click';
+
+/** Where an action happened, so the same event is not ambiguous. */
+export type LeadLocation =
+  | 'header'
+  | 'hero'
+  | 'services'
+  | 'packages'
+  | 'faq'
+  | 'final_cta'
+  | 'footer'
+  | 'sticky_mobile';
 
 export interface LeadEventPayload {
   timestamp: string;

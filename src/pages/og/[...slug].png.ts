@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { OGImageRoute } from 'astro-og-canvas';
 import { siteConfig } from '../../config/site';
 import { ogSlugFromPath } from '../../lib/og';
-import { copy } from '../../pages/_wedding/copy';
+import { page as pageCopy } from '../../pages/_wedding/content';
 
 const FONT_FILES = ['Inter_400Regular.ttf', 'Inter_700Bold.ttf'];
 
@@ -29,18 +29,18 @@ function resolveFont(name: string): string {
 }
 
 /**
- * OG 1200×630 dalam dunia Selects Table: bidang meja gelap, garis seleksi
- * merah di tepi bawah, tipografi serif yang sama dengan halaman. Satu rute
- * publik (`/`) plus `default` untuk tautan tanpa halaman sendiri.
+ * OG 1200×630 dalam dunia editorial docs/DESIGN.md: bidang charcoal, judul
+ * ivory, garis champagne di tepi bawah. Satu rute publik (`/`) plus `default`
+ * untuk tautan tanpa halaman sendiri.
  */
-const PAPER: [number, number, number] = [242, 241, 236];
-const TABLE: [number, number, number] = [23, 24, 26];
-const MUTED: [number, number, number] = [160, 156, 148];
-const SELECT: [number, number, number] = [201, 48, 43];
+const IVORY: [number, number, number] = [247, 243, 238];
+const CHARCOAL: [number, number, number] = [30, 29, 27];
+const MUTED: [number, number, number] = [207, 198, 186];
+const CHAMPAGNE: [number, number, number] = [182, 155, 114];
 
 const pages: Record<string, { title: string; description: string }> = {
-  default: { title: siteConfig.name, description: copy.sheet.description },
-  [ogSlugFromPath('/')]: { title: copy.sheet.title, description: copy.sheet.description },
+  default: { title: siteConfig.name, description: pageCopy.meta.description },
+  [ogSlugFromPath('/')]: { title: pageCopy.meta.title, description: pageCopy.meta.description },
 };
 
 export const { getStaticPaths, GET } = await OGImageRoute({
@@ -49,14 +49,14 @@ export const { getStaticPaths, GET } = await OGImageRoute({
   getImageOptions: (_path, page) => ({
     title: page.title,
     description: page.description,
-    bgColor: TABLE,
-    border: { color: SELECT, width: 18, side: 'block-end' },
+    bgColor: CHARCOAL,
+    border: { color: CHAMPAGNE, width: 14, side: 'block-end' },
     padding: 88,
     font: {
       title: {
         size: 64,
         weight: 'Bold',
-        color: PAPER,
+        color: IVORY,
         families: ['Inter'],
       },
       description: {
@@ -66,9 +66,10 @@ export const { getStaticPaths, GET } = await OGImageRoute({
         families: ['Inter'],
       },
     },
-    // OG card dirender dengan TTF yang tersedia di node_modules (canvaskit tidak
-    // membaca woff2). Interface web tetap Source Serif 4; lihat docs/ASSET-MANIFEST.md.
-    // Inter OFL (SIL Open Font License). Font proprietary tidak dikomit ke repo.
+    // Kartu OG dirender dari TTF yang ada di node_modules (canvaskit tidak
+    // membaca woff2), jadi Inter dipakai di sini sementara halaman memakai
+    // Cormorant Garamond + Manrope. Inter berlisensi OFL (SIL Open Font
+    // License); tidak ada font proprietary yang dikomit ke repo.
     fonts: FONT_FILES.map(resolveFont),
   }),
 });

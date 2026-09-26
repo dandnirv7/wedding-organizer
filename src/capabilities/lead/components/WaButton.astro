@@ -1,17 +1,23 @@
 ---
 /**
- * WaButton — aksi WhatsApp LEAD. Penomoran hanya dari konfigurasi proyek;
- * tanpa nomor, komponen tidak merender apa pun (tidak pernah href="#").
- * Styling visual milik design system halaman lewat kelas `.select-line`.
+ * WaButton — aksi WhatsApp LEAD.
+ *
+ * Nomor hanya dari konfigurasi proyek; tanpa nomor, komponen tidak merender
+ * apa pun (tidak pernah `href="#"`). Kelas visual (`btn--*`) dipasok design
+ * system halaman, jadi kemampuan lead ini tetap generik.
  */
 import { buildWaLink } from '../lib/whatsapp';
+import type { LeadLocation } from '../lib/track';
 
 export interface Props {
   text?: string;
   message?: string;
   number?: string;
-  variant?: 'line' | 'quiet' | 'floating';
+  variant?: 'primary' | 'ghost' | 'onink' | 'floating';
+  /** Sumber klik, supaya satu event tidak ambigu lintas blok. */
+  location?: LeadLocation;
   class?: string;
+  slot?: string;
   ariaLabel?: string;
 }
 
@@ -19,43 +25,44 @@ const {
   text = 'Hubungi via WhatsApp',
   message = 'Halo, saya ingin bertanya tentang layanan kalian.',
   number,
-  variant = 'line',
+  variant = 'primary',
+  location = 'hero',
   class: className = '',
+  slot: slotName,
   ariaLabel = 'Hubungi tim kami via WhatsApp',
 } = Astro.props;
 
 const waUrl = buildWaLink({ number, text: message });
 const hasNumber = waUrl !== '#';
+const buttonClass = variant === 'onink' ? 'btn btn--on-ink' : variant === 'ghost' ? 'btn btn--ghost' : 'btn btn--primary';
 ---
 
 {
   hasNumber &&
     (variant === 'floating' ? (
-      <aside
-        aria-label="Aksi cepat kontak"
-        class="field-table fixed inset-x-0 bottom-0 z-50 border-t border-hairline-table md:hidden"
-      >
-        <div class="sheet flex justify-center py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <a
-            href={waUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={ariaLabel}
-            data-event="lead_whatsapp_click"
-            class:list={['select-line', 'select-line--quiet', className]}
-          >
-            <span>{text}</span>
-          </a>
-        </div>
-      </aside>
+      <div class="cta-bar" aria-label="Aksi cepat kontak">
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={ariaLabel}
+          data-event="whatsapp_click"
+          data-wa-location={location}
+          class:list={[buttonClass, 'w-full', className]}
+        >
+          <span>{text}</span>
+        </a>
+      </div>
     ) : (
       <a
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={ariaLabel}
-        data-event="lead_whatsapp_click"
-        class:list={['select-line', { 'select-line--quiet': variant === 'quiet' }, className]}
+        data-event="whatsapp_click"
+        data-wa-location={location}
+        slot={slotName}
+        class:list={[buttonClass, className]}
       >
         <span>{text}</span>
       </a>
@@ -63,16 +70,17 @@ const hasNumber = waUrl !== '#';
 }
 
 <script>
-  import { track } from '../lib/track';
+  import { track, type LeadLocation } from '../lib/track';
 
   // Satu listener terdelegasi per halaman; guard membuat instance tambahan no-op.
-  if (!(window as { __waTrackBound?: boolean }).__waTrackBound) {
-    (window as { __waTrackBound?: boolean }).__waTrackBound = true;
-    document.addEventListener('click', (e) => {
-      const target = e.target;
+  if (!window.__waTrackBound) {
+    window.__waTrackBound = true;
+    document.addEventListener('click', (event) => {
+      const target = event.target;
       if (!(target instanceof Element)) return;
-      if (!target.closest('[data-event="lead_whatsapp_click"]')) return;
-      track('lead_whatsapp_click');
+      const trigger = target.closest<HTMLElement>('[data-event="whatsapp_click"]');
+      if (!trigger) return;
+      track('whatsapp_click', { location: (trigger.dataset.waLocation ?? 'unknown') as LeadLocation });
     });
   }
 </script>

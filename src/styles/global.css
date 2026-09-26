@@ -1,1031 +1,1040 @@
-@import "tailwindcss";
+/* ------------------------------------------------------------------
+   Wedding Organizer — editorial design system (docs/DESIGN.md)
+   Ivory ground, charcoal ink, beige secondary surface, champagne accent.
+   Cormorant Garamond carries emotion, Manrope carries clarity.
+   Structure of `/` is the Ruang Ganti device: a claim on one side of a
+   champagne axis, its evidence on the other.
+   ------------------------------------------------------------------ */
+@import 'tailwindcss';
 
-/* ==========================================================================
-   THE SELECTS TABLE — Meja Seleksi
-   Paper reads; the dark table is for looking. No gradient between them.
-   Radius is zero everywhere except the SVG selection circle.
-   ========================================================================== */
 @theme {
-  /* Grounds */
-  --color-paper: #f2f1ec;
-  --color-paper-deep: #e7e5dd;
-  --color-table: #17181a;
-  --color-table-deep: #101113;
+  /* Grounds — DESIGN.md §4 */
+  --color-ivory: #f7f3ee;
+  --color-ivory-deep: #efe7dd;
+  --color-beige: #e8ded2;
+  --color-beige-deep: #ded2c2;
+  --color-charcoal: #1e1d1b;
+  --color-charcoal-deep: #161514;
+  --color-white: #ffffff;
 
-  /* Ink */
-  --color-ink: #1a1c1e;
-  --color-ink-muted: #5c6066;
-  --color-table-ink: #e9e7e1;
-  --color-table-muted: #a09c94;
+  /* Ink — warm-toned, never neutral gray on a warm ground */
+  --color-ink: #1e1d1b;
+  --color-ink-soft: #4c4842;
+  --color-ink-mute: #6b655d;
+  --color-on-ink: #f7f3ee;
+  --color-on-ink-soft: #cfc6ba;
+  --color-on-ink-mute: #a89e90;
 
-  /* Lines + the single accent */
-  --color-hairline: #d9d6ce;
-  --color-hairline-table: #2a2c30;
-  --color-select: #c9302b;
-  --color-film: #b8935a;
+  /* Lines */
+  --color-hairline: #ddd3c6;
+  --color-hairline-strong: #c9bcab;
+  --color-hairline-ink: #3a3631;
 
-  /* Type: one serif for words, one narrow grotesque for data */
-  --font-reading: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
-  --font-data: "Archivo Narrow", "Arial Narrow", system-ui, sans-serif;
+  /* Accent — champagne is a line and a marker; words stay ink (§4.5) */
+  --color-champagne: #b69b72;
+  --color-champagne-deep: #96794f;
 
-  --text-lede: 1.0625rem;
-  --text-lede-lg: 1.125rem;
-  --text-strip: 0.75rem;
-  --text-section: clamp(1.75rem, 4.5vw, 2.75rem);
-  --text-display: clamp(2.4rem, 7.5vw, 5rem);
+  /* Type — §5 */
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Manrope', ui-sans-serif, system-ui, sans-serif;
 
-  --leading-reading: 1.7;
-  --leading-tight: 1.08;
-  --tracking-strip: 0.14em;
-  --tracking-folio: 0.22em;
+  /* Fluid scale, mobile (§6.3) → desktop (§6.1) */
+  --text-display: clamp(2.75rem, 8.2vw, 4.5rem);
+  --text-section: clamp(2.25rem, 5vw, 3.5rem);
+  --text-item: clamp(1.75rem, 2.9vw, 2.25rem);
+  --text-lead: clamp(1.375rem, 1.9vw, 1.5rem);
+  --text-lede: clamp(1.0625rem, 1.35vw, 1.25rem);
+  --text-body: 1rem;
+  --text-meta: 0.875rem;
+  --text-eyebrow: 0.75rem;
 
-  --max-w-measure: 66ch;
-  --max-w-sheet: 1240px;
-}
+  --leading-display: 1.02;
+  --leading-tight: 1.1;
+  --leading-reading: 1.6;
 
-/* ---- Palet alternatif -----------------------------------------------------
-   Dipakai oleh PalettePicker lewat `<html data-palette="…">`. Struktur perannya
-   tidak berubah — dua bidang, satu tanda seleksi, satu pita film — hanya hue yang
-   berpindah. Kontras dijaga sebanding default: ≥4.5:1 teks di atas kertas,
-   ≥3:1 tanda seleksi di atas meja. `meja-seleksi` mengulang nilai @theme supaya
-   barisnya di picker tetap menunjuk warna aslinya. Nilainya ada di sini saja;
-   swatch picker membaca variabel yang sama.
-   ========================================================================== */
-@layer base {
-  /* Meja Seleksi — nilai @theme diulang di sini supaya baris pertamanya di
-     picker tetap menunjuk warna aslinya setelah palet lain dipilih. */
-  [data-palette='meja-seleksi'] {
-    --color-paper: #f2f1ec;
-    --color-paper-deep: #e7e5dd;
-    --color-table: #17181a;
-    --color-table-deep: #101113;
-    --color-ink: #1a1c1e;
-    --color-ink-muted: #5c6066;
-    --color-table-ink: #e9e7e1;
-    --color-table-muted: #a09c94;
-    --color-hairline: #d9d6ce;
-    --color-hairline-table: #2a2c30;
-    --color-select: #c9302b;
-    --color-film: #b8935a;
-  }
+  /* Layout — §10 */
+  --width-page: 1280px;
+  --width-measure: 66ch;
+  --gutter-page: clamp(1.25rem, 4vw, 4rem);
+  --gap-column: clamp(1.5rem, 3.5vw, 3.5rem);
 
-  /* Abu Sage — akad taman, dekorasi hijau; aksi tanah liat. */
-  [data-palette='abu-sage'] {
-    --color-paper: #eceee7;
-    --color-paper-deep: #dfe2d8;
-    --color-table: #191d18;
-    --color-table-deep: #121510;
-    --color-ink: #22271f;
-    --color-ink-muted: #5f6659;
-    --color-table-ink: #e6e9df;
-    --color-table-muted: #99a192;
-    --color-hairline: #d2d7ca;
-    --color-hairline-table: #2e352c;
-    --color-select: #b4472f;
-    --color-film: #9c8f5f;
-  }
+  /* Section rhythm — §9 */
+  --pad-section: clamp(4.5rem, 9vw, 7.5rem);
+  --pad-major: clamp(6rem, 10vw, 10rem);
+  --pad-compact: clamp(3.5rem, 5vw, 5rem);
 
-  /* Kabut Slate — ballroom kota, resepsi malam; aksi tinta biru. */
-  [data-palette='kabut-slate'] {
-    --color-paper: #eceef1;
-    --color-paper-deep: #dee2e7;
-    --color-table: #151b21;
-    --color-table-deep: #0e1318;
-    --color-ink: #1d242b;
-    --color-ink-muted: #5c6672;
-    --color-table-ink: #e6eaee;
-    --color-table-muted: #96a1ab;
-    --color-hairline: #d3d8de;
-    --color-hairline-table: #272f37;
-    --color-select: #2b6f9f;
-    --color-film: #93a3b6;
-  }
-
-  /* Sepia Malam — resepsi klasik, cahaya hangat; aksi wine. */
-  [data-palette='sepia-malam'] {
-    --color-paper: #f3efe9;
-    --color-paper-deep: #e8e1d7;
-    --color-table: #1d1712;
-    --color-table-deep: #15100c;
-    --color-ink: #2a221c;
-    --color-ink-muted: #6b5d52;
-    --color-table-ink: #efe7de;
-    --color-table-muted: #a4948a;
-    --color-hairline: #ded4c8;
-    --color-hairline-table: #342a23;
-    --color-select: #ad4354;
-    --color-film: #c08a4e;
-  }
+  /* Radius — §13, restrained */
+  --radius-plate: 2px;
+  --radius-card: 4px;
+  --radius-control: 2px;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    background-color: var(--color-paper);
-    color: var(--color-ink);
-    font-family: var(--font-reading);
-    font-optical-sizing: auto;
+    scroll-padding-block: 6rem;
+    background-color: var(--color-ivory);
     -webkit-text-size-adjust: 100%;
-  }
-
-  body {
     text-rendering: optimizeLegibility;
-  }
-
-  h1,
-  h2,
-  h3,
-  figure,
-  blockquote,
-  p,
-  ol,
-  ul {
-    margin: 0;
-  }
-
-  ::selection {
-    background: var(--color-select);
-    color: var(--color-paper);
-  }
-
-  :focus-visible {
-    outline: 2px solid var(--color-select);
-    outline-offset: 3px;
-  }
-
-  /* Browser surfaces the page never draws: caret, scrollbar */
-  caret-color: var(--color-select);
-
-  @media (prefers-reduced-motion: no-preference) {
-    html {
-      scrollbar-width: thin;
-      scrollbar-color: var(--color-hairline) transparent;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
     }
+  }
 
-    *,
-    *::before,
-    *::after {
-      animation-duration: 1ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 1ms !important;
-      animation-timeline: auto !important;
-    }
+  body {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-reading);
+    color: var(--color-ink);
+    font-weight: 400;
+    font-feature-settings: 'kern' 1, 'liga' 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    text-wrap: balance;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Browser surfaces belong to the design too. */
+  ::selection {
+    background: var(--color-beige-deep);
+    color: var(--color-charcoal);
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: var(--color-champagne-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-charcoal);
+    outline-offset: 3px;
+    border-radius: 1px;
+  }
+
+  .field-ink :focus-visible {
+    outline-color: var(--color-champagne);
+  }
+
+  a:not([class]) {
+    text-decoration-color: var(--color-champagne);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.22em;
+  }
+
+  ::-webkit-scrollbar {
+    inline-size: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-ivory-deep);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-hairline-strong);
+    border: 3px solid var(--color-ivory-deep);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-champagne);
   }
 }
 
 @layer components {
-  /* ---- Fields ----------------------------------------------------------- */
-  .field-paper {
-    background-color: var(--color-paper);
+  /* ---------------------------------------------------------- structure */
+  .wrap {
+    margin-inline: auto;
+    max-inline-size: var(--width-page);
+    padding-inline: var(--gutter-page);
+  }
+
+  .field-ivory {
+    background-color: var(--color-ivory);
     color: var(--color-ink);
   }
 
-  .field-table {
-    background-color: var(--color-table);
-    color: var(--color-table-ink);
-    scrollbar-color: var(--color-hairline-table) transparent;
-
-    ::selection {
-      background: var(--color-table-ink);
-      color: var(--color-table);
-    }
+  .field-beige {
+    background-color: var(--color-beige);
+    color: var(--color-charcoal);
   }
 
-  .sheet {
-    max-width: var(--max-w-sheet);
-    margin-inline: auto;
-    padding-inline: clamp(1.25rem, 4vw, 2rem);
+  .field-ink {
+    background-color: var(--color-charcoal);
+    color: var(--color-on-ink);
   }
 
-  /* One rhythm: more air above a section heading than below it. */
-  .sheet-block {
-    padding-block: clamp(4.5rem, 11vw, 8.5rem) clamp(3.5rem, 8vw, 6rem);
+  .band-section {
+    padding-block: var(--pad-section);
   }
 
-  /* ---- Data type -------------------------------------------------------- */
-  .strip {
-    font-family: var(--font-data);
-    font-size: var(--text-strip);
-    font-weight: 600;
-    line-height: 1.4;
-    letter-spacing: var(--tracking-strip);
-    text-transform: uppercase;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-ink-muted);
+  .band-major {
+    padding-block: var(--pad-major);
   }
 
-  .field-table .strip {
-    color: var(--color-table-muted);
+  .band-compact {
+    padding-block: var(--pad-compact);
   }
 
-  .folio {
-    font-family: var(--font-data);
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: var(--tracking-folio);
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-  }
-
-  .field-table .folio {
-    color: var(--color-table-muted);
-  }
-
-  /* ---- Reading type ----------------------------------------------------- */
-  .display {
+  /* ------------------------------------------------------------ type */
+  .t-display {
     font-size: var(--text-display);
-    font-weight: 600;
-    line-height: var(--leading-tight);
-    letter-spacing: -0.02em;
-    max-width: 16ch;
-    text-wrap: balance;
+    line-height: var(--leading-display);
+    font-family: var(--font-display);
+    font-weight: 500;
   }
 
-  .h-section {
+  .t-section {
     font-size: var(--text-section);
-    font-weight: 600;
-    line-height: 1.12;
-    letter-spacing: -0.015em;
-    max-width: 24ch;
-    text-wrap: balance;
+    line-height: 1.06;
+    font-family: var(--font-display);
+    font-weight: 500;
   }
 
-  .h-item {
-    font-size: 1.0625rem;
-    font-weight: 600;
-    line-height: 1.35;
+  .t-item {
+    font-size: var(--text-item);
+    line-height: var(--leading-tight);
+    font-family: var(--font-display);
+    font-weight: 500;
+  }
+
+  .t-lead {
+    font-size: var(--text-lead);
+    line-height: 1.25;
+    font-family: var(--font-display);
+    font-weight: 500;
   }
 
   .lede {
     font-size: var(--text-lede);
+    line-height: 1.5;
+    max-inline-size: 62ch;
+    color: var(--color-ink-soft);
+  }
+
+  .prose {
+    font-size: var(--text-body);
     line-height: var(--leading-reading);
-    max-width: var(--max-w-measure);
-    text-wrap: pretty;
-
-    @media (min-width: 768px) {
-      font-size: var(--text-lede-lg);
-    }
+    max-inline-size: var(--width-measure);
+    color: var(--color-ink-soft);
   }
 
-  .hairline-top {
-    border-top: 1px solid var(--color-hairline);
+  .lede + .lede,
+  .prose + .prose {
+    margin-block-start: 1.25rem;
   }
 
-  .field-table .hairline-top {
-    border-top-color: var(--color-hairline-table);
+  .field-ink .lede,
+  .field-ink .prose {
+    color: var(--color-on-ink-soft);
   }
 
-  /* ---- The one action vocabulary: a line + a red selection mark --------- */
-  .select-line {
-    display: inline-flex;
+  /* Eyebrow: the words carry ink, the rule carries champagne (§4.5 + §28.1). */
+  .eyebrow {
+    display: flex;
     align-items: center;
     gap: 0.75rem;
-    min-height: 44px;
-    font-family: var(--font-data);
-    font-size: 0.9375rem;
-    font-weight: 700;
-    letter-spacing: var(--tracking-strip);
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: currentColor;
-    text-decoration: none;
-    border-bottom: 2px solid transparent;
-    transition: border-color 220ms cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 220ms ease;
-
-    &:hover,
-    &:focus-visible {
-      border-bottom-color: var(--color-select);
-    }
-
-    & svg {
-      flex: none;
-      overflow: visible;
-    }
-
-    & .ring {
-      stroke: var(--color-select);
-      stroke-width: 3;
-      fill: none;
-      stroke-dasharray: 118;
-      stroke-dashoffset: 0;
-      transform-origin: center;
-      transition: stroke-dashoffset 420ms cubic-bezier(0.16, 1, 0.3, 1),
-        transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* The authored moment: the pencil circle closes as the row is entered. */
-    &:hover .ring,
-    &:focus-visible .ring {
-      stroke-dashoffset: -118;
-      transform: rotate(-8deg);
-    }
+    line-height: 1.4;
+    color: var(--color-ink-mute);
   }
 
-  .select-line--quiet {
-    font-size: 0.8125rem;
-    min-height: 40px;
+  .eyebrow::before {
+    content: '';
+    flex: none;
+    inline-size: clamp(1.75rem, 4vw, 3.25rem);
+    block-size: 1px;
+    background: var(--color-champagne);
   }
 
-  /* ---- Frames ----------------------------------------------------------- */
-  .plate {
-    display: block;
-    border: 1px solid var(--color-hairline);
-    background-color: var(--color-paper-deep);
+  .field-ink .eyebrow {
+    color: var(--color-on-ink-soft);
   }
 
-  .field-table .plate {
-    border-color: var(--color-hairline-table);
-    background-color: var(--color-table-deep);
-  }
-
-  .plate-media {
-    position: relative;
-    width: 100%;
-    overflow: hidden;
-
-    & img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-  }
-
-  .plate-empty {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-content: center;
-    justify-items: center;
-    gap: 0.875rem;
-    padding-inline: 1.25rem;
-    text-align: center;
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in oklab, var(--color-hairline) 55%, transparent) 0 1px,
-      transparent 1px 11px
-    );
-  }
-
-  .field-table .plate-empty {
-    background-image: repeating-linear-gradient(
-      -45deg,
-      color-mix(in oklab, var(--color-hairline-table) 90%, transparent) 0 1px,
-      transparent 1px 11px
-    );
-  }
-
-  .plate-caption {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.625rem 0.875rem;
-    border-top: 1px solid var(--color-hairline);
-  }
-
-  .field-table .plate-caption {
-    border-top-color: var(--color-hairline-table);
-  }
-
-  /* Film edge: the only place the faded amber is printed. */
-  .edge-band {
-    display: flex;
-    align-items: center;
-    gap: clamp(1rem, 3vw, 2rem);
-    overflow: hidden;
-    padding-block: 0.5rem;
-    border-block: 1px solid var(--color-hairline-table);
-    background-color: var(--color-table-deep);
-    color: var(--color-film);
-  }
-
-  .edge-perf {
-    display: flex;
-    gap: 0.375rem;
-
-    & i {
-      display: block;
-      width: 0.5rem;
-      height: 0.4375rem;
-      background-color: color-mix(in oklab, var(--color-film) 22%, transparent);
-    }
-  }
-
-  /* ---- Ledger (Services) ------------------------------------------------ */
-  .ledger {
-    display: grid;
-    gap: clamp(2rem, 5vw, 3.5rem);
-
-    @media (min-width: 1024px) {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-      align-items: start;
-    }
-  }
-
-  .ledger-row {
-    display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr);
-    gap: 0.25rem 1rem;
-    align-items: baseline;
-    padding-block: clamp(1.25rem, 3vw, 1.75rem);
-    border-top: 1px solid var(--color-hairline);
-    transition: background-color 260ms ease;
-
-    &:last-of-type {
-      border-bottom: 1px solid var(--color-hairline);
-    }
-
-    &:hover,
-    &:focus-within {
-      background-color: color-mix(in oklab, var(--color-paper-deep) 70%, transparent);
-    }
-  }
-
-  .ledger-view {
-    position: relative;
-    aspect-ratio: 4 / 5;
-    max-height: 68vh;
-
-    @media (max-width: 1023px) {
-      display: none;
-    }
-  }
-
-  .ledger-view > * {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transform: translateY(0.5rem);
-    transition: opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
-      transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .ledger-view > :first-child {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* The rows drive the plate; :has() keeps it JavaScript-free. */
-  .ledger:has(.ledger-row:nth-child(2):hover) .ledger-view > :nth-child(2),
-  .ledger:has(.ledger-row:nth-child(2):focus-within) .ledger-view > :nth-child(2),
-  .ledger:has(.ledger-row:nth-child(3):hover) .ledger-view > :nth-child(3),
-  .ledger:has(.ledger-row:nth-child(3):focus-within) .ledger-view > :nth-child(3),
-  .ledger:has(.ledger-row:nth-child(4):hover) .ledger-view > :nth-child(4),
-  .ledger:has(.ledger-row:nth-child(4):focus-within) .ledger-view > :nth-child(4),
-  .ledger:has(.ledger-row:nth-child(5):hover) .ledger-view > :nth-child(5),
-  .ledger:has(.ledger-row:nth-child(5):focus-within) .ledger-view > :nth-child(5),
-  .ledger:has(.ledger-row:nth-child(6):hover) .ledger-view > :nth-child(6),
-  .ledger:has(.ledger-row:nth-child(6):focus-within) .ledger-view > :nth-child(6) {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* On paper: a selected row prints its number in red. */
-  .ledger-row .ledger-no {
-    color: var(--color-ink-muted);
-    transition: color 220ms ease;
-  }
-
-  .ledger-row:hover .ledger-no,
-  .ledger-row:focus-within .ledger-no {
-    color: var(--color-select);
-  }
-
-  /* Mobile: the plate rides inside its own row, inline. */
-  .ledger-inline {
-    @media (min-width: 1024px) {
-      display: none;
-    }
-  }
-
-  /* ---- FAQ (native disclosure, no script) ------------------------------- */
-  .faq-item {
-    border-top: 1px solid var(--color-hairline);
-
-    &:last-of-type {
-      border-bottom: 1px solid var(--color-hairline);
-    }
-
-    & summary {
-      display: grid;
-      grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
-      align-items: baseline;
-      gap: 0.25rem 1rem;
-      min-height: 44px;
-      padding-block: 1.25rem;
-      cursor: pointer;
-      list-style: none;
-
-      &::-webkit-details-marker {
-        display: none;
-      }
-    }
-
-    & summary:hover .faq-q,
-    & summary:focus-visible .faq-q {
-      text-decoration: underline;
-      text-decoration-color: var(--color-select);
-      text-decoration-thickness: 2px;
-      text-underline-offset: 0.35em;
-    }
-
-    & .faq-mark::after {
-      content: "+";
-    }
-
-    &[open] .faq-mark::after {
-      content: "\2212";
-    }
-
-    & p {
-      padding-block-end: 1.5rem;
-    }
-  }
-
-  /* ---- Story strip: asymmetric, not a uniform grid ---------------------- */
-  .story-strip {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(0.75rem, 2vw, 1.25rem);
-    align-items: start;
-
-    @media (min-width: 768px) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    @media (min-width: 1200px) {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-    }
-
-    & > :nth-child(2) {
-      @media (min-width: 768px) {
-        margin-top: clamp(2rem, 6vw, 5rem);
-      }
-    }
-
-    & > :nth-child(4) {
-      @media (min-width: 1200px) {
-        margin-top: clamp(2rem, 6vw, 5rem);
-      }
-    }
-  }
-
-  /* ---- Nav: folio tepi lembar + sheet indeks dari kanan ---------------- */
-  /* Bidang meja solid: di atas hero warnanya sama sehingga terbaca menyatu,
-     lalu hairline memisahkannya sendiri saat bertemu bidang kertas. */
-  .sheet-nav {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    background-color: var(--color-table);
-    border-bottom: 1px solid var(--color-hairline-table);
-  }
-
-  .nav-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    min-height: 44px;
-    padding-inline: 0.25rem;
-    background: none;
-    border: 0;
-    color: var(--color-table-ink);
-    cursor: pointer;
-  }
-
-  /* Tiga helai hairline: ikon digambar, bukan glyph unicode. */
-  .nav-bars {
-    display: grid;
-    gap: 4px;
-    inline-size: 1.125rem;
-
-    & i {
-      display: block;
-      block-size: 1px;
-      inline-size: 100%;
-      background-color: currentColor;
-      transition: inline-size 200ms ease;
-    }
-
-    & i:nth-child(2) {
-      inline-size: 70%;
-    }
-  }
-
-  .nav-toggle:active .nav-bars i:nth-child(2) {
-    inline-size: 0.5rem;
-  }
-
-  .nav-sheet {
-    position: fixed;
-    inset: 0 0 0 auto;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    border-left: 1px solid var(--color-hairline-table);
-    block-size: 100dvh;
-    inline-size: min(20rem, 86vw);
-    max-inline-size: none;
-    max-block-size: none;
-    overflow-y: auto;
-    background-color: var(--color-table);
-    color: var(--color-table-ink);
-    translate: 100% 0;
-    transition:
-      translate 420ms cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 200ms linear,
-      display 420ms allow-discrete,
-      overlay 420ms allow-discrete;
-
-    &::backdrop {
-      background-color: rgb(5 6 7 / 0.58);
-      opacity: 0;
-      transition: opacity 320ms ease, overlay 320ms allow-discrete;
-    }
-
-    &:popover-open {
-      translate: 0 0;
-      padding-block: 1rem max(1.5rem, env(safe-area-inset-bottom));
-      padding-inline: clamp(1.25rem, 6vw, 2rem);
-
-      &::backdrop {
-        opacity: 1;
-      }
-    }
-  }
-
-  @starting-style {
-    .nav-sheet:popover-open {
-      translate: 100% 0;
-    }
-
-    .nav-sheet:popover-open::backdrop {
-      opacity: 0;
-    }
-  }
-
-  /* Sheet di atas konten: kunci scroll halaman selama terbuka. */
-  body:has(.nav-sheet:popover-open) {
-    overflow: clip;
-  }
-
-  .nav-row {
-    display: grid;
-    grid-template-columns: 2.75rem minmax(0, 1fr);
-    align-items: center;
-    gap: 0.5rem 1rem;
-    min-height: 56px;
-    border-top: 1px solid var(--color-hairline-table);
-    font-family: var(--font-data);
-    font-size: 0.9375rem;
-    font-weight: 700;
-    letter-spacing: var(--tracking-strip);
-    text-transform: uppercase;
-    color: var(--color-table-ink);
-
-    &:last-of-type {
-      border-bottom: 1px solid var(--color-hairline-table);
-    }
-
-    &:hover .nav-no,
-    &:focus-visible .nav-no {
-      color: var(--color-select);
-    }
-  }
-
-  .nav-no {
-    font-family: var(--font-data);
-    font-size: var(--text-strip);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-table-muted);
-    transition: color 200ms ease;
-  }
-
-  .nav-close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    inline-size: 44px;
-    block-size: 44px;
-    margin-inline-end: -0.625rem;
-    background: none;
-    border: 0;
-    color: var(--color-table-ink);
-    cursor: pointer;
-
-    & svg {
-      stroke: currentColor;
-      stroke-width: 1.5;
-      transition: stroke 200ms ease;
-    }
-
-    &:hover svg,
-    &:focus-visible svg {
-      stroke: var(--color-select);
-    }
-  }
-
-  /* Browser tanpa Popover API: navigasi tetap ada, sebagai baris inline. */
-  @supports not selector(:popover-open) {
-    .nav-toggle,
-    .nav-sheet {
-      display: none;
-    }
-
-    .nav-fallback {
-      display: flex !important;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .nav-sheet,
-    .nav-sheet::backdrop {
-      transition: none;
-    }
-  }
-
-  /* ---- Reveal: a folio strip wipe, content visible by default ----------- */
-  @media (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: view()) {
-      .reveal {
-        animation: folio-wipe linear both;
-        animation-timeline: view();
-        animation-range: entry 2% entry 34%;
-      }
-    }
-  }
-
-  @keyframes folio-wipe {
-    from {
-      opacity: 0;
-      transform: translateY(1.25rem);
-      clip-path: inset(0 0 100% 0);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-      clip-path: inset(0 0 0 0);
-    }
-  }
-
-  /* Mobile sticky action reserves its own space so it never covers a caption */
-  .sticky-reserve {
-    @media (max-width: 767px) {
-      padding-block-end: 5.5rem;
-    }
-  }
-
-  /* ---- Palette picker -----------------------------------------------------
-     Tab folio melayang di kanan-bawah + indeks palet sebagai sheet. Punya
-     posisi sendiri: hanya alat pratinjuan untuk memilih arah warna, jadi ia
-     tidak boleh meniru konten halaman — tetap bidang meja, hairline, radius nol,
-     tanpa bayangan.
-     -------------------------------------------------------------------------- */
-  .pal-dock {
-    --pal-gap: clamp(0.75rem, 3vw, 1.5rem);
-    /* Tinggi bar aksi WhatsApp melayang di mobile (md:hidden). Harus 0px,
-       bukan 0: calc() menolak <number> yang dijumlahkan dengan <length>. */
-    --pal-rise: 0px;
-    height: 0;
-
-    @media (max-width: 767px) {
-      --pal-rise: 4.25rem;
-    }
-  }
-
-  .pal-trigger {
-    position: fixed;
-    z-index: 45;
-    right: var(--pal-gap);
-    bottom: calc(var(--pal-gap) + var(--pal-rise));
-    display: inline-flex;
-    align-items: center;
-    gap: 0.625rem;
-    min-height: 44px;
-    padding-inline: 0.75rem;
-    background-color: var(--color-table);
-    border: 1px solid var(--color-hairline-table);
-    color: var(--color-table-ink);
-    font-family: var(--font-data);
-    font-size: var(--text-strip);
-    font-weight: 700;
-    letter-spacing: var(--tracking-strip);
-    text-transform: uppercase;
-    cursor: pointer;
-
-    &:hover .pal-trigger-label,
-    &:focus-visible .pal-trigger-label {
-      color: var(--color-select);
-    }
-  }
-
-  /* Titik trigger mengikuti palet aktif: umpan balik tanpa teks. */
-  .pal-dots {
-    display: flex;
-    gap: 3px;
-
-    & i {
-      display: block;
-      inline-size: 7px;
-      block-size: 14px;
-    }
-
-    & i:nth-child(1) {
-      background-color: var(--color-paper);
-    }
-
-    & i:nth-child(2) {
-      background-color: var(--color-table-muted);
-    }
-
-    & i:nth-child(3) {
-      background-color: var(--color-select);
-    }
-  }
-
-  /* Membawa kelas .field-table dari markup: warna bidang + muting tipenya. */
-  .pal-sheet {
-    position: fixed;
-    inset: auto var(--pal-gap) calc(var(--pal-gap) + var(--pal-rise) + 3.25rem) auto;
-    margin: 0;
-    padding: 0.875rem clamp(1rem, 3vw, 1.25rem) 1.125rem;
-    border: 1px solid var(--color-hairline-table);
-    inline-size: min(24rem, calc(100vw - 2 * var(--pal-gap)));
-    max-inline-size: none;
-    max-block-size: min(72dvh, 36rem);
-    overflow-y: auto;
-    opacity: 0;
-    translate: 0 0.75rem;
-    transition:
-      translate 360ms cubic-bezier(0.16, 1, 0.3, 1),
-      opacity 200ms linear,
-      display 360ms allow-discrete,
-      overlay 360ms allow-discrete;
-
-    &:popover-open {
-      opacity: 1;
-      translate: 0 0;
-    }
-  }
-
-  @starting-style {
-    .pal-sheet:popover-open {
-      opacity: 0;
-      translate: 0 0.75rem;
-    }
-  }
-
-  .pal-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-block-end: 0.5rem;
-  }
-
-  /* Kalimat, bukan label: lepas dari uppercase .strip supaya tetap terbaca. */
-  .pal-foot {
-    margin-block-start: 0.875rem;
-    padding-block-start: 0.625rem;
-    border-top: 1px solid var(--color-hairline-table);
-    font-family: var(--font-data);
-    font-size: 0.75rem;
+  .meta {
+    font-size: var(--text-meta);
     line-height: 1.5;
-    color: var(--color-table-muted);
+    color: var(--color-ink-mute);
+    letter-spacing: 0.01em;
   }
 
-  .pal-field {
+  .figure {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  /* --------------------------------------------------------- controls */
+  .btn {
+    --btn-pad: clamp(1.5rem, 2.4vw, 2rem);
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    min-block-size: 50px;
+    padding-inline: var(--btn-pad);
+    padding-block: 0.85rem;
+    border-radius: var(--radius-control);
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+    transition:
+      background-color 220ms ease,
+      color 220ms ease,
+      border-color 220ms ease;
+  }
+
+  /* Narrow phones: the label gets the whole row instead of wrapping mid-button. */
+  @media (width < 30rem) {
+    .btn {
+      inline-size: 100%;
+      line-height: 1.35;
+    }
+  }
+
+  .btn::after {
+    content: '→';
+    font-size: 1.05rem;
+    letter-spacing: 0;
+    translate: 0 -1px;
+    transition: translate 220ms ease;
+  }
+
+  .btn:hover::after {
+    translate: 4px -1px;
+  }
+
+  .btn--primary {
+    background: var(--color-charcoal);
+    color: var(--color-white);
+  }
+
+  .btn--primary:hover {
+    background: #2e2b27;
+  }
+
+  .btn--primary:active {
+    background: var(--color-charcoal-deep);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border-color: var(--color-hairline-strong);
+    min-block-size: 44px;
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-weight: 500;
+    font-size: 0.9375rem;
+  }
+
+  .btn--ghost:hover {
+    border-color: var(--color-charcoal);
+    background: var(--color-ivory-deep);
+  }
+
+  .btn--on-ink {
+    background: var(--color-ivory);
+    color: var(--color-charcoal);
+  }
+
+  .btn--on-ink:hover {
+    background: var(--color-white);
+  }
+
+  /* A text-level action: a champagne underline that thickens. */
+  .link-quiet {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    text-decoration-line: underline;
+    text-decoration-color: var(--color-champagne);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.3em;
+    transition: text-decoration-color 220ms ease;
+  }
+
+  .link-quiet:hover {
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--color-charcoal);
+  }
+
+  .field-ink .link-quiet {
+    color: var(--color-on-ink);
+  }
+
+  /* ------------------------------------------------------- media plate */
+  .plate {
     margin: 0;
-    padding: 0;
-    border: 0;
+  }
+
+  .plate__media {
+    position: relative;
+    inline-size: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-plate);
+    background: var(--color-ivory-deep);
+    box-shadow: inset 0 0 0 1px var(--color-hairline);
+  }
+
+  .plate__media img,
+  .plate__media video {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  /* Empty slot: labelled, final-sized, never a stand-in photo. The two
+     diagonals are the plate's own registration marks, not a pattern. */
+  .plate__empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 0.35rem;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+    background-color: var(--color-ivory-deep);
+    background-image:
+      linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--color-hairline) 50%, transparent calc(50% + 0.5px)),
+      linear-gradient(to bottom left, transparent calc(50% - 0.5px), var(--color-hairline) 50%, transparent calc(50% + 0.5px));
+  }
+
+  .field-beige .plate__empty {
+    background-color: var(--color-beige-deep);
+  }
+
+  .plate__tag {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #565049;
+  }
+
+  .plate__dim {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--color-ink-mute);
+  }
+
+  .plate__cap {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.6rem 0;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--color-ink-mute);
+  }
+
+  .field-beige .plate__cap {
+    color: #5f584f;
+  }
+
+  /* ------------------------------------------------- hero media stage
+     Media-agnostic: an empty frame today, a poster tomorrow, a video the
+     day after. The box never moves. */
+  .stage {
+    position: relative;
+    inline-size: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-plate);
+    background: var(--color-ivory-deep);
+    box-shadow: inset 0 0 0 1px var(--color-hairline-strong);
+  }
+
+  .stage__media {
+    position: absolute;
+    inset: 0;
+  }
+
+  .stage__media img,
+  .stage__media video {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+  }
+
+  .stage-wrap {
+    margin: 0;
+  }
+
+  .stage__cap {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-block-start: 0.9rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1.4;
+    color: var(--color-ink-mute);
+  }
+
+  .stage__dot {
+    flex: none;
+    inline-size: 6px;
+    block-size: 6px;
+    border-radius: 999px;
+    background: var(--color-champagne);
+  }
+
+  /* --------------------------------------------- the Ruang Ganti pair */
+  .pair {
+    display: grid;
+    column-gap: var(--gap-column);
+    row-gap: 1.75rem;
+    align-items: start;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (width >= 48rem) {
+    .pair {
+      grid-template-columns: minmax(0, 5fr) 1px minmax(0, 6fr);
+      column-gap: clamp(2rem, 4.5vw, 4.5rem);
+      row-gap: 0;
+      align-items: center;
+    }
+
+    .pair__a {
+      grid-column: 1;
+    }
+
+    .pair__axis {
+      grid-column: 2;
+    }
+
+    .pair__b {
+      grid-column: 3;
+    }
+
+    .pair--reverse .pair__a {
+      grid-column: 3;
+    }
+
+    .pair--reverse .pair__b {
+      grid-column: 1;
+    }
+  }
+
+  /* Opening band: the first viewport reads as one deliberate composition. */
+  @media (width >= 48rem) {
+    .hero {
+      min-block-size: calc(100vh - 68px);
+      min-block-size: calc(100svh - 68px);
+      display: grid;
+      align-content: center;
+    }
+  }
+
+  /* The axis: a hairline on desktop, absent on mobile. */
+  .pair__axis {
+    display: none;
+  }
+
+  @media (width >= 48rem) {
+    .pair__axis {
+      display: block;
+      align-self: stretch;
+      inline-size: 1px;
+      background: var(--color-champagne);
+      opacity: 0.7;
+    }
+  }
+
+  .pair__a,
+  .pair__b {
     min-inline-size: 0;
   }
 
-  /* Radio asli: panah kiri/kanan sudah memindahkan pilihan tanpa skrip. */
-  .pal-input:focus-visible + .pal-row {
-    outline: 2px solid var(--color-select);
-    outline-offset: 2px;
-  }
-
-  .pal-row {
-    display: grid;
-    grid-template-columns: 1.75rem minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 0.125rem 0.875rem;
-    padding-block: 0.875rem;
-    border-top: 1px solid var(--color-hairline-table);
-    cursor: pointer;
-  }
-
-  .pal-no {
-    grid-row: span 2;
-    font-family: var(--font-data);
-    font-size: var(--text-strip);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-table-muted);
-    transition: color 200ms ease;
-  }
-
-  .pal-name {
-    font-family: var(--font-data);
-    font-size: 0.9375rem;
-    font-weight: 700;
-    letter-spacing: var(--tracking-strip);
+  .pair__side {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
+    color: var(--color-ink-mute);
+    margin-block-end: 0.9rem;
   }
 
-  .pal-note {
-    grid-column: 2;
-    font-size: 0.8125rem;
-    line-height: 1.5;
-    color: var(--color-table-muted);
+  .pair__side::before {
+    content: '';
+    display: inline-block;
+    inline-size: 0.45rem;
+    block-size: 0.45rem;
+    margin-inline-end: 0.55rem;
+    background: var(--color-champagne);
+    vertical-align: 0.08em;
   }
 
-  .pal-flag {
-    display: none;
-    color: var(--color-select);
+  .field-beige .pair__side {
+    color: #5f584f;
   }
 
-  .pal-row:hover .pal-no,
-  .pal-input:checked + .pal-row .pal-no {
-    color: var(--color-select);
+  .pair + .pair {
+    margin-block-start: clamp(3rem, 6vw, 5rem);
+    padding-block-start: clamp(3rem, 6vw, 5rem);
+    border-block-start: 1px solid var(--color-hairline);
   }
 
-  .pal-samples {
-    --pal-sample-edge: var(--color-hairline-table);
+  .field-beige .pair + .pair {
+    border-block-start-color: var(--color-beige-deep);
+  }
 
-    position: relative;
-    grid-column: 3;
-    grid-row: 1 / span 2;
+  /* ------------------------------------------------------ plain lists */
+  .rule-list > li {
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
+    border-block-start: 1px solid var(--color-hairline);
+  }
+
+  .field-beige .rule-list > li {
+    border-block-start-color: var(--color-beige-deep);
+  }
+
+  .statement {
+    max-inline-size: 44ch;
+  }
+
+  /* -------------------------------------------------------------- faq */
+  .faq__item {
+    border-block-start: 1px solid var(--color-hairline);
+  }
+
+  .faq__item:last-child {
+    border-block-end: 1px solid var(--color-hairline);
+  }
+
+  .faq__item summary {
     display: flex;
-    gap: 2px;
-    padding: 2px;
-    border: 1px solid var(--pal-sample-edge);
+    align-items: flex-start;
+    gap: clamp(1rem, 3vw, 2rem);
+    padding-block: clamp(1.25rem, 2.5vw, 1.75rem);
+    cursor: pointer;
+    list-style: none;
   }
 
-  /* Tiap sel membawa data-palette-nya sendiri, jadi warnanya dibaca dari
-     blok token palet itu — tidak ada nilai warna yang dityalis di markup. */
-  .pal-samples i {
-    display: block;
-    inline-size: 1.05rem;
-    block-size: 1.75rem;
-  }
-
-  .pal-samples i:nth-child(1) {
-    background-color: var(--color-paper);
-  }
-
-  .pal-samples i:nth-child(2) {
-    background-color: var(--color-table);
-    outline: 1px solid var(--pal-sample-edge);
-    outline-offset: -1px;
-  }
-
-  .pal-samples i:nth-child(3) {
-    background-color: var(--color-select);
-  }
-
-  /* Lingkaran pensil: tanda pilihan sistem ini, digambar dengan warna seleksinya. */
-  .pal-ring {
-    position: absolute;
-    inset: -8px -10px;
+  .faq__item summary::-webkit-details-marker {
     display: none;
-    inline-size: calc(100% + 20px);
-    block-size: calc(100% + 16px);
-    overflow: visible;
-    stroke: var(--color-select);
-    stroke-width: 3;
-    fill: none;
   }
 
-  .pal-input:checked + .pal-row .pal-ring {
-    display: block;
+  .faq__q {
+    flex: 1;
+    font-family: var(--font-display);
+    font-size: var(--text-lead);
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
-  .pal-input:checked + .pal-row .pal-flag {
-    display: inline;
+  .faq__mark {
+    position: relative;
+    flex: none;
+    inline-size: 1.1rem;
+    block-size: 1.1rem;
+    margin-block-start: 0.45rem;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .pal-sheet {
-      transition: none;
+  .faq__mark::before,
+  .faq__mark::after {
+    content: '';
+    position: absolute;
+    background: var(--color-champagne-deep);
+    transition: rotate 250ms ease;
+  }
+
+  .faq__mark::before {
+    inset-inline: 0;
+    inset-block-start: 50%;
+    block-size: 1px;
+  }
+
+  .faq__mark::after {
+    inset-block: 0;
+    inset-inline-start: 50%;
+    inline-size: 1px;
+  }
+
+  .faq__item[open] .faq__mark::after {
+    rotate: 90deg;
+  }
+
+  .faq__body {
+    padding-block-end: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  @media (width >= 48rem) {
+    .faq__body {
+      padding-inline-start: clamp(2rem, 5vw, 3.5rem);
     }
   }
 
-  /* Browser tanpa Popover API: picker hilang total, halaman tidak dirusak. */
-  @supports not selector(:popover-open) {
-    .pal-trigger,
-    .pal-sheet {
+  /* ------------------------------------------------------- inquiry form */
+  .inq__grid {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @media (width >= 40rem) {
+    .inq__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inq__wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .inq__field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .inq__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-on-ink-soft);
+  }
+
+  .inp {
+    inline-size: 100%;
+    min-block-size: 46px;
+    padding: 0.7rem 0.9rem;
+    background: var(--color-charcoal-deep);
+    color: var(--color-on-ink);
+    border: 1px solid var(--color-hairline-ink);
+    border-radius: var(--radius-control);
+    font: inherit;
+    transition: border-color 220ms ease;
+  }
+
+  textarea.inp {
+    field-sizing: content;
+    min-block-size: 92px;
+    max-block-size: 20rem;
+    line-height: 1.5;
+  }
+
+  .inp::placeholder {
+    color: #807a70;
+  }
+
+  .inp:hover {
+    border-color: #4f4a43;
+  }
+
+  .inp:focus-visible {
+    border-color: var(--color-champagne);
+  }
+
+  .inp[aria-invalid='true'] {
+    border-color: #c9805f;
+  }
+
+  select.inp {
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--color-champagne) 50%),
+      linear-gradient(135deg, var(--color-champagne) 50%, transparent 50%);
+    background-position:
+      calc(100% - 18px) calc(50% + 1px),
+      calc(100% - 12px) calc(50% + 1px);
+    background-size: 6px 6px;
+    background-repeat: no-repeat;
+    padding-inline-end: 2.25rem;
+  }
+
+  .inq__hint {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-on-ink-mute);
+  }
+
+  .inq__status {
+    padding: 0.9rem 1.1rem;
+    border-inline-start: 1px solid var(--color-champagne);
+    background: var(--color-charcoal-deep);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--color-on-ink-soft);
+  }
+
+  /* ------------------------------------------------------------ header */
+  .nav {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 40;
+    background: rgb(247 243 238 / 0.9);
+    backdrop-filter: blur(10px);
+    border-block-end: 1px solid var(--color-hairline);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .nav {
+      background: var(--color-ivory);
+    }
+  }
+
+  .nav__row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-block-size: 68px;
+  }
+
+  .nav__brand {
+    flex: none;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+    white-space: nowrap;
+    color: var(--color-charcoal);
+    transition: color 220ms ease;
+  }
+
+  .nav__brand:hover {
+    color: var(--color-champagne-deep);
+  }
+
+  .nav__list {
+    display: none;
+    align-items: center;
+    gap: clamp(1.25rem, 2.6vw, 2.5rem);
+    margin-inline-start: auto;
+  }
+
+  @media (width >= 62rem) {
+    .nav__list {
+      display: flex;
+    }
+  }
+
+  .nav__link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 44px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-ink-soft);
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.4em;
+    transition:
+      color 220ms ease,
+      text-decoration-color 220ms ease;
+  }
+
+  .nav__link:hover {
+    color: var(--color-charcoal);
+    text-decoration-color: var(--color-champagne);
+  }
+
+  .nav__cta {
+    display: none;
+    flex: none;
+    margin-inline-start: clamp(1rem, 2vw, 2rem);
+  }
+
+  @media (width >= 62rem) {
+    .nav__cta {
+      display: inline-flex;
+    }
+  }
+
+  .nav__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-inline-start: auto;
+    padding: 0.75rem 0.25rem;
+    background: none;
+    border: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-charcoal);
+  }
+
+  @media (width >= 62rem) {
+    .nav__toggle {
       display: none;
+    }
+  }
+
+  .nav__bars {
+    display: grid;
+    gap: 4px;
+    inline-size: 20px;
+  }
+
+  .nav__bars i {
+    display: block;
+    block-size: 1px;
+    background: var(--color-charcoal);
+  }
+
+  .nav__sheet {
+    inset-inline: 0;
+    inset-block: auto;
+    inline-size: auto;
+    max-block-size: 88vh;
+    margin: 0;
+    padding: clamp(1.5rem, 5vw, 2.5rem) var(--gutter-page)
+      calc(2rem + env(safe-area-inset-bottom));
+    border: 0;
+    border-block-start: 1px solid var(--color-hairline-strong);
+    background: var(--color-ivory);
+    color: var(--color-ink);
+    overflow-y: auto;
+  }
+
+  .nav__sheet::backdrop {
+    background: rgb(30 29 27 / 0.45);
+  }
+
+  .nav__sheet-link {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.9rem;
+    border-block-start: 1px solid var(--color-hairline);
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    line-height: 1.2;
+    color: var(--color-charcoal);
+  }
+
+  .nav__sheet-no {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--color-champagne-deep);
+  }
+
+  .nav__fallback {
+    display: none;
+  }
+
+  @supports not (selector(:popover-open)) {
+    .nav__toggle,
+    .nav__sheet {
+      display: none;
+    }
+
+    .nav__fallback {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 1.5rem;
+      padding-block: 0.75rem 1rem;
+      border-block-start: 1px solid var(--color-hairline);
+    }
+  }
+
+  /* ---------------------------------------------------------- sticky CTA */
+  .cta-bar {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: 45;
+    padding: 0.75rem var(--gutter-page) calc(0.75rem + env(safe-area-inset-bottom));
+    background: rgb(30 29 27 / 0.97);
+    border-block-start: 1px solid var(--color-champagne);
+  }
+
+  @media (width >= 62rem) {
+    .cta-bar {
+      display: none;
+    }
+  }
+
+  .sticky-reserve {
+    padding-block-end: 6rem;
+  }
+
+  @media (width >= 62rem) {
+    .sticky-reserve {
+      padding-block-end: 0;
+    }
+  }
+
+  /* --------------------------------------------------------------- motion
+     One grammar: a pair settles claim-first, then its evidence crosses the
+     axis. Where the browser cannot time a scroll, nothing moves. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .pair__a {
+        animation: pair-settle linear both;
+        animation-timeline: view();
+        animation-range: entry 8% cover 42%;
+      }
+
+      .pair__b {
+        animation: pair-settle linear both;
+        animation-timeline: view();
+        animation-range: entry 16% cover 52%;
+      }
+
+      .stage {
+        animation: stage-open 1000ms cubic-bezier(0.16, 0.84, 0.28, 1) both;
+      }
+
+      @keyframes pair-settle {
+        from {
+          opacity: 0.4;
+          transform: translateY(14px);
+          filter: blur(3px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+          filter: blur(0);
+        }
+      }
+
+      @keyframes stage-open {
+        from {
+          clip-path: inset(0 0 30% 0);
+          opacity: 0.4;
+        }
+
+        to {
+          clip-path: inset(0 0 0 0);
+          opacity: 1;
+        }
+      }
     }
   }
 }

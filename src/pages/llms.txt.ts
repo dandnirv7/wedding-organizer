@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { siteConfig } from '../config/site';
-import { copy } from '../pages/_wedding/copy';
+import { normalizePhoneNumber } from '../capabilities/lead/lib/whatsapp';
+import { page } from '../pages/_wedding/content';
 
 /**
  * llms.txt untuk satu rute. Direktif AI bersifat advisory; tidak ada jaminan
@@ -8,16 +9,15 @@ import { copy } from '../pages/_wedding/copy';
  */
 export const GET: APIRoute = () => {
   const base = siteConfig.url.replace(/\/+$/, '');
-  const contact = siteConfig.contact.whatsapp
-    ? `\n\n## Kontak\n\n- WhatsApp: https://wa.me/${siteConfig.contact.whatsapp}`
-    : '';
-  const sections = copy.sheet.nav.map((n) => `- [${n.label}](${base}/${n.href.slice(1)})`).join('\n');
+  const waNumber = normalizePhoneNumber(siteConfig.contact.whatsapp ?? '');
+  const contact = waNumber ? `\n\n## Kontak\n\n- WhatsApp: https://wa.me/${waNumber}` : '';
+  const sections = page.nav.map((n) => `- [${n.label}](${base}/${n.href.slice(1)})`).join('\n');
 
   const body = `# ${siteConfig.name}
 
-> ${copy.sheet.description}
+> ${page.meta.description}
 
-## Bagian lembar
+## Bagian halaman
 
 ${sections}
 

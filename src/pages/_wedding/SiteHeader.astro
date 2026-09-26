@@ -1,0 +1,82 @@
+---
+/**
+ * SiteHeader — kop sticky: nama WO, anchor yang benar-benar ada, satu CTA.
+ * <62rem: satu tombol membuka indeks sebagai sheet bawah lewat Popover API
+ * bawaan HTML (Esc / klik luar / tutup, fokus kembali ke tombol).
+ * Tanpa Popover API, daftar tautan tetap tampil sebagai baris cadangan.
+ */
+import { siteConfig } from '../../config/site';
+
+export interface Props {
+  items: readonly { href: string; label: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<header class="nav">
+  <div class="wrap nav__row">
+    <a class="nav__brand" href="#main-content">{siteConfig.name}</a>
+
+    <nav aria-label="Navigasi utama" class="nav__list">
+      <ul class="flex items-center gap-[inherit]">
+        {items.map((item) => (
+          <li>
+            <a class="nav__link" href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="nav__cta">
+      <slot name="cta" />
+    </div>
+
+    <button type="button" class="nav__toggle" popovertarget="site-menu" aria-label="Buka menu navigasi">
+      <span class="nav__bars" aria-hidden="true"><i /><i /><i /></span>
+      Menu
+    </button>
+  </div>
+
+  <nav class="nav__fallback wrap" aria-label="Navigasi utama">
+    {items.map((item) => <a class="nav__link" href={item.href}>{item.label}</a>)}
+  </nav>
+
+  <div id="site-menu" class="nav__sheet" popover>
+    <div class="flex items-baseline justify-between gap-6">
+      <p class="eyebrow">Navigasi</p>
+      <button
+        type="button"
+        class="link-quiet"
+        popovertarget="site-menu"
+        popovertargetaction="hide"
+        aria-label="Tutup menu navigasi"
+      >
+        Tutup
+      </button>
+    </div>
+    <ul class="mt-6">
+      {items.map((item, i) => (
+        <li>
+          <a class="nav__sheet-link" href={item.href} data-nav-close>
+            <span class="nav__sheet-no figure">{String(i + 1).padStart(2, '0')}</span>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="mt-8">
+      <slot name="cta" />
+    </div>
+  </div>
+</header>
+
+<script>
+  // Popover API tidak menutup sendiri saat tautan hash dipilih.
+  const menu = document.getElementById('site-menu');
+
+  menu?.addEventListener('click', (event) => {
+    const link = event.target instanceof Element ? event.target.closest('[data-nav-close]') : null;
+    if (link && typeof menu.hidePopover === 'function') menu.hidePopover();
+  });
+</script>

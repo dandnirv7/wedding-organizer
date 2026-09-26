@@ -1,10 +1,10 @@
 ---
 import type { Thing } from 'schema-dts';
 import { ClientRouter } from 'astro:transitions';
-import '@fontsource-variable/source-serif-4';
-import '@fontsource/archivo-narrow/400.css';
-import '@fontsource/archivo-narrow/600.css';
-import '@fontsource/archivo-narrow/700.css';
+import '@fontsource/cormorant-garamond/latin-400.css';
+import '@fontsource/cormorant-garamond/latin-500.css';
+import '@fontsource/cormorant-garamond/latin-600.css';
+import '@fontsource-variable/manrope/wght.css';
 import SeoHead, { type Props as SeoProps } from '../components/seo/SeoHead.astro';
 import Schema from '../components/seo/Schema.astro';
 import { siteConfig } from '../config/site';
@@ -30,28 +30,28 @@ const { graph, ...seoProps } = Astro.props;
          SeoHead and Schema own those. -->
     <slot name="head" />
   </head>
-  <body
-    class="field-paper flex min-h-full flex-col"
-    data-contract="c37c4509 · THESIS lembar seleksi bernomor, bukan hero default · WORLD kertas #f2f1ec / meja #17181a / merah #c9302b, radius 0 · FIRST-VIEWPORT folio kiri-atas + pelat 00 dominan kanan + H1 di tepi kiri + satu SelectMark ke #work · FINISH unreviewed and undocumented is unfinished"
-  >
-    <!-- IMPECCABLE SEED c37c4509 — kontrak arah `/` (audit saat finish)
-      THESIS: halaman membuktikan kualitas eksekusi lewat frame bernomor seperti
-        lembar seleksi studio; menolak susunan default kategori (hero foto besar +
-        judul di tengah + tiga kartu layanan + carousel testimoni).
-      OWN-WORLD: kertas #f2f1ec dan meja #17181a berselang-seling; Source Serif 4
-        untuk kalimat, Archivo Narrow untuk data; merah #c9302b hanya lingkaran
-        seleksi dan satu baris aksi; radius nol; tanpa bayangan kabur.
-      STORY: pengunjung melihat hasil nyata, mengenali gaya, percaya pada detail,
-        lalu tahu pesan apa yang akan terkirim ke WhatsApp.
-      FIRST VIEWPORT: bidang meja penuh; folio nama kiri-atas; FramePlate 00
-        dominan di kanan (~60% viewport) + kapsel kredit; H1 di tepi kiri bawah
-        folio; satu SelectMark merah "Lihat lembaran lengkap" ke #work.
-      FORM: lembar kontak fotografis; ritme baca dari strip ke pelat ke teks.
+  <body class="field-ivory flex min-h-full flex-col" data-contract="a59aea6b · THESIS klaim &amp; bukti berdampingan · WORLD ivory #f7f3ee / charcoal #1e1d1b / beige / champagne, radius 0-4 · FIRST-VIEWPORT H1 Cormorant rata kiri + pelat 16:9 memecah margin, sumbu champagne di antaranya · FINISH unreviewed and undocumented is unfinished">
+    <!-- IMPECCABLE SEED a59aea6b (reroll 1, index 5) — kontrak arah `/` (audit saat finish)
+      THESIS: halaman membuktikan eksekusi dengan memasangkan klaim dan buktinya
+        di dua sisi satu sumbu champagne — bukan hero foto penuh + judul di
+        tengah + tiga kartu layanan + carousel testimoni.
+      OWN-WORLD: ivory #F7F3EE dan charcoal #1E1D1B berselang-seling dengan beige
+        #E8DED2 sebagai bidang pendukung; Cormorant Garamond untuk emosi, Manrope
+        untuk kejelasan; champagne #B69B72 hanya garis, penanda, dan status — kata
+        selalu tinta; radius 0–4px; tanpa bayangan.
+      STORY: pengunjung merasakan dulu harinya, lalu melihat apa yang dikerjakan
+        di baliknya, mengenali prosesnya, dan tahu persis pesan apa yang terkirim.
+      FIRST VIEWPORT: bidang ivory; sumbu champagne vertikal membagi layar; kiri
+        eyebrow + H1 Cormorant rata kiri + lede + CTA; kanan MediaStage 16:9
+        memecah margin kiri (-ms-10) sebagai bingkai berlabel menunggu footage.
+      FORM: Ruang Ganti — pasang (claim, bukti) untuk Hero/Services/Weddings/
+        Process, bidang sunyi tanpa sumbu untuk Introduction/Why Us/Packages/
+        Testimoni/FAQ, dan satu kaki charcoal untuk CTA akhir + form wa.me.
       FINISH: unreviewed and undocumented is unfinished; this build ends with the
         finish review, the verdict, and DESIGN.md. -->
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-paper focus:px-4 focus:py-2 focus:text-ink focus:outline-2 focus:outline-select"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-charcoal focus:px-4 focus:py-2 focus:text-on-ink focus:outline-2 focus:outline-champagne"
     >
       Menuju ke konten utama
     </a>
