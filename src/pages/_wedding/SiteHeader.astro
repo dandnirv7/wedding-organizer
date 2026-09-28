@@ -1,11 +1,14 @@
 ---
 /**
- * SiteHeader — kop sticky: nama WO, anchor yang benar-benar ada, satu CTA.
- * <62rem: satu tombol membuka indeks sebagai sheet bawah lewat Popover API
- * bawaan HTML (Esc / klik luar / tutup, fokus kembali ke tombol).
+ * SiteHeader — kop MOCA: wordmark, anchor yang benar-benar ada, satu CTA.
+ *
+ * Sesuai reference, link nav tampil di layar lebar (≥80rem). Di bawah itu
+ * (<80rem) link nav tidak muat di referensinya, jadi halaman tidak kehilangan
+ * jalan ke section: satu tombol Menu membuka indeks sebagai sheet bawah lewat
+ * Popover API bawaan HTML (Esc / klik luar / tutup, fokus kembali ke tombol).
  * Tanpa Popover API, daftar tautan tetap tampil sebagai baris cadangan.
  */
-import { siteConfig } from '../../config/site';
+import { page } from './content';
 
 export interface Props {
   items: readonly { href: string; label: string }[];
@@ -15,11 +18,11 @@ const { items } = Astro.props;
 ---
 
 <header class="nav">
-  <div class="wrap nav__row">
-    <a class="nav__brand" href="#main-content">{siteConfig.name}</a>
+  <div class="wrap wrap--slim nav__row">
+    <a class="nav__brand" href="#main-content">{page.brand}</a>
 
     <nav aria-label="Navigasi utama" class="nav__list">
-      <ul class="flex items-center gap-[inherit]">
+      <ul>
         {items.map((item) => (
           <li>
             <a class="nav__link" href={item.href}>{item.label}</a>
@@ -43,31 +46,28 @@ const { items } = Astro.props;
   </nav>
 
   <div id="site-menu" class="nav__sheet" popover>
-    <div class="flex items-baseline justify-between gap-6">
-      <p class="eyebrow">Navigasi</p>
-      <button
-        type="button"
-        class="link-quiet"
-        popovertarget="site-menu"
-        popovertargetaction="hide"
-        aria-label="Tutup menu navigasi"
-      >
+    <div class="nav__sheet-head">
+      <p class="label">Navigasi</p>
+      <button type="button" class="nav__close" popovertarget="site-menu" popovertargetaction="hide">
         Tutup
       </button>
     </div>
-    <ul class="mt-6">
+    <ul>
       {items.map((item, i) => (
         <li>
           <a class="nav__sheet-link" href={item.href} data-nav-close>
-            <span class="nav__sheet-no figure">{String(i + 1).padStart(2, '0')}</span>
+            <span class="figure">{String(i + 1).padStart(2, '0')}</span>
             {item.label}
           </a>
         </li>
       ))}
+      <li>
+        <a class="nav__sheet-link" href={page.formAnchor} data-nav-close>
+          <span class="figure">→</span>
+          {page.hero.primaryCta}
+        </a>
+      </li>
     </ul>
-    <div class="mt-8">
-      <slot name="cta" />
-    </div>
   </div>
 </header>
 

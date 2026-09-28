@@ -1,29 +1,40 @@
 ---
+/**
+ * `/` — satu rute, tiga belas blok.
+ *
+ * Urutan, komposisi, dan ritme diambil dari docs/references/ui/*.png (desktop,
+ * tablet, mobile): band ivory / beige / charcoal bergantian, tipografi editorial
+ * tanpa kartu, grid asimetris, dan konversi berakhir di satu blok inquiry.
+ *
+ * Yang tidak boleh bocor ke sini: nomor WhatsApp, harga, nama pasangan, dan
+ * testimoni. Semuanya datang dari `siteConfig` atau `content.ts`; kalau belum
+ * ada isinya, blok menampilkannya sebagai status berlabel.
+ */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { resolveCanonical } from '../lib/seo';
-import {
-  buildWebSiteSchema,
-  buildOrganizationSchema,
-  buildWebPageSchema,
-} from '../lib/schema';
-import { WaButton } from '../capabilities/lead/index.js';
-import { siteConfig } from '../config/site';
+import { buildOrganizationSchema, buildWebPageSchema, buildWebSiteSchema } from '../lib/schema';
 import SiteHeader from './_wedding/SiteHeader.astro';
 import SiteFooter from './_wedding/SiteFooter.astro';
 import SectionHead from './_wedding/SectionHead.astro';
-import PairRow from './_wedding/PairRow.astro';
 import FramePlate from './_wedding/FramePlate.astro';
 import MediaStage from './_wedding/MediaStage.astro';
 import FaqList from './_wedding/FaqList.astro';
 import InquiryForm from './_wedding/InquiryForm.astro';
+import CtaLink from './_wedding/CtaLink.astro';
+import WaitNote from './_wedding/WaitNote.astro';
+import TestimonialSlider from './_wedding/TestimonialSlider.astro';
 import {
   page,
   frames,
+  stories,
+  storyMeta,
+  craftKeywords,
+  behindTheDay,
   services,
-  weddings,
-  values,
+  craftLegend,
   steps,
-  packagesPublic,
+  team,
+  testimonials,
   faq,
 } from './_wedding/content';
 
@@ -34,258 +45,241 @@ const graph = [
   buildWebPageSchema(canonicalUrl, page.meta.title, page.meta.description),
 ];
 
-const hasWa = Boolean(siteConfig.contact.whatsapp);
-const publicPackages = siteConfig.wedding.packagesMode === 'public';
+const [story] = stories;
+const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
 <BaseLayout title={page.meta.title} description={page.meta.description} canonical={canonicalUrl} graph={graph}>
   <SiteHeader slot="header" items={page.nav}>
-    {
-      hasWa ? (
-        <WaButton slot="cta" variant="primary" text={page.headerCta} message={page.waMessage} location="header" />
-      ) : (
-        <a slot="cta" class="btn btn--primary" href="#rencana">
-          <span>{page.headerCta}</span>
-        </a>
-      )
-    }
+    <CtaLink slot="cta" text={page.headerCta} location="header" variant="quiet" />
   </SiteHeader>
 
-  <!-- 01 · HERO — klaim di satu sisi sumbu, bidangnya di sisi lain -->
-  <section class="hero field-ivory band-major" aria-labelledby="hero-title">
+  <!-- 01 · HERO — bidang gelap, klaim di kiri, hari-H di kanan -->
+  <section class="band band--ink hero" aria-labelledby="hero-title">
+    <div class="wrap wrap--slim hero__grid">
+      <div class="hero__text">
+        <p class="label label--accent">{page.hero.eyebrow}</p>
+        <h1 class="t-display hero__title" id="hero-title">{page.hero.title}</h1>
+        <p class="lede hero__lede">{page.hero.lede}</p>
+        <div class="hero__cta">
+          <CtaLink text={page.hero.primaryCta} location="hero" variant="onink" />
+          <a class="link-arrow link-arrow--ink" href={page.hero.secondaryTarget}>
+            {page.hero.secondaryCta}
+            <span class="link-arrow__mark" aria-hidden="true">↓</span>
+          </a>
+        </div>
+      </div>
+      <MediaStage frame={frames.hero} class="hero__media" />
+    </div>
+  </section>
+
+  <!-- 02 · TENTANG — bidang sunyi + deretan label -->
+  <section class="band band--beige band--tight" id="tentang" aria-labelledby="tentang-title">
     <div class="wrap">
-      <PairRow prepLabel={page.hero.eyebrow} rememberLabel={page.hero.stageSide}>
-        <div slot="prep">
-          <h1 class="t-display mt-5" id="hero-title">{page.hero.title}</h1>
-          <p class="lede mt-7">{page.hero.lede}</p>
-          <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
-            {hasWa ? (
-              <WaButton variant="primary" text={page.hero.primaryCta} message={page.waMessage} location="hero" />
-            ) : (
-              <a class="btn btn--primary" href="#rencana"><span>{page.hero.primaryCta}</span></a>
-            )}
-            <a class="link-quiet" href="#pernikahan">{page.hero.secondaryCta}</a>
-          </div>
-        </div>
-        <div slot="remember">
-          <MediaStage frame={frames.stage} label={page.hero.stageLabel} />
-        </div>
-      </PairRow>
+      <SectionHead
+        eyebrow={page.intro.eyebrow}
+        headline={page.intro.headline}
+        lede={page.intro.lede}
+        headingId="tentang-title"
+      />
+      <ul class="keywords">
+        {
+          craftKeywords.map((keyword, i) => (
+            <li class="keywords__item">
+              {i > 0 && <span class="keywords__mark" aria-hidden="true">+</span>}
+              <span>{keyword}</span>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </section>
 
-  <!-- 02 · INTRODUCTION — bidang sunyi, tanpa sumbu -->
-  <section class="field-beige band-section scroll-mt-24" id="pengantar" aria-labelledby="pengantar-title">
-    <div class="wrap grid items-start gap-x-16 gap-y-12 lg:grid-cols-12">
-      <div class="lg:col-span-7">
-        <p class="eyebrow">{page.intro.eyebrow}</p>
-        <h2 class="t-section mt-5" id="pengantar-title">{page.intro.headline}</h2>
-        {page.intro.body.map((paragraph) => <p class="prose mt-7">{paragraph}</p>)}
-        <p class="t-lead mt-12 max-w-[22ch]">{page.intro.statement}</p>
+  <!-- 03 · CERITA PERNIKAHAN — grid asimetris + tiga baris data -->
+  <section class="band band--ivory band--air" id="pernikahan" aria-labelledby="pernikahan-title">
+    <div class="wrap">
+      <SectionHead
+        eyebrow={page.portfolio.eyebrow}
+        headline={page.portfolio.headline}
+        lede={page.portfolio.lede}
+        headingId="pernikahan-title"
+      />
+      <div class="grid-portfolio">
+        <FramePlate frame={story.frames[0]} class="grid-portfolio__a" />
+        <div class="grid-portfolio__stack">
+          <FramePlate frame={story.frames[1]} />
+          <FramePlate frame={story.frames[2]} />
+        </div>
       </div>
-      <div class="lg:col-span-5 lg:mt-24">
-        <FramePlate frame={page.intro.frame} />
-      </div>
+      <dl class="meta-grid">
+        {
+          storyMeta.map((item) => (
+            <div class="meta-grid__item">
+              <dt class="label">{item.label}</dt>
+              <dd class="prose">{item.value ?? <span class="pending">{item.note}</span>}</dd>
+            </div>
+          ))
+        }
+      </dl>
+      <WaitNote text={page.portfolio.note} class="mt-6" />
     </div>
   </section>
 
-  <!-- 03 · SERVICES — pasangan: yang kami siapkan / yang kamu ingat -->
-  <section class="field-ivory band-section scroll-mt-24" id="layanan" aria-labelledby="layanan-title">
+  <!-- 04 · SATU HARI — bidang gelap, satu bidang lebar + tiga kolom -->
+  <section class="band band--ink" aria-labelledby="satu-hari-title">
+    <div class="wrap">
+      <SectionHead
+        eyebrow={page.behind.eyebrow}
+        headline={page.behind.headline}
+        lede={page.behind.lede}
+        headingId="satu-hari-title"
+        accent
+      />
+      <FramePlate frame={frames.craft} class="field-wide mt-6" />
+      <ol class="cols cols--3 mt-12">
+        {
+          behindTheDay.map((item) => (
+            <li class="col">
+              <p class="col__label">
+                <span class="figure">{item.no}</span> {item.name}
+              </p>
+              <p class="col__body mt-4">{item.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 05 · LAYANAN — empat baris bernomor, bukan kartu -->
+  <section class="band band--ivory band--air" id="layanan" aria-labelledby="layanan-title">
     <div class="wrap">
       <SectionHead
         eyebrow={page.services.eyebrow}
         headline={page.services.headline}
         lede={page.services.lede}
         headingId="layanan-title"
+        accent
       />
-      <div class="mt-16">
-        {services.map((service, i) => (
-          <PairRow
-            prepLabel={page.services.prepLabel}
-            rememberLabel={page.services.rememberLabel}
-            reverse={i % 2 === 1}
-          >
-            <div slot="prep">
-              <h3 class="t-item">{service.name}</h3>
-              <p class="prose mt-4">{service.benefit}</p>
-              <p class="prose mt-4">{service.prep}</p>
-              {hasWa && (
-                <WaButton
-                  class="mt-7"
-                  variant="ghost"
-                  text={service.waLabel}
-                  message={`Halo, saya ingin bertanya tentang layanan ${service.name}.`}
-                  location="services"
-                />
-              )}
-            </div>
-            <div slot="remember">
-              <FramePlate frame={service.frame} />
-              <p class="prose mt-6">{service.remember}</p>
-            </div>
-          </PairRow>
-        ))}
-      </div>
-      <p class="meta mt-14 max-w-measure">{page.services.note}</p>
+      <ul class="rows">
+        {
+          services.map((service, i) => (
+            <li class="row">
+              <span class="row__no figure">{pad(i + 1)}</span>
+              <h3 class="row__name">{service.name}</h3>
+              <p class="row__body">{service.summary}</p>
+              <a class="row__arrow" href={page.formAnchor} aria-label={`Tanya layanan ${service.name}`}>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <WaitNote text={page.services.note} class="mt-10" />
     </div>
   </section>
 
-  <!-- 04 · REAL WEDDINGS — pelat di balik layar / pelat yang terlihat -->
-  <section class="field-beige band-section scroll-mt-24" id="pernikahan" aria-labelledby="pernikahan-title">
+  <!-- 06 · PEKERJAAN YANG TAK SELALU TERLIHAT — grid editorial + legenda -->
+  <section class="band band--beige" aria-labelledby="detail-title">
     <div class="wrap">
       <SectionHead
-        eyebrow={page.weddings.eyebrow}
-        headline={page.weddings.headline}
-        lede={page.weddings.lede}
-        headingId="pernikahan-title"
+        eyebrow={page.craft.eyebrow}
+        headline={page.craft.headline}
+        lede={page.craft.lede}
+        headingId="detail-title"
       />
-      <p class="meta mt-6 max-w-measure">{page.weddings.pending}</p>
-      <div class="mt-16">
-        {weddings.map((wedding, i) => (
-          <PairRow
-            prepLabel={page.weddings.prepLabel}
-            rememberLabel={page.weddings.rememberLabel}
-            reverse={i === 1}
-          >
-            <div slot="prep">
-              <FramePlate frame={wedding.frames[0]} />
-              <p class="prose mt-6">{wedding.prep}</p>
-            </div>
-            <div slot="remember">
-              <FramePlate frame={wedding.frames[1]} />
-              <p class="prose mt-6">{wedding.remember}</p>
-              <dl class="mt-8 grid gap-x-8 gap-y-4 sm:grid-cols-2">
-                <div>
-                  <dt class="meta">Pasangan</dt>
-                  <dd class="t-lead mt-1">{wedding.couple || wedding.note}</dd>
-                </div>
-                <div>
-                  <dt class="meta">Konsep &amp; lokasi</dt>
-                  <dd class="prose mt-2">
-                    {[wedding.concept, wedding.venue, wedding.location].filter(Boolean).join(' · ') || wedding.note}
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </PairRow>
-        ))}
+      <div class="grid-detail">
+        <FramePlate frame={frames.detail[0]} class="grid-detail__a" />
+        <div class="grid-detail__stack">
+          <FramePlate frame={frames.detail[1]} />
+          <FramePlate frame={frames.detail[2]} />
+        </div>
+        <div class="grid-detail__row">
+          <FramePlate frame={frames.detail[3]} />
+          <FramePlate frame={frames.detail[4]} />
+          <FramePlate frame={frames.detail[5]} />
+        </div>
       </div>
-      <div class="mt-14">
-        <a class="link-quiet" href="#pernikahan">{page.weddings.cta}</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 05 · WHY US — empat alasan sebagai daftar bernada, bukan kartu -->
-  <section class="field-ivory band-section" aria-labelledby="kenapa-title">
-    <div class="wrap">
-      <SectionHead eyebrow={page.why.eyebrow} headline={page.why.headline} headingId="kenapa-title" />
-      <ul class="rule-list mt-14 grid gap-x-16 lg:grid-cols-2">
-        {values.map((value) => (
-          <li>
-            <h3 class="t-item">{value.name}</h3>
-            <p class="prose mt-3">{value.body}</p>
-          </li>
-        ))}
+      <ul class="legend">
+        {
+          craftLegend.map((item, i) => (
+            <li class="legend__item">
+              <span>{item}</span>
+              {i < craftLegend.length - 1 && <span class="legend__rule" aria-hidden="true" />}
+            </li>
+          ))
+        }
       </ul>
     </div>
   </section>
 
-  <!-- 06 · HOW WE WORK — satu langkah, dua sudut pandang -->
-  <section class="field-beige band-section scroll-mt-24" id="proses" aria-labelledby="proses-title">
+  <!-- 07 · CARA KAMI BEKERJA — empat langkah + tiga bidang -->
+  <section class="band band--ivory" id="proses" aria-labelledby="proses-title">
     <div class="wrap">
-      <SectionHead eyebrow={page.process.eyebrow} headline={page.process.headline} headingId="proses-title" />
-      <ol class="mt-16">
-        {steps.map((step, i) => (
-          <li>
-            <PairRow prepLabel={page.process.youLabel} rememberLabel={page.process.usLabel}>
-              <div slot="prep">
-                <h3 class="t-item">
-                  <span class="meta me-3 align-middle figure">{String(i + 1).padStart(2, '0')}</span>
-                  {step.name}
-                </h3>
-                <p class="prose mt-4">{step.you}</p>
-              </div>
-              <div slot="remember">
-                <p class="prose">{step.us}</p>
-              </div>
-            </PairRow>
-          </li>
-        ))}
-      </ol>
-    </div>
-  </section>
-
-  <!-- 07 · PACKAGES / INVESTMENT — satu flag konfigurasi, dua pembacaan -->
-  <section class="field-ivory band-section scroll-mt-24" id="paket" aria-labelledby="paket-title">
-    <div class="wrap">
-      {publicPackages ? (
-        <>
-          <SectionHead
-            eyebrow={page.packages.eyebrowPublic}
-            headline={page.packages.headlinePublic}
-            headingId="paket-title"
-          />
-          <ul class="mt-16">
-            {packagesPublic.map((pkg) => (
-              <li class="pair">
-                <div class="pair__a">
-                  <span class="pair__side">Cocok untuk</span>
-                  <h3 class="t-item">{pkg.name ?? page.packages.pendingName}</h3>
-                  <p class="prose mt-4">{pkg.bestFor ?? 'Menunggu konfirmasi lingkup paket dari klien.'}</p>
-                </div>
-                <div class="pair__axis" aria-hidden="true"></div>
-                <div class="pair__b">
-                  <span class="pair__side">Yang termasuk</span>
-                  <ul class="prose mt-1 space-y-1">
-                    {pkg.includes.map((item) => <li>{item}</li>)}
-                  </ul>
-                  <p class="t-lead mt-6">{pkg.price ?? page.packages.pendingPrice}</p>
-                  {hasWa && (
-                    <WaButton class="mt-7" variant="ghost" text={pkg.ctaLabel} message={page.waMessage} location="packages" />
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-          <p class="meta mt-14 max-w-measure">{page.packages.priceNote}</p>
-        </>
-      ) : (
-        <>
-          <SectionHead
-            eyebrow={page.packages.eyebrowConsult}
-            headline={page.packages.headlineConsult}
-            lede={page.packages.bodyConsult}
-            headingId="paket-title"
-          />
-          <div class="mt-10">
-            {hasWa ? (
-              <WaButton variant="primary" text={page.packages.ctaConsult} message={page.waMessage} location="packages" />
-            ) : (
-              <a class="btn btn--primary" href="#rencana"><span>{page.packages.ctaConsult}</span></a>
-            )}
-          </div>
-        </>
-      )}
-    </div>
-  </section>
-
-  <!-- 08 · TESTIMONIALS — belum ada yang boleh ditayangkan -->
-  <section class="field-beige band-section" aria-labelledby="testimoni-title">
-    <div class="wrap max-w-4xl">
       <SectionHead
-        eyebrow={page.testimonials.eyebrow}
-        headline={page.testimonials.headline}
-        headingId="testimoni-title"
+        eyebrow={page.process.eyebrow}
+        headline={page.process.headline}
+        lede={page.process.lede}
+        headingId="proses-title"
+        accent
       />
-      <p class="lede mt-10 border-t border-hairline pt-7">{page.testimonials.pending}</p>
+      <ol class="cols cols--4 cols--ruled mt-6">
+        {
+          steps.map((step, i) => (
+            <li class="col">
+              <h3 class="col__label">
+                <span class="figure">{pad(i + 1)}</span> {step.name}
+              </h3>
+              <p class="col__body mt-4">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="grid-process mt-6">
+        {frames.process.map((frame) => <FramePlate frame={frame} />)}
+      </div>
     </div>
   </section>
 
-  <!-- 09 · FAQ — disclosure bawaan, tanpa skrip -->
-  <section class="field-ivory band-section scroll-mt-24" id="tanya" aria-labelledby="tanya-title">
+  <!-- 08 · TIM — potret + peran, nama menunggu aset -->
+  <section class="band band--ivory" aria-labelledby="tim-title">
     <div class="wrap">
-      <SectionHead eyebrow={page.faq.eyebrow} headline={page.faq.headline} headingId="tanya-title" />
+      <SectionHead
+        eyebrow={page.team.eyebrow}
+        headline={page.team.headline}
+        lede={page.team.lede}
+        headingId="tim-title"
+      />
+      <div class="grid-team mt-6">
+        {
+          team.map((member, i) => (
+            <article class="person">
+              <FramePlate frame={member.frame} />
+              <h3 class="label person__name">
+                {member.name ?? `Nama tim ${pad(i + 1)} menunggu aset`}
+              </h3>
+              <p class="prose">{member.role} · {member.body}</p>
+            </article>
+          ))
+        }
+      </div>
+      <WaitNote text={page.team.note} class="mt-10" />
+    </div>
+  </section>
+
+  <!-- 09 · CERITA DARI PASANGAN — kartu testimoni -->
+  <section class="band band--beige" id="testimoni" aria-labelledby="testimoni-title">
+    <div class="wrap">
+      <SectionHead eyebrow={page.voices.eyebrow} headline={page.voices.headline} headingId="testimoni-title" />
+      <TestimonialSlider testimonials={testimonials} eyebrow={page.voices.eyebrow} />
+      <WaitNote text={page.voices.note} class="mt-6" />
+    </div>
+  </section>
+
+  <!-- 10 · FAQ — disclosure native, tanpa skrip -->
+  <section class="band band--ivory" id="tanya" aria-labelledby="tanya-title">
+    <div class="wrap">
+      <SectionHead eyebrow={page.faq.eyebrow} headline={page.faq.headline} headingId="tanya-title" accent />
       <FaqList
         items={faq}
         pendingAnswer={page.faq.pendingAnswer}
@@ -295,38 +289,40 @@ const publicPackages = siteConfig.wedding.packagesMode === 'public';
     </div>
   </section>
 
-  <!-- 10 · FINAL CTA + form kualifikasi yang menyusun pesan WhatsApp -->
-  <section class="field-ink band-section scroll-mt-24" id="rencana" aria-labelledby="rencana-title">
-    <div class="wrap grid items-start gap-x-16 gap-y-14 lg:grid-cols-12">
-      <div class="lg:col-span-5">
-        <p class="eyebrow">{page.finalCta.eyebrow}</p>
-        <h2 class="t-section mt-5" id="rencana-title">{page.finalCta.headline}</h2>
-        <p class="lede mt-6">{page.finalCta.lede}</p>
-        {hasWa && (
-          <div class="mt-9">
-            <WaButton variant="onink" text={page.finalCta.secondaryCta} message={page.waMessage} location="final_cta" />
-          </div>
-        )}
-        <div class="mt-14 hidden lg:block">
-          <FramePlate frame={page.intro.frame} bare />
+  <!-- 11 · INQUIRY — closure: cerita di kiri, form pesan di kanan -->
+  <section class="band band--ivory" id="mulainya" aria-labelledby="mulainya-title">
+    <div class="wrap">
+      <div class="grid-inquiry">
+        <div class="grid-inquiry__intro">
+          <p class="label">{page.inquiry.eyebrow}</p>
+          <h2 class="t-section block__title" id="mulainya-title">{page.inquiry.headline}</h2>
+          <p class="lede block__lede">{page.inquiry.lede}</p>
+          <FramePlate frame={frames.form} class="mt-6" />
         </div>
-      </div>
-      <div class="lg:col-span-7">
-        {hasWa ? (
-          <InquiryForm headline={page.finalCta.primaryCta} lede={page.finalCta.formIntro} />
-        ) : (
-          <>
-            <h3 class="t-item">{page.finalCta.primaryCta}</h3>
-            <p class="lede mt-5">{page.finalCta.formIntro}</p>
-            <p class="inq__status mt-8">{page.finalCta.needsNumber}</p>
-          </>
-        )}
+        <InquiryForm
+          eyebrow={page.inquiry.formEyebrow}
+          hint={page.inquiry.formHint}
+          submit={page.inquiry.submit}
+        />
       </div>
     </div>
   </section>
 
+  <!-- 12 · FINAL CTA — bidang gelap, satu kalimat + satu tautan -->
+  <section class="band band--ink band--tight" aria-labelledby="penutup-title">
+    <div class="wrap wrap--slim grid-closing">
+      <div>
+        <h2 class="t-section t-section--lead" id="penutup-title">{page.closing.headline}</h2>
+        <CtaLink
+          text={page.closing.cta}
+          location="final_cta"
+          variant="quiet"
+          class="link-arrow--ink mt-6 block"
+        />
+      </div>
+      <FramePlate frame={frames.closing} />
+    </div>
+  </section>
+
   <SiteFooter slot="footer" />
-  {hasWa && (
-    <WaButton variant="floating" text={page.floatingCta} message={page.waMessage} location="sticky_mobile" />
-  )}
 </BaseLayout>

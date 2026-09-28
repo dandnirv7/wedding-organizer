@@ -1,86 +1,82 @@
 ---
 /**
- * SiteFooter — bidang charcoal dengan teks terang (DESIGN.md §34).
- * Baris yang datanya belum diterima klien tidak dirender; tanpa link mati,
- * termasuk pranala legal yang halamannya memang belum ada.
+ * SiteFooter — bidang charcoal, empat kolom, baris bawah.
+ *
+ * Kanal kontak (WhatsApp/Instagram/email) dan wilayah kerja hanya dirender
+ * kalau sudah ada isinya di `siteConfig`; yang belum diisi tampil sebagai
+ * status berlabel, bukan sebagai tautan mati atau nomor karangan.
  */
 import { siteConfig } from '../../config/site';
 import { buildWaLink } from '../../capabilities/lead/lib/whatsapp';
+import { page } from './content';
 
 const year = new Date().getFullYear();
 const waUrl = buildWaLink({ number: siteConfig.contact.whatsapp });
 const instagram = siteConfig.socials.instagram;
 const email = siteConfig.contact.email;
 const areas = siteConfig.serviceAreas;
+
+const waNumber = siteConfig.contact.whatsapp;
+const igHandle = siteConfig.socials.instagram ? siteConfig.socials.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '') : '';
+
+const contact = [
+  waUrl !== '#' && waNumber ? { label: `WhatsApp — ${waNumber}`, href: waUrl, external: true } : null,
+  instagram ? { label: `Instagram @${igHandle}`, href: instagram, external: true } : null,
+  email ? { label: `Email — ${email}`, href: `mailto:${email}`, external: false } : null,
+].filter((item): item is { label: string; href: string; external: boolean } => item !== null);
 ---
 
-<footer class="field-ink sticky-reserve">
-  <div class="wrap band-major">
-    <div class="grid gap-x-16 gap-y-12 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-      <div>
-        <p class="t-lead">{siteConfig.name}</p>
-        <p class="lede mt-4 max-w-measure">{siteConfig.tagline}</p>
-        {areas.length > 0 && <p class="meta mt-6 text-on-ink-mute">Area layanan · {areas.join(', ')}</p>}
+<footer class="field-ink">
+  <div class="wrap wrap--slim footer__inner">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <p class="t-display footer__wordmark">{siteConfig.name}</p>
+        <p class="t-item footer__tagline">{siteConfig.tagline}</p>
       </div>
 
-      <div class="grid gap-10 sm:grid-cols-2">
-        <nav aria-label="Navigasi footer">
-          <h2 class="eyebrow">Halaman ini</h2>
-          <ul class="mt-5 space-y-3">
-            <li><a class="link-quiet" href="#layanan">Layanan</a></li>
-            <li><a class="link-quiet" href="#pernikahan">Pernikahan Kami</a></li>
-            <li><a class="link-quiet" href="#pengantar">Tentang Kami</a></li>
-            <li><a class="link-quiet" href="#tanya">FAQ</a></li>
-            <li><a class="link-quiet" href="#rencana">Mulai Konsultasi</a></li>
+      {page.footer.columns.map((column) => (
+        <nav aria-label={column.title}>
+          <h2 class="label label--ink">{column.title}</h2>
+          <ul class="footer__list">
+            {column.links.map((link) => (
+              <li><a class="footer__link" href={link.href}>{link.label}</a></li>
+            ))}
           </ul>
         </nav>
+      ))}
 
-        <div>
-          <h2 class="eyebrow">Kontak</h2>
-          <ul class="mt-5 space-y-3">
-            {waUrl !== '#' && (
+      <div>
+        <h2 class="label label--ink">{page.footer.contactTitle}</h2>
+        {contact.length > 0 ? (
+          <ul class="footer__list">
+            {contact.map((item) => (
               <li>
                 <a
-                  class="link-quiet"
-                  href={waUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-event="whatsapp_click"
-                  data-wa-location="footer"
+                  class="footer__link"
+                  href={item.href}
+                  {...(item.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 >
-                  WhatsApp
+                  {item.label}
                 </a>
               </li>
-            )}
-            {instagram && (
-              <li>
-                <a class="link-quiet" href={instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
-              </li>
-            )}
-            {email && (
-              <li>
-                <a class="link-quiet" href={`mailto:${email}`}>Email</a>
-              </li>
-            )}
-            {waUrl === '#' && !instagram && !email && (
-              <li class="meta text-on-ink-mute">Kontak resmi menunggu materi klien.</li>
-            )}
+            ))}
           </ul>
-        </div>
+        ) : (
+          <ul class="footer__list">
+            {page.footer.pendingContact.map((label) => (
+              <li>
+                <span class="footer__link footer__link--pending" aria-disabled="true">{label} — belum diisi</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {areas.length > 0 && <p class="footer__areas">{areas.join(' · ')}</p>}
       </div>
     </div>
 
-    <div class="mt-16 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4 border-t border-hairline-ink pt-8">
-      <p class="meta text-on-ink-mute">© {year} {siteConfig.name}</p>
-      <p class="meta max-w-measure text-on-ink-mute">
-        Situs ini tidak menyimpan data kamu — pesan konsultasi disusun di perangkatmu sendiri lalu kamu kirim lewat
-        WhatsApp.
-      </p>
-      <p class="meta text-on-ink-mute">
-        <a class="hover:text-on-ink" href="/sitemap-index.xml">Sitemap</a>
-        <span aria-hidden="true"> · </span>
-        <a class="hover:text-on-ink" href="/llms.txt">llms.txt</a>
-      </p>
+    <div class="footer__base">
+      <p class="footer__copy">© {year} {siteConfig.name}</p>
+      {areas.length > 0 && <p class="footer__copy">{areas.join(' · ')} · Indonesia</p>}
     </div>
   </div>
 </footer>
