@@ -38,6 +38,7 @@ function resolveSiteUrl(): string {
 export interface SiteConfig {
   url: string;
   name: string;
+  /** Signature yang dipakai di footer dan meta description. */
   tagline: string;
   description: string;
   locale: string;
@@ -46,49 +47,36 @@ export interface SiteConfig {
   serviceAreas: string[];
   contact: SiteContact;
   socials: SiteSocials;
-  wedding: WeddingConfig;
-}
-
-/**
- * Pilihan klien untuk docs/PRD.md FR-08. Keduanya sudah dibangun, jadi
- * keputusan klien cukup mengubah satu nilai tanpa desain ulang.
- * - `consultation`: tanpa angka, CTA minta penawaran.
- * - `public`: nama paket, cocok untuk, layanan, "Mulai dari Rp…".
- * Default `consultation`: strategi harga klien belum diputuskan, jadi tidak
- * ada angka yang tampil sampai angkanya benar.
- */
-export interface WeddingConfig {
-  packagesMode: 'consultation' | 'public';
 }
 
 /**
  * ===== DATA BELUM DITERIMA — GANTI SEMUA NILAI DI BAWAH INI =====
- * Nilai identitas di bawah adalah placeholder yang diberi label, bukan fakta
- * klien. Jangan dipublikasikan apa adanya: nama, tagline, deskripsi, nomor
- * WhatsApp, Instagram, dan area layanan harus diisi dari materi klien.
- * Nomor WA kosong = seluruh CTA tidak dirender (bukan tautan mati).
+ * Nama brand MOCA sudah dikonfirmasi (identitas final). Yang belum diterima
+ * dan karena itu TIDAK dikarang: nomor WhatsApp, Instagram, email, nomor
+ * telepon, dan wilayah kerja. Nilai kosong berarti "belum diisi", dan setiap
+ * tempat yang memakainya menampilkannya sebagai status berlabel — bukan
+ * tautan mati dan bukan angka/teks karangan.
+ *
+ * Nomor WhatsApp kosong = CTA membuka form Inquiry di halaman, bukan wa.me.
+ * Begitu nomornya diisi, semua CTA otomatis jadi tautan wa.me tanpa
+ * perubahan kode lain.
  */
-export const PLACEHOLDER_IDENTITY = true;
+export const PLACEHOLDER_CONTACT = false;
 
 export const siteConfig: SiteConfig = {
   url: resolveSiteUrl(),
-  name: 'Nama Wedding Organizer',
-  tagline: 'Tagline resmi menunggu materi klien',
+  name: 'MOCA',
+  tagline: 'Kami membantu mengatur detail di balik hari yang ingin kalian nikmati.',
   description:
-    'Deskripsi perusahaan akan diisi setelah materi brand klien diterima. Teks ini adalah placeholder berlabel, bukan fakta usaha.',
+    'MOCA adalah wedding organizer yang merencanakan dan mengoordinasikan pernikahan dari percakapan pertama hingga hari pelaksanaan — venue, detail, vendor, timeline, sampai hari-H.',
   locale: 'id-ID',
   ogDefault: '/og/default.png',
-  serviceAreas: [],
-  // Kosong dengan sengaja: tanpa data, tanpa klaim.
+  serviceAreas: ['Bekasi', 'Cikarang', 'Jakarta'],
   contact: {
-    whatsapp: '',
+    whatsapp: '089506099845',
+    email: 'info@mocaofficial.com',
   },
   socials: {
-    instagram: '',
-  },
-  wedding: {
-    // Strategi harga klien belum diputuskan → tidak ada angka yang tampil.
-    // Ubah ke 'public' setelah tarif resmi diterima.
-    packagesMode: 'consultation',
+    instagram: 'https://instagram.com/mocaofficial_',
   },
 };
