@@ -18,11 +18,20 @@ export interface Props {
   frame: Frame;
   /** Lebar tampil tipikal, mis. "(min-width: 64rem) 46vw, 100vw". */
   sizes?: string;
+  widths?: number[];
+  quality?: number | 'low' | 'mid' | 'high' | 'max';
   eager?: boolean;
   class?: string;
 }
 
-const { frame, sizes = '(min-width: 64rem) 46vw, 100vw', eager = false, class: className = '' } = Astro.props;
+const {
+  frame,
+  sizes = '(min-width: 64rem) 46vw, 100vw',
+  widths = [360, 600, 840],
+  quality,
+  eager = false,
+  class: className = '',
+} = Astro.props;
 const ar = `--ar: ${frame.width} / ${frame.height};`;
 const arSm = frame.sm ? ` --ar-sm: ${frame.sm.width} / ${frame.sm.height};` : '';
 ---
@@ -32,12 +41,13 @@ const arSm = frame.sm ? ` --ar-sm: ${frame.sm.width} / ${frame.sm.height};` : ''
     <Picture
       src={frame.src}
       alt={frame.alt}
-      widths={[420, 680, 900]}
+      widths={widths}
       {sizes}
       formats={['avif', 'webp']}
       fallbackFormat="jpg"
       loading={eager ? 'eager' : 'lazy'}
       decoding="async"
+      {...(quality !== undefined && { quality })}
       {...(eager && { fetchpriority: 'high' })}
     />
   </div>

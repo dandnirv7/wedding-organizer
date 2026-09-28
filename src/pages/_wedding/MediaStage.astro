@@ -15,11 +15,23 @@ export interface Props {
   /** Sumber video desktop; varian `mobile` dipakai di layar sempit. */
   video?: string;
   videoMobile?: string;
+  widths?: number[];
+  sizes?: string;
+  quality?: number | 'low' | 'mid' | 'high' | 'max';
   eager?: boolean;
   class?: string;
 }
 
-const { frame, video, videoMobile, eager = true, class: className = '' } = Astro.props;
+const {
+  frame,
+  video,
+  videoMobile,
+  widths = [420, 680, 960, 1200],
+  sizes = '(min-width: 64rem) 46vw, 100vw',
+  quality,
+  eager = true,
+  class: className = '',
+} = Astro.props;
 ---
 
 <figure class:list={['stage-wrap', className]}>
@@ -36,12 +48,13 @@ const { frame, video, videoMobile, eager = true, class: className = '' } = Astro
         <Picture
           src={frame.src}
           alt={frame.alt}
-          widths={[420, 680, 900]}
-          sizes="(min-width: 64rem) 46vw, 100vw"
+          widths={widths}
+          sizes={sizes}
           formats={['avif', 'webp']}
           fallbackFormat="jpg"
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
+          {...(quality !== undefined && { quality })}
           {...(eager && { fetchpriority: 'high' })}
         />
       )

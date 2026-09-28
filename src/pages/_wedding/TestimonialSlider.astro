@@ -28,7 +28,11 @@ const { testimonials, eyebrow } = Astro.props;
         aria-hidden={index !== 0 ? 'true' : 'false'}
       >
         <div class="voice__media">
-          <FramePlate frame={t.frame} />
+          <FramePlate
+            frame={t.frame}
+            sizes="(min-width: 64rem) 35vw, 100vw"
+            widths={[340, 520, 680]}
+          />
         </div>
         <div class="voice__body">
           <p class="chip">{eyebrow}</p>

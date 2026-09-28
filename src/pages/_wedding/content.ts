@@ -15,26 +15,26 @@
  */
 import type { ImageMetadata } from 'astro';
 
-import openingPhotograph from '../../assets/wedding/opening-photograph.png';
-import weddingPhoto from '../../assets/wedding/wedding-photo.png';
-import mainStory from '../../assets/wedding/main-story.png';
-import couplesDetail from '../../assets/wedding/couples-detail.png';
-import flowerDetail from '../../assets/wedding/flower-detail.png';
-import ringDetail from '../../assets/wedding/ring-detail.png';
-import tableDetail from '../../assets/wedding/table-detail.png';
-import locationDetail from '../../assets/wedding/location-detail.png';
-import eventDetail from '../../assets/wedding/event-detail.png';
-import mocaTeam from '../../assets/wedding/moca-team.png';
-import temporaryTeamOne from '../../assets/wedding/temporary-moca-team.png';
-import temporaryTeamTwo from '../../assets/wedding/temporary-moca-team-2.png';
+import openingPhotograph from '../../assets/wedding/opening-photograph.webp';
+import weddingPhoto from '../../assets/wedding/wedding-photo.webp';
+import mainStory from '../../assets/wedding/main-story.webp';
+import couplesDetail from '../../assets/wedding/couples-detail.webp';
+import flowerDetail from '../../assets/wedding/flower-detail.webp';
+import ringDetail from '../../assets/wedding/ring-detail.webp';
+import tableDetail from '../../assets/wedding/table-detail.webp';
+import locationDetail from '../../assets/wedding/location-detail.webp';
+import eventDetail from '../../assets/wedding/event-detail.webp';
+import mocaTeam from '../../assets/wedding/moca-team.webp';
+import temporaryTeamOne from '../../assets/wedding/temporary-moca-team.webp';
+import temporaryTeamTwo from '../../assets/wedding/temporary-moca-team-2.webp';
 
 /**
  * Slot media. Rasio tata letak sudah final dan terkunci, jadi aset yang berganti
  * tidak pernah menggeser layout. `sm` hanya untuk slot yang komposisinya memang
  * berubah di layar sempit.
  *
- * Foto di `src/assets/wedding/` semuanya 3:2 dan totalnya sekitar 9 MB, jadi
- * tidak pernah dilayani apa adanya: `<Picture>` menurunkan avif/webp + srcset
+ * Foto di `src/assets/wedding/` telah dioptimasi dalam format WebP (<800 KB total)
+ * dan dilayani via `<Picture>` yang menurunkan varian avif/webp responsif + srcset
  * per slot sesuai lebar tampilnya.
  */
 export interface Frame {
