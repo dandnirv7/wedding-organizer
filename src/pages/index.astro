@@ -58,10 +58,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <section class="band band--ink hero" aria-labelledby="hero-title">
     <div class="wrap wrap--slim hero__grid">
       <div class="hero__text">
-        <p class="label label--accent">{page.hero.eyebrow}</p>
-        <h1 class="t-display hero__title" id="hero-title">{page.hero.title}</h1>
-        <p class="lede hero__lede">{page.hero.lede}</p>
-        <div class="hero__cta">
+        <p class="label label--accent gs-hero-item">{page.hero.eyebrow}</p>
+        <h1 class="t-display hero__title gs-hero-item" id="hero-title">{page.hero.title}</h1>
+        <p class="lede hero__lede gs-hero-item">{page.hero.lede}</p>
+        <div class="hero__cta gs-hero-item">
           <CtaLink text={page.hero.primaryCta} location="hero" variant="onink" />
           <a class="link-arrow link-arrow--ink" href={page.hero.secondaryTarget}>
             {page.hero.secondaryCta}
@@ -69,7 +69,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
           </a>
         </div>
       </div>
-      <MediaStage frame={frames.hero} class="hero__media" />
+      <MediaStage frame={frames.hero} class="hero__media gs-hero-media" />
     </div>
   </section>
 
@@ -105,10 +105,23 @@ const pad = (n: number) => String(n).padStart(2, '0');
         headingId="pernikahan-title"
       />
       <div class="grid-portfolio">
-        <FramePlate frame={story.frames[0]} class="grid-portfolio__a" />
+        <FramePlate
+          frame={story.frames[0]}
+          class="grid-portfolio__a"
+          sizes="(min-width: 64rem) 54vw, (min-width: 48rem) 67vw, 100vw"
+          widths={[420, 680, 900]}
+        />
         <div class="grid-portfolio__stack">
-          <FramePlate frame={story.frames[1]} />
-          <FramePlate frame={story.frames[2]} />
+          <FramePlate
+            frame={story.frames[1]}
+            sizes="(min-width: 64rem) 26vw, (min-width: 48rem) 33vw, 100vw"
+            widths={[340, 520, 680]}
+          />
+          <FramePlate
+            frame={story.frames[2]}
+            sizes="(min-width: 64rem) 26vw, (min-width: 48rem) 33vw, 100vw"
+            widths={[340, 520, 680]}
+          />
         </div>
       </div>
       <dl class="meta-grid">
@@ -135,7 +148,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
         headingId="satu-hari-title"
         accent
       />
-      <FramePlate frame={frames.craft} class="field-wide mt-6" />
+      <FramePlate
+        frame={frames.craft}
+        class="field-wide mt-6"
+        sizes="(min-width: 72rem) 1152px, 100vw"
+        widths={[420, 680, 900, 1200]}
+      />
       <ol class="cols cols--3 mt-12">
         {
           behindTheDay.map((item) => (
@@ -189,15 +207,40 @@ const pad = (n: number) => String(n).padStart(2, '0');
         headingId="detail-title"
       />
       <div class="grid-detail">
-        <FramePlate frame={frames.detail[0]} class="grid-detail__a" />
+        <FramePlate
+          frame={frames.detail[0]}
+          class="grid-detail__a"
+          sizes="(min-width: 64rem) 50vw, (min-width: 48rem) 62vw, 100vw"
+          widths={[380, 560, 780]}
+        />
         <div class="grid-detail__stack">
-          <FramePlate frame={frames.detail[1]} />
-          <FramePlate frame={frames.detail[2]} />
+          <FramePlate
+            frame={frames.detail[1]}
+            sizes="(min-width: 64rem) 26vw, (min-width: 48rem) 38vw, 50vw"
+            widths={[200, 360, 520]}
+          />
+          <FramePlate
+            frame={frames.detail[2]}
+            sizes="(min-width: 64rem) 26vw, (min-width: 48rem) 38vw, 50vw"
+            widths={[200, 360, 520]}
+          />
         </div>
         <div class="grid-detail__row">
-          <FramePlate frame={frames.detail[3]} />
-          <FramePlate frame={frames.detail[4]} />
-          <FramePlate frame={frames.detail[5]} />
+          <FramePlate
+            frame={frames.detail[3]}
+            sizes="(min-width: 64rem) 26vw, (min-width: 48rem) 33vw, 50vw"
+            widths={[200, 360, 520]}
+          />
+          <FramePlate
+            frame={frames.detail[4]}
+            sizes="(min-width: 64rem) 26vw, (min-width: 48rem) 33vw, 50vw"
+            widths={[200, 360, 520]}
+          />
+          <FramePlate
+            frame={frames.detail[5]}
+            sizes="(min-width: 64rem) 26vw, (min-width: 48rem) 33vw, 100vw"
+            widths={[340, 520, 680]}
+          />
         </div>
       </div>
       <ul class="legend">
@@ -236,7 +279,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
         }
       </ol>
       <div class="grid-process mt-6">
-        {frames.process.map((frame) => <FramePlate frame={frame} />)}
+        <FramePlate
+          frame={frames.process[0]}
+          sizes="(min-width: 64rem) 40vw, 50vw"
+          widths={[340, 520, 680]}
+        />
+        <FramePlate
+          frame={frames.process[1]}
+          sizes="(min-width: 64rem) 20vw, 50vw"
+          widths={[200, 360, 520]}
+        />
+        <FramePlate
+          frame={frames.process[2]}
+          sizes="(min-width: 64rem) 20vw, 50vw"
+          widths={[200, 360, 520]}
+        />
       </div>
     </div>
   </section>
@@ -254,7 +311,11 @@ const pad = (n: number) => String(n).padStart(2, '0');
         {
           team.map((member, i) => (
             <article class="person">
-              <FramePlate frame={member.frame} />
+              <FramePlate
+                frame={member.frame}
+                sizes="(min-width: 64rem) 28vw, (min-width: 48rem) 33vw, 50vw"
+                widths={[200, 360, 520]}
+              />
               <h3 class="label person__name">
                 {member.name ?? `Nama tim ${pad(i + 1)} menunggu aset`}
               </h3>
@@ -297,7 +358,12 @@ const pad = (n: number) => String(n).padStart(2, '0');
           <p class="label">{page.inquiry.eyebrow}</p>
           <h2 class="t-section block__title" id="mulainya-title">{page.inquiry.headline}</h2>
           <p class="lede block__lede">{page.inquiry.lede}</p>
-          <FramePlate frame={frames.form} class="mt-6" />
+          <FramePlate
+            frame={frames.form}
+            class="mt-6"
+            sizes="(min-width: 64rem) 38vw, 100vw"
+            widths={[340, 520, 680]}
+          />
         </div>
         <InquiryForm
           eyebrow={page.inquiry.formEyebrow}
@@ -320,9 +386,345 @@ const pad = (n: number) => String(n).padStart(2, '0');
           class="link-arrow--ink mt-6 block"
         />
       </div>
-      <FramePlate frame={frames.closing} />
+      <FramePlate
+        frame={frames.closing}
+        sizes="(min-width: 64rem) 42vw, 100vw"
+        widths={[380, 560, 780]}
+      />
     </div>
   </section>
 
   <SiteFooter slot="footer" />
 </BaseLayout>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let mm: gsap.MatchMedia | null = null;
+
+  function initAnimations() {
+    // Bersihkan matchMedia dan ScrollTrigger sebelumnya jika ada (mis. navigasi via ClientRouter)
+    if (mm) {
+      mm.revert();
+    }
+    ScrollTrigger.getAll().forEach((t: any) => t.kill());
+
+    mm = gsap.matchMedia();
+
+    // Animasi dinamis penuh hanya jika pengguna TIDAK menyetel preferensi reduced-motion
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // 01 · Hero Cinematic Reveal
+      gsap.from(".gs-hero-item", {
+        y: 28,
+        opacity: 0,
+        duration: 1,
+        stagger: 0.15,
+        ease: "power3.out",
+        clearProps: "all",
+      });
+
+      gsap.from(".gs-hero-media", {
+        opacity: 0,
+        duration: 1.2,
+        delay: 0.2,
+        ease: "power2.out",
+        clearProps: "all",
+      });
+
+      // Kepala Seksi Universal (Sections 02 – 12)
+      const sectionHeads = document.querySelectorAll("section:not(.hero) header.block");
+      sectionHeads.forEach((head) => {
+        gsap.from(head, {
+          scrollTrigger: {
+            trigger: head,
+            start: "top 88%",
+            once: true,
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      });
+
+      // 02 · Tentang — Keywords Stagger
+      const keywords = document.querySelectorAll("#tentang .keywords__item");
+      if (keywords.length > 0) {
+        gsap.from(keywords, {
+          scrollTrigger: {
+            trigger: "#tentang .keywords",
+            start: "top 88%",
+            once: true,
+          },
+          y: 16,
+          opacity: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 03 · Cerita Pernikahan — Portfolio Frames & Metadata
+      const portfolioPlates = document.querySelectorAll("#pernikahan .grid-portfolio .plate");
+      if (portfolioPlates.length > 0) {
+        gsap.from(portfolioPlates, {
+          scrollTrigger: {
+            trigger: "#pernikahan .grid-portfolio",
+            start: "top 85%",
+            once: true,
+          },
+          y: 32,
+          opacity: 0,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: "power3.out",
+          clearProps: "all",
+        });
+      }
+
+      const metaItems = document.querySelectorAll("#pernikahan .meta-grid__item");
+      if (metaItems.length > 0) {
+        gsap.from(metaItems, {
+          scrollTrigger: {
+            trigger: "#pernikahan .meta-grid",
+            start: "top 90%",
+            once: true,
+          },
+          y: 16,
+          opacity: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 04 · Satu Hari — Wide Plate & 3 Kolom
+      const craftPlate = document.querySelector('section[aria-labelledby="satu-hari-title"] .field-wide');
+      if (craftPlate) {
+        gsap.from(craftPlate, {
+          scrollTrigger: {
+            trigger: craftPlate,
+            start: "top 85%",
+            once: true,
+          },
+          opacity: 0,
+          y: 28,
+          duration: 0.9,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      const craftCols = document.querySelectorAll('section[aria-labelledby="satu-hari-title"] .cols--3 .col');
+      if (craftCols.length > 0) {
+        gsap.from(craftCols, {
+          scrollTrigger: {
+            trigger: 'section[aria-labelledby="satu-hari-title"] .cols--3',
+            start: "top 85%",
+            once: true,
+          },
+          y: 20,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 05 · Layanan — Baris Layanan Berurutan
+      const serviceRows = document.querySelectorAll("#layanan .rows .row");
+      if (serviceRows.length > 0) {
+        gsap.from(serviceRows, {
+          scrollTrigger: {
+            trigger: "#layanan .rows",
+            start: "top 85%",
+            once: true,
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 06 · Detail — Grid & Legenda
+      const detailPlates = document.querySelectorAll('section[aria-labelledby="detail-title"] .plate');
+      if (detailPlates.length > 0) {
+        gsap.from(detailPlates, {
+          scrollTrigger: {
+            trigger: 'section[aria-labelledby="detail-title"] .grid-detail',
+            start: "top 85%",
+            once: true,
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      const legendItems = document.querySelectorAll('section[aria-labelledby="detail-title"] .legend__item');
+      if (legendItems.length > 0) {
+        gsap.from(legendItems, {
+          scrollTrigger: {
+            trigger: 'section[aria-labelledby="detail-title"] .legend',
+            start: "top 90%",
+            once: true,
+          },
+          opacity: 0,
+          y: 12,
+          duration: 0.5,
+          stagger: 0.08,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 07 · Cara Kami Bekerja — Kolom & Grid Proses
+      const processCols = document.querySelectorAll("#proses .cols--4 .col");
+      if (processCols.length > 0) {
+        gsap.from(processCols, {
+          scrollTrigger: {
+            trigger: "#proses .cols--4",
+            start: "top 85%",
+            once: true,
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      const processPlates = document.querySelectorAll("#proses .grid-process .plate");
+      if (processPlates.length > 0) {
+        gsap.from(processPlates, {
+          scrollTrigger: {
+            trigger: "#proses .grid-process",
+            start: "top 85%",
+            once: true,
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.12,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 08 · Tim — Kartu Person
+      const teamMembers = document.querySelectorAll('section[aria-labelledby="tim-title"] .grid-team .person');
+      if (teamMembers.length > 0) {
+        gsap.from(teamMembers, {
+          scrollTrigger: {
+            trigger: 'section[aria-labelledby="tim-title"] .grid-team',
+            start: "top 85%",
+            once: true,
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 09 · Testimoni — Slider Container
+      const voiceSlider = document.querySelector("#testimoni .voice-slider");
+      if (voiceSlider) {
+        gsap.from(voiceSlider, {
+          scrollTrigger: {
+            trigger: voiceSlider,
+            start: "top 85%",
+            once: true,
+          },
+          y: 24,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 10 · FAQ — Kontainer List
+      const faqContainer = document.querySelector("#tanya .faq");
+      if (faqContainer) {
+        gsap.from(faqContainer, {
+          scrollTrigger: {
+            trigger: faqContainer,
+            start: "top 85%",
+            once: true,
+          },
+          y: 20,
+          opacity: 0,
+          duration: 0.7,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 11 · Inquiry — Intro & Formulir
+      const inqIntro = document.querySelector("#mulainya .grid-inquiry__intro");
+      const inqForm = document.querySelector("#mulainya .inq__form");
+      if (inqIntro && inqForm) {
+        gsap.from([inqIntro, inqForm], {
+          scrollTrigger: {
+            trigger: "#mulainya .grid-inquiry",
+            start: "top 80%",
+            once: true,
+          },
+          y: 28,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power2.out",
+          clearProps: "all",
+        });
+      }
+
+      // 12 · Penutup — Closing Grid
+      const closingContent = document.querySelectorAll('section[aria-labelledby="penutup-title"] .grid-closing > *');
+      if (closingContent.length > 0) {
+        gsap.from(closingContent, {
+          scrollTrigger: {
+            trigger: 'section[aria-labelledby="penutup-title"]',
+            start: "top 80%",
+            once: true,
+          },
+          y: 28,
+          opacity: 0,
+          duration: 0.9,
+          stagger: 0.15,
+          ease: "power3.out",
+          clearProps: "all",
+        });
+      }
+    });
+
+    // Fallback aksesibilitas langsung tampil statis tanpa animasi
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      gsap.set(".gs-hero-item, .gs-hero-media", {
+        clearProps: "all",
+      });
+    });
+  }
+
+  // Jalankan saat load awal dan saat navigasi client router Astro
+  initAnimations();
+  document.addEventListener("astro:page-load", initAnimations);
+</script>
