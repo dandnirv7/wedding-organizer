@@ -1,6 +1,6 @@
 ---
 /**
- * SectionHead — kepala blok yang sunyi: label + H2 (+ satu kalimat pembuka).
+ * SectionHead — kepala blok: label + H2 (+ satu kalimat pembuka).
  * Judul membawa bobotnya sendiri; label hanya penanda blok.
  */
 export interface Props {
@@ -9,14 +9,18 @@ export interface Props {
   lede?: string;
   /** id anchor pada heading, bukan pada section. */
   headingId?: string;
+  /** Label champagne — dipakai pada bidang gelap & penanda blok. */
+  accent?: boolean;
+  /** Judul lebih besar dan lebih rapat (intro, inquiry, penutup). */
+  lead?: boolean;
   class?: string;
 }
 
-const { eyebrow, headline, lede, headingId, class: className = '' } = Astro.props;
+const { eyebrow, headline, lede, headingId, accent = false, lead = false, class: className = '' } = Astro.props;
 ---
 
 <header class:list={['block', className]}>
-  <p class="eyebrow">{eyebrow}</p>
-  <h2 class="t-section mt-5" id={headingId}>{headline}</h2>
-  {lede && <p class="lede mt-6">{lede}</p>}
+  <p class:list={['label', { 'label--accent': accent }]}>{eyebrow}</p>
+  <h2 class:list={['t-section', 'block__title', { 't-section--lead': lead }]} id={headingId}>{headline}</h2>
+  {lede && <p class="lede block__lede">{lede}</p>}
 </header>

@@ -3,16 +3,15 @@
  * FaqList — disclosure native `<details name>`: akordeon tanpa skrip,
  * satu terbuka pada satu waktu, tetap terbaca mesin pencari dan AI.
  * Butir yang jawabannya adalah kebijakan klien dijawab apa adanya dan
- * dialihkan ke percakapan, tidak dikarang.
+ * diberi ajakan bertanya, tidak dikarang.
  */
 import { buildWaLink } from '../../capabilities/lead/lib/whatsapp';
-import type { FaqEntry } from './content';
+import { page, type FaqEntry } from './content';
 
 export interface Props {
   items: readonly FaqEntry[];
   pendingAnswer: string;
   ctaLabel: string;
-  /** Copy pesan WhatsApp prefilled dari halaman. */
   waMessage: string;
 }
 
@@ -21,13 +20,13 @@ const waUrl = buildWaLink({ text: waMessage });
 const hasNumber = waUrl !== '#';
 ---
 
-<div class="mt-12">
+<div class="faq">
   {
-    items.map((item, i) => (
-      <details class="faq__item" name="faq" open={i === 0}>
+    items.map((item) => (
+      <details class="faq__item" name="faq">
         <summary>
-          <h3 class="faq__q">{item.q}</h3>
-          <span class="faq__mark" aria-hidden="true"></span>
+          <span class="faq__q">{item.q}</span>
+          <span class="faq__mark" aria-hidden="true" />
         </summary>
         <div class="faq__body">
           {item.a ? (
@@ -35,17 +34,19 @@ const hasNumber = waUrl !== '#';
           ) : (
             <>
               <p class="prose">{pendingAnswer}</p>
-              {hasNumber && (
+              {hasNumber ? (
                 <a
+                  class="link-arrow mt-5"
                   href={waUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="link-quiet mt-4"
-                  data-wa-location="faq"
                   data-event="whatsapp_click"
+                  data-wa-location="faq"
                 >
                   {ctaLabel}
                 </a>
+              ) : (
+                <a class="link-arrow mt-5" href={page.formAnchor}>{ctaLabel}</a>
               )}
             </>
           )}

@@ -1,0 +1,53 @@
+---
+/**
+ * CtaLink — satu komponen untuk semua CTA di halaman.
+ *
+ * Nomor WhatsApp ada → tautan wa.me dengan pesan terisi (kemampuan LEAD).
+ * Nomor belum ada → anchor ke blok inquiry, supaya tombol tetap terlihat dan
+ * tidak pernah jadi tautan mati. Begitu `siteConfig.contact.whatsapp` diisi,
+ * semua CTA di halaman otomatis jadi wa.me tanpa perubahan kode.
+ */
+import { WaButton, buildWaLink } from '../../capabilities/lead/index.js';
+import { page } from './content';
+
+export interface Props {
+  text: string;
+  location: 'header' | 'hero' | 'final_cta' | 'footer';
+  /** `onink` = tombol terang di atas bidang gelap; `quiet` = teks saja. */
+  variant?: 'primary' | 'onink' | 'quiet';
+  class?: string;
+  slot?: string;
+}
+
+const { text, location, variant = 'primary', class: className = '', slot: slotName } = Astro.props;
+const waUrl = buildWaLink({ text: page.waMessage });
+const hasWa = waUrl !== '#';
+const quiet = variant === 'quiet';
+---
+
+{
+  quiet ? (
+    <a
+      href={hasWa ? waUrl : page.formAnchor}
+      class:list={['link-arrow', className]}
+      slot={slotName}
+      {...(hasWa && { target: '_blank', rel: 'noopener noreferrer', 'data-event': 'whatsapp_click', 'data-wa-location': location })}
+    >
+      {text}
+      <span class="link-arrow__mark" aria-hidden="true">→</span>
+    </a>
+  ) : hasWa ? (
+    <WaButton
+      text={text}
+      message={page.waMessage}
+      location={location}
+      variant={variant === 'onink' ? 'onink' : 'primary'}
+      class={className}
+      slot={slotName}
+    />
+  ) : (
+    <a href={page.formAnchor} class:list={['btn', variant === 'onink' ? 'btn--onink' : 'btn--primary', className]} slot={slotName}>
+      {text}
+    </a>
+  )
+}

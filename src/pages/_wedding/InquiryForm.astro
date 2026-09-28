@@ -1,121 +1,148 @@
 ---
 /**
- * InquiryForm — form kualifikasi lead yang mengirimnya ke WhatsApp, bukan ke server.
+ * InquiryForm — form kualifikasi lead yang menyusun pesan WhatsApp, bukan
+ * kiriman ke server.
  *
  * Statis penuh: tidak ada endpoint, tidak ada penyimpanan. Tombol submit
  * menyusun pesan dari field lalu membuka wa.me. Tanpa JavaScript, form tetap
- * membuka percakapan yang sama (field-nya hanya tidak ikut tersusun);
- * tanpa nomor WhatsApp di konfigurasi, seluruh form tidak dirender.
+ * membuka percakapan yang sama lewat `method="get"` (field-nya hanya tidak ikut
+ * tersusun).
+ *
+ * Nomor WhatsApp belum diisi → tombol tidak mengirim ke mana pun: pesannya
+ * ditampilkan siap disalin, dan statusnya jujur mengatakan nomornya belum
+ * dipasang. Tidak ada endpoint pengganti yang dikarang.
  */
 import { buildWaLink } from '../../capabilities/lead/lib/whatsapp';
-import { inquiryFields, page } from './content';
+import { formOptions, page } from './content';
 
 export interface Props {
-  headline: string;
-  lede: string;
+  /** Label kecil di atas form; judul blok sudah ada di kolom kiri. */
+  eyebrow: string;
+  hint: string;
+  submit: string;
 }
 
-const { headline, lede } = Astro.props;
-const waUrl = buildWaLink({ text: page.waMessage });
-const hasNumber = waUrl !== '#';
+const { eyebrow, hint, submit } = Astro.props;
+const base = buildWaLink();
+const hasNumber = base !== '#';
 
-type FieldType = 'text' | 'date' | 'tel' | 'textarea' | 'select';
+type FieldType = 'text' | 'date' | 'tel' | 'textarea' | 'select' | 'radio';
 
 interface Field {
   name: string;
   label: string;
   type: FieldType;
-  required: boolean;
-  wide: boolean;
+  required?: boolean;
   autocomplete?: string;
-  options?: string[];
+  options?: readonly string[];
+  hint?: string;
 }
 
 const fields: Field[] = [
-  { name: 'nama', label: 'Nama kamu', type: 'text', required: true, autocomplete: 'name', wide: false },
-  { name: 'pasangan', label: 'Nama pasangan', type: 'text', required: false, autocomplete: 'name', wide: false },
-  { name: 'tanggal', label: 'Tanggal rencana', type: 'date', required: true, wide: false },
-  { name: 'lokasi', label: 'Lokasi / venue yang dibayangkan', type: 'text', required: false, wide: false },
-  { name: 'tamu', label: 'Perkiraan jumlah tamu', type: 'select', required: true, options: [...inquiryFields.guestRanges], wide: false },
-  { name: 'jenis', label: 'Jenis pernikahan', type: 'select', required: false, options: [...inquiryFields.weddingTypes], wide: false },
-  { name: 'layanan', label: 'Layanan yang dibutuhkan', type: 'select', required: false, options: [...inquiryFields.serviceNeeds], wide: false },
-  { name: 'budget', label: 'Kisaran budget', type: 'select', required: false, options: [...inquiryFields.budgetRanges], wide: true },
-  { name: 'kontak', label: 'Nomor yang bisa dihubungi', type: 'tel', required: false, autocomplete: 'tel', wide: false },
-  { name: 'pesan', label: 'Ceritakan sedikit rencanamu', type: 'textarea', required: false, wide: true },
+  { name: 'nama', label: 'Nama kalian', type: 'text', required: true, autocomplete: 'name' },
+  { name: 'pasangan', label: 'Nama pasangan', type: 'text', autocomplete: 'name' },
+  { name: 'kontak', label: 'Nomor WhatsApp atau email', type: 'text', autocomplete: 'email' },
+  { name: 'tanggal', label: 'Tanggal pernikahan (jika sudah ada)', type: 'date' },
+  { name: 'lokasi', label: 'Lokasi / venue', type: 'text' },
+  { name: 'tamu', label: 'Perkiraan jumlah tamu', type: 'select', options: formOptions.tamu },
 ];
+
+const services = formOptions.layanan;
 ---
 
-{
-  hasNumber && (
-    <div>
-      <h3 class="t-item">{headline}</h3>
-      <p class="lede mt-5">{lede}</p>
+<div class="inq">
+  <p class="label">{eyebrow}</p>
 
-      <form
-        id="inq"
-        class="mt-10"
-        action={buildWaLink()}
-        method="get"
-        data-wa-href={waUrl}
-        data-ok={page.finalCta.ok}
-        data-required={page.finalCta.errors.required}
-      >
-        <div class="inq__grid">
-          {fields.map((field) => {
-            const id = `inq-${field.name}`;
-            return (
-              <div class:list={['inq__field', { 'inq__wide': field.wide }]}>
-                <label class="inq__label" for={id}>
-                  {field.label}
-                  {!field.required && <span class="inq__hint ms-2 font-normal normal-case tracking-normal">({page.finalCta.optional})</span>}
-                  {field.required && <span class="inq__req" aria-hidden="true">*</span>}
-                </label>
+  <form
+    id="inq"
+    class="inq__form"
+    action={hasNumber ? base : undefined}
+    method={hasNumber ? 'get' : undefined}
+    data-wa-href={base}
+    data-has-number={String(hasNumber)}
+    data-default-message={page.waMessage}
+  >
+    <div class="inq__fields">
+      {
+        fields.map((field) => {
+          const id = `inq-${field.name}`;
+          return (
+            <div class="inq__field">
+              <label class="inq__label" for={id}>
+                {field.label}
+              </label>
 
-                {field.type === 'select' ? (
-                  <select class="inp" id={id} name={field.name} data-label={field.label} required={field.required}>
-                    <option value="">Belum tahu / pilih nanti</option>
-                    {(field.options ?? []).map((option) => <option value={option}>{option}</option>)}
-                  </select>
-                ) : field.type === 'textarea' ? (
-                  <textarea
-                    class="inp"
-                    id={id}
-                    name={field.name}
-                    data-label={field.label}
-                    rows={3}
-                    required={field.required}
-                    placeholder="Konsep, adat yang dipakai, atau hal yang paling kamu khawatirkan terlewat."
-                  />
-                ) : (
-                  <input
-                    class="inp"
-                    id={id}
-                    name={field.name}
-                    type={field.type}
-                    data-label={field.label}
-                    required={field.required}
-                    {...field.autocomplete && { autocomplete: field.autocomplete }}
-                  />
-                )}
-              </div>
-            );
-          })}
+              {field.type === 'select' ? (
+                <select class="inq__control" id={id} name={field.name} data-label={field.label}>
+                  <option value="">Belum tahu</option>
+                  {field.options?.map((option) => (
+                    <option value={option}>{option}</option>
+                  ))}
+                </select>
+              ) : field.type === 'textarea' ? (
+                <textarea
+                  class="inq__control inq__control--area"
+                  id={id}
+                  name={field.name}
+                  data-label={field.label}
+                  rows="2"
+                />
+              ) : (
+                <input
+                  class="inq__control"
+                  id={id}
+                  name={field.name}
+                  type={field.type}
+                  data-label={field.label}
+                  required={field.required}
+                  {...(field.autocomplete && { autocomplete: field.autocomplete })}
+                />
+              )}
+            </div>
+          );
+        })
+      }
+
+      <fieldset class="inq__field inq__fieldset">
+        <legend class="inq__label">Layanan yang dibutuhkan</legend>
+        <div class="inq__radios">
+          {
+            services.map((option, i) => (
+              <label class="inq__radio" for={`inq-layanan-${i}`}>
+                <input
+                  type="radio"
+                  id={`inq-layanan-${i}`}
+                  name="layanan"
+                  value={option}
+                  checked={i === 0}
+                />
+                <span class="inq__radio-mark" aria-hidden="true" />
+                <span>{option}</span>
+              </label>
+            ))
+          }
         </div>
+      </fieldset>
 
-        <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
-          <button type="submit" class="btn btn--on-ink">{page.finalCta.submit}</button>
-          <p class="inq__hint max-w-measure">{page.finalCta.submitHint}</p>
-        </div>
-
-        <p class="inq__status mt-6" id="inq-status" role="status" aria-live="polite" hidden></p>
-        <div class="inq__status mt-4" id="inq-preview-wrap" hidden>
-          <span class="inq__hint">Isi pesan yang akan terbuka:</span>
-          <p class="inq__preview mt-2" id="inq-preview"></p>
-        </div>
-      </form>
+      <div class="inq__field">
+        <label class="inq__label" for="inq-pesan">Ceritakan kebutuhan kalian</label>
+        <textarea class="inq__control inq__control--area" id="inq-pesan" name="pesan" data-label="Ceritakan kebutuhan kalian" rows="2" />
+      </div>
     </div>
-  )
-}
+
+    <p class="inq__hint">{hint}</p>
+
+    <button type="submit" class="btn btn--primary inq__submit">{submit}</button>
+
+    <p class="inq__status" id="inq-status" role="status" aria-live="polite" hidden></p>
+
+    <div class="inq__preview-wrap" id="inq-preview-wrap" hidden>
+      <p class="inq__preview-label" id="inq-preview-label">Pesan yang tersusun</p>
+      <p class="inq__preview" id="inq-preview" aria-live="polite" aria-labelledby="inq-preview-label"></p>
+      <button type="button" class="inq__copy" id="inq-copy" hidden>Salin pesan</button>
+    </div>
+  </form>
+</div>
 
 <script>
   import { track } from '../../capabilities/lead/lib/track';
@@ -126,10 +153,11 @@ const fields: Field[] = [
     const status = document.getElementById('inq-status');
     const previewWrap = document.getElementById('inq-preview-wrap');
     const preview = document.getElementById('inq-preview');
-    const base = form.dataset.waHref ?? '';
-    const okText = form.dataset.ok ?? '';
-    const requiredText = form.dataset.required ?? 'Lengkapi isian wajib dulu.';
+    const copyBtn = document.getElementById('inq-copy') as HTMLButtonElement | null;
+    const hasNumber = form.dataset.hasNumber === 'true';
+    const waBase = form.dataset.waHref ?? '';
     let started = false;
+    let composed = '';
 
     const values = () => Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
 
@@ -139,13 +167,11 @@ const fields: Field[] = [
         'Halo, saya ingin konsultasi soal pernikahan kami.',
         '',
         `Nama: ${v.nama?.trim() || '—'}${v.pasangan?.trim() ? ` & ${v.pasangan.trim()}` : ''}`,
-        v.tanggal && `Tanggal rencana: ${v.tanggal}`,
+        v.tanggal && `Tanggal pernikahan: ${v.tanggal}`,
         v.lokasi && `Lokasi: ${v.lokasi}`,
         v.tamu && `Perkiraan tamu: ${v.tamu}`,
-        v.jenis && `Jenis pernikahan: ${v.jenis}`,
         v.layanan && `Layanan yang dibutuhkan: ${v.layanan}`,
-        v.budget && `Kisaran budget: ${v.budget}`,
-        v.kontak && `Nomor yang bisa dihubungi: ${v.kontak}`,
+        v.kontak && `Nomor WhatsApp atau email: ${v.kontak}`,
         v.pesan && `\n${v.pesan}`,
       ].filter(Boolean) as string[];
       return lines.join('\n');
@@ -153,14 +179,15 @@ const fields: Field[] = [
 
     const showPreview = () => {
       if (!previewWrap || !preview) return;
+      composed = compose();
       previewWrap.hidden = false;
-      preview.textContent = compose();
+      preview.textContent = composed;
     };
 
-    const say = (target: HTMLElement | null, message: string) => {
-      if (!target) return;
-      target.textContent = message;
-      target.hidden = false;
+    const say = (message: string) => {
+      if (!status) return;
+      status.textContent = message;
+      status.hidden = false;
     };
 
     form.addEventListener(
@@ -175,7 +202,15 @@ const fields: Field[] = [
       true,
     );
 
-    // `invalid` tidak bubbled: capture supaya pesan error datang dari
+    form.addEventListener(
+      'change',
+      () => {
+        showPreview();
+      },
+      true,
+    );
+
+    // `invalid` tidak bubbles: capture supaya pesan error datang dari
     // rancangan halaman, bukan tooltip bawaan browser.
     form.addEventListener(
       'invalid',
@@ -184,7 +219,7 @@ const fields: Field[] = [
         if (!(el instanceof HTMLElement)) return;
         el.setAttribute('aria-invalid', 'true');
         event.preventDefault();
-        say(status, requiredText.replace('{field}', (el.dataset.label ?? 'field wajib').toLowerCase()));
+        say(`Isi ${(el.dataset.label ?? 'field wajib').toLowerCase()} dulu — itu yang paling dibutuhkan untuk mulai.`);
         el.focus();
       },
       true,
@@ -196,8 +231,28 @@ const fields: Field[] = [
 
       [...form.elements].forEach((el) => el.removeAttribute('aria-invalid'));
       track('inquiry_form_submit', { fields: Object.keys(values()).length });
-      say(status, okText);
-      window.location.href = `${base.split('?')[0]}?text=${encodeURIComponent(compose())}`;
+      showPreview();
+
+      if (hasNumber) {
+        say('Pesannya sudah siap di WhatsApp. Kalau ada yang mau diubah, tinggal edit sebelum dikirim.');
+        window.location.href = `${waBase.split('?')[0]}?text=${encodeURIComponent(compose())}`;
+        return;
+      }
+
+      // Nomor belum ada: jangan mengarahkan ke mana pun. Beri pesannya saja.
+      if (copyBtn) copyBtn.hidden = false;
+      say(
+        'Nomor WhatsApp MOCA belum dipasang di konfigurasi, jadi pesan ini belum bisa dikirim dari sini. Salin pesannya lalu kirimkan lewat WhatsApp MOCA.'
+      );
+    });
+
+    copyBtn?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(composed);
+        say('Pesan tersalin. Tinggal tempel di WhatsApp.');
+      } catch {
+        say('Browser menolak akses clipboard — select manual teksnya ya.');
+      }
     });
   }
 </script>

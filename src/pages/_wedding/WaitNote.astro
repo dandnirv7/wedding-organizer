@@ -1,0 +1,14 @@
+---
+/**
+ * WaitNote — status "data klien belum tiba" yang tampil sebagai kalimat status,
+ * bukan sebagai fakta. Dipakai di blok yang datanya masih menunggu.
+ */
+export interface Props {
+  text: string;
+  class?: string;
+}
+
+const { text, class: className = '' } = Astro.props;
+---
+
+<p class:list={['wait', className]}>{text}</p>
