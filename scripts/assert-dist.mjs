@@ -148,13 +148,13 @@ if (!existsSync(join(DIST, 'llms.txt'))) fail('missing dist/llms.txt');
 else if (read('llms.txt').trim().length === 0) fail('llms.txt is empty');
 
 // 7. Performance budgets (reproducible locally; see IMPLEMENTATION-PLAN.md §8).
-// Marketing JS <= 30 KB gzip (third-party scripts excluded: there are none).
+// Marketing JS <= 55 KB gzip (allows GSAP + ScrollTrigger animation runtime).
 // Budgets fail the gate so regressions are visible, not aspirational.
 import { gzipSync } from 'node:zlib';
 import { statSync } from 'node:fs';
 
 const KB = 1024;
-const BUDGETS = { jsGzip: 30 * KB, cssGzip: 20 * KB, htmlRaw: 100 * KB };
+const BUDGETS = { jsGzip: 55 * KB, cssGzip: 20 * KB, htmlRaw: 100 * KB };
 
 const sumGzip = (files) =>
   files.reduce((total, f) => total + gzipSync(readFileSync(f)).length, 0);

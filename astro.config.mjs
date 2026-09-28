@@ -44,10 +44,10 @@ export default defineConfig({
     service: {
       entrypoint: 'astro/assets/services/sharp',
       config: {
-        avif: { effort: 4 },
-        webp: { effort: 5 },
-        jpeg: { mozjpeg: true },
-        png: { compressionLevel: 9 },
+        avif: { effort: 5, quality: 72 },
+        webp: { effort: 6, quality: 80 },
+        jpeg: { mozjpeg: true, quality: 80 },
+        png: { compressionLevel: 9, effort: 7 },
       },
     },
   },
