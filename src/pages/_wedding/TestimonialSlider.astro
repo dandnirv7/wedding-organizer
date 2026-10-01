@@ -5,7 +5,9 @@
  * Progressive enhancement:
  * - Slide pertama aktif dan tampil secara statis tanpa JS.
  * - Navigasi panah kiri/kanan dan keyboard ArrowLeft/ArrowRight mengubah slide aktif.
- * - Indikator counter (1 / 3, 2 / 3, 3 / 3) terikat pada tiap slide.
+ * - Indikator counter (1 / 3, 2 / 3, 3 / 3) terikat pada slider.
+ * - Kartu pembungkus dan bar navigasi bawah bersifat permanen dan tidak berkedip;
+ *   hanya foto dan konten teks yang bertransisi halus.
  */
 import FramePlate from './FramePlate.astro';
 import type { Testimonial } from './content';
@@ -18,59 +20,62 @@ export interface Props {
 const { testimonials, eyebrow } = Astro.props;
 ---
 
-<div class="voice-slider" id="voice-slider">
-  {
-    testimonials.map((t, index) => (
-      <figure
-        class:list={['voice', 'voice-slide', { 'is-active': index === 0 }]}
-        data-index={index}
-        id={`voice-slide-${index}`}
-        aria-hidden={index !== 0 ? 'true' : 'false'}
+<figure class="voice voice-slider" id="voice-slider">
+  <div class="voice__stage">
+    {
+      testimonials.map((t, index) => (
+        <div
+          class:list={['voice__slide', { 'is-active': index === 0 }]}
+          data-index={index}
+          id={`voice-slide-${index}`}
+          aria-hidden={index !== 0 ? 'true' : 'false'}
+        >
+          <div class="voice__media">
+            <FramePlate
+              frame={t.frame}
+              sizes="(min-width: 64rem) 35vw, 100vw"
+              widths={[340, 520, 680]}
+            />
+          </div>
+          <div class="voice__body">
+            <p class="chip">{eyebrow}</p>
+            <blockquote class="t-quote voice__quote">
+              <p>“{t.quote}”</p>
+            </blockquote>
+            <div class="voice__meta">
+              <p class="voice__author">{t.couple}</p>
+              {t.context && <p class="voice__context">{t.context}</p>}
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <figcaption class="voice__bar">
+    <span class="voice__count" aria-live="polite">
+      <span class="voice__current">1</span> / {testimonials.length}
+    </span>
+    <div class="voice__nav">
+      <button
+        type="button"
+        class="voice__step voice__step--prev"
+        aria-label="Testimoni sebelumnya"
+        data-dir="prev"
       >
-        <div class="voice__media">
-          <FramePlate
-            frame={t.frame}
-            sizes="(min-width: 64rem) 35vw, 100vw"
-            widths={[340, 520, 680]}
-          />
-        </div>
-        <div class="voice__body">
-          <p class="chip">{eyebrow}</p>
-          <blockquote class="t-quote voice__quote">
-            <p>“{t.quote}”</p>
-          </blockquote>
-          <div class="voice__meta">
-            <p class="voice__author">{t.couple}</p>
-            {t.context && <p class="voice__context">{t.context}</p>}
-          </div>
-        </div>
-        <figcaption class="voice__bar">
-          <span class="voice__count" aria-live="polite">
-            {index + 1} / {testimonials.length}
-          </span>
-          <div class="voice__nav">
-            <button
-              type="button"
-              class="voice__step voice__step--prev"
-              aria-label="Testimoni sebelumnya"
-              data-dir="prev"
-            >
-              ←
-            </button>
-            <button
-              type="button"
-              class="voice__step voice__step--next"
-              aria-label="Testimoni berikutnya"
-              data-dir="next"
-            >
-              →
-            </button>
-          </div>
-        </figcaption>
-      </figure>
-    ))
-  }
-</div>
+        ←
+      </button>
+      <button
+        type="button"
+        class="voice__step voice__step--next"
+        aria-label="Testimoni berikutnya"
+        data-dir="next"
+      >
+        →
+      </button>
+    </div>
+  </figcaption>
+</figure>
 
 <style>
   .voice-slider {
@@ -78,27 +83,30 @@ const { testimonials, eyebrow } = Astro.props;
     inline-size: 100%;
   }
 
-  .voice-slide:not(.is-active) {
+  .voice__slide:not(.is-active) {
     display: none !important;
   }
 
-  .voice-slide.is-active {
-    animation: voiceFadeIn 300ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Animasi hanya diterapkan pada foto dan teks, BUKAN keseluruhan kartu atau bar navigasi */
+  .voice__slide.is-active .voice__media,
+  .voice__slide.is-active .voice__body {
+    animation: voiceContentFadeIn 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  @keyframes voiceFadeIn {
+  @keyframes voiceContentFadeIn {
     from {
       opacity: 0;
-      translate: 0 4px;
+      transform: translateY(4px);
     }
     to {
       opacity: 1;
-      translate: 0 0;
+      transform: translateY(0);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .voice-slide.is-active {
+    .voice__slide.is-active .voice__media,
+    .voice__slide.is-active .voice__body {
       animation: none;
     }
   }
@@ -109,7 +117,8 @@ const { testimonials, eyebrow } = Astro.props;
     const slider = document.getElementById('voice-slider');
     if (!slider) return;
 
-    const slides = Array.from(slider.querySelectorAll<HTMLElement>('.voice-slide'));
+    const slides = Array.from(slider.querySelectorAll<HTMLElement>('.voice__slide'));
+    const currentNumEl = slider.querySelector<HTMLElement>('.voice__current');
     const total = slides.length;
     if (total <= 1) return;
 
@@ -129,6 +138,10 @@ const { testimonials, eyebrow } = Astro.props;
         slide.classList.toggle('is-active', isActive);
         slide.setAttribute('aria-hidden', String(!isActive));
       });
+
+      if (currentNumEl) {
+        currentNumEl.textContent = String(currentIndex + 1);
+      }
     }
 
     slider.addEventListener('click', (event) => {

@@ -5,6 +5,7 @@
  * Butir yang jawabannya adalah kebijakan klien dijawab apa adanya dan
  * diberi ajakan bertanya, tidak dikarang.
  */
+import { Icon } from 'astro-icon/components';
 import { buildWaLink } from '../../capabilities/lead/lib/whatsapp';
 import { page, type FaqEntry } from './content';
 
@@ -44,9 +45,17 @@ const hasNumber = waUrl !== '#';
                   data-wa-location="faq"
                 >
                   {ctaLabel}
+                  <span class="link-arrow__mark" aria-hidden="true">
+                    <Icon name="arrow-right" class="link-arrow__icon" />
+                  </span>
                 </a>
               ) : (
-                <a class="link-arrow mt-5" href={page.formAnchor}>{ctaLabel}</a>
+                <a class="link-arrow mt-5" href={page.formAnchor}>
+                  {ctaLabel}
+                  <span class="link-arrow__mark" aria-hidden="true">
+                    <Icon name="arrow-right" class="link-arrow__icon" />
+                  </span>
+                </a>
               )}
             </>
           )}
@@ -55,3 +64,161 @@ const hasNumber = waUrl !== '#';
     ))
   }
 </div>
+
+<script>
+  class SmoothAccordion {
+    private el: HTMLDetailsElement;
+    private summary: HTMLElement;
+    private content: HTMLElement;
+    private animation: Animation | null = null;
+    private contentAnimation: Animation | null = null;
+    private isClosing = false;
+    private isExpanding = false;
+
+    constructor(el: HTMLDetailsElement) {
+      this.el = el;
+      this.summary = el.querySelector('summary')!;
+      this.content = el.querySelector('.faq__body')!;
+      if (!this.summary || !this.content) return;
+
+      (this.el as unknown as Record<string, unknown>).__smoothAccordion = this;
+      this.summary.addEventListener('click', (e) => this.onClick(e));
+    }
+
+    private onClick(e: MouseEvent) {
+      e.preventDefault();
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.el.open = !this.el.open;
+        return;
+      }
+
+      if (this.isClosing || !this.el.open) {
+        this.open();
+      } else if (this.isExpanding || this.el.open) {
+        this.shrink();
+      }
+    }
+
+    public shrink() {
+      if (this.isClosing || !this.el.open) return;
+      this.isClosing = true;
+      this.isExpanding = false;
+      this.el.style.overflow = 'hidden';
+
+      const startHeight = `${this.el.offsetHeight}px`;
+      const endHeight = `${this.summary.offsetHeight}px`;
+
+      if (this.animation) this.animation.cancel();
+      if (this.contentAnimation) this.contentAnimation.cancel();
+
+      this.animation = this.el.animate(
+        {
+          height: [startHeight, endHeight],
+        },
+        {
+          duration: 320,
+          easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        }
+      );
+
+      this.contentAnimation = this.content.animate(
+        {
+          opacity: [1, 0],
+          transform: ['translateY(0)', 'translateY(-6px)'],
+        },
+        {
+          duration: 220,
+          easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+        }
+      );
+
+      this.animation.onfinish = () => this.onAnimationFinish(false);
+      this.animation.oncancel = () => {
+        this.isClosing = false;
+      };
+    }
+
+    public open() {
+      // Smoothly close any sibling accordion in the same group
+      const groupName = this.el.getAttribute('name');
+      if (groupName) {
+        const others = document.querySelectorAll<HTMLDetailsElement>(`details[name="${groupName}"][open]`);
+        others.forEach((other) => {
+          if (other !== this.el) {
+            const inst = (other as unknown as Record<string, unknown>).__smoothAccordion as SmoothAccordion | undefined;
+            if (inst) {
+              inst.shrink();
+            } else {
+              other.open = false;
+            }
+          }
+        });
+      }
+
+      this.el.style.overflow = 'hidden';
+      this.el.style.height = `${this.el.offsetHeight}px`;
+      this.el.open = true;
+
+      window.requestAnimationFrame(() => this.expand());
+    }
+
+    private expand() {
+      this.isExpanding = true;
+      this.isClosing = false;
+
+      const startHeight = `${this.el.offsetHeight}px`;
+      const endHeight = `${this.summary.offsetHeight + this.content.offsetHeight}px`;
+
+      if (this.animation) this.animation.cancel();
+      if (this.contentAnimation) this.contentAnimation.cancel();
+
+      this.animation = this.el.animate(
+        {
+          height: [startHeight, endHeight],
+        },
+        {
+          duration: 380,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        }
+      );
+
+      this.contentAnimation = this.content.animate(
+        {
+          opacity: [0, 1],
+          transform: ['translateY(-8px)', 'translateY(0)'],
+        },
+        {
+          duration: 380,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        }
+      );
+
+      this.animation.onfinish = () => this.onAnimationFinish(true);
+      this.animation.oncancel = () => {
+        this.isExpanding = false;
+      };
+    }
+
+    private onAnimationFinish(open: boolean) {
+      this.el.open = open;
+      this.animation = null;
+      this.contentAnimation = null;
+      this.isClosing = false;
+      this.isExpanding = false;
+      this.el.style.height = '';
+      this.el.style.overflow = '';
+    }
+  }
+
+  function initFaqAccordions() {
+    const items = document.querySelectorAll<HTMLDetailsElement>('.faq__item');
+    items.forEach((item) => {
+      if ((item as unknown as Record<string, unknown>).__smoothAccordion) return;
+      new SmoothAccordion(item);
+    });
+  }
+
+  initFaqAccordions();
+  document.addEventListener('astro:page-load', initFaqAccordions);
+</script>

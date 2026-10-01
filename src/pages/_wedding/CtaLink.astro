@@ -7,6 +7,7 @@
  * tidak pernah jadi tautan mati. Begitu `siteConfig.contact.whatsapp` diisi,
  * semua CTA di halaman otomatis jadi wa.me tanpa perubahan kode.
  */
+import { Icon } from 'astro-icon/components';
 import { WaButton, buildWaLink } from '../../capabilities/lead/index.js';
 import { page } from './content';
 
@@ -34,7 +35,9 @@ const quiet = variant === 'quiet';
       {...(hasWa && { target: '_blank', rel: 'noopener noreferrer', 'data-event': 'whatsapp_click', 'data-wa-location': location })}
     >
       {text}
-      <span class="link-arrow__mark" aria-hidden="true">→</span>
+      <span class="link-arrow__mark" aria-hidden="true">
+        <Icon name="arrow-right" class="link-arrow__icon" />
+      </span>
     </a>
   ) : hasWa ? (
     <WaButton
