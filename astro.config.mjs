@@ -4,9 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import robotsTxt from 'astro-robots-txt';
-import min from 'astro-min';
 import compressor from 'astro-compressor';
 import fs from 'node:fs';
+
+import icon from 'astro-icon';
 
 function loadDotEnv() {
   try {
@@ -56,32 +57,28 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
-  integrations: [
-    sitemap({
-      filter: (page) =>
-        !page.includes('/404') && !page.includes('/drafts') && !page.includes('/api'),
-    }),
-    robotsTxt({
-      policy: [
-        {
-          userAgent: '*',
-          allow: '/',
-          disallow: ['/admin', '/api', '/drafts', '/404'],
-        },
-      ],
-      transform(content) {
-        // AI crawler notes are advisory preferences, not enforcement:
-        // robots.txt cannot compel compliance; real control needs edge/WAF.
-        // AI retrieval for search/discovery stays allowed via User-agent: *.
-        return `${content}
+  integrations: [sitemap({
+    filter: (page) =>
+      !page.includes('/404') && !page.includes('/drafts') && !page.includes('/api'),
+  }), robotsTxt({
+    policy: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: ['/admin', '/api', '/drafts', '/404'],
+      },
+    ],
+    transform(content) {
+      // AI crawler notes are advisory preferences, not enforcement:
+      // robots.txt cannot compel compliance; real control needs edge/WAF.
+      // AI retrieval for search/discovery stays allowed via User-agent: *.
+      return `${content}
 # Note: AI crawler directives below are advisory only (not enforceable via robots.txt).
 # AI retrieval for search/discovery remains allowed; no crawler is blocked here.
 `;
-      },
-    }),
-    min(),
-    compressor(), // Compressor must be last in integrations list
-  ],
+    },
+  }), // Compressor must be last in integrations list
+  compressor(), icon()],
 
   adapter: vercel(),
 });
