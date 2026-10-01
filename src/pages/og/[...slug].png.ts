@@ -1,5 +1,6 @@
 import { existsSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { createRequire } from 'node:module';
 import { OGImageRoute } from 'astro-og-canvas';
 import { siteConfig } from '../../config/site';
 import { ogSlugFromPath } from '../../lib/og';
@@ -9,20 +10,50 @@ const FONT_FILES = ['Inter_400Regular.ttf', 'Inter_700Bold.ttf'];
 
 /**
  * canvaskit hanya membaca TTF. Paket font bisa tertaut langsung di
- * node_modules atau hanya ada di store virtual pnpm; keduanya valid di mesin
- * berbeda, jadi carinya dua jalur lalu gagal keras daripada merender kartu kosong.
+ * node_modules atau hanya ada di store virtual pnpm; struktur versi baru
+ * (@expo-google-fonts/inter@0.4.x+) meletakkan TTF di dalam subfolder
+ * (mis. 400Regular/Inter_400Regular.ttf).
  */
 function resolveFont(name: string): string {
+  const variant = name.replace(/^Inter_/, '').replace(/\.ttf$/, '');
+
+  // 1. Module resolution via require.resolve (paling andal di Vercel/CI/pnpm)
+  try {
+    const req = createRequire(import.meta.url);
+    const pkgDir = dirname(req.resolve('@expo-google-fonts/inter/package.json'));
+
+    const subfolderCandidate = join(pkgDir, variant, name);
+    if (existsSync(subfolderCandidate)) return subfolderCandidate;
+
+    const directCandidate = join(pkgDir, name);
+    if (existsSync(directCandidate)) return directCandidate;
+
+    for (const entry of readdirSync(pkgDir, { withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        const nested = join(pkgDir, entry.name, name);
+        if (existsSync(nested)) return nested;
+      }
+    }
+  } catch {}
+
+  // 2. Direct relative path fallback
+  const directSub = join('node_modules', '@expo-google-fonts', 'inter', variant, name);
+  if (existsSync(directSub)) return directSub;
   const direct = join('node_modules', '@expo-google-fonts', 'inter', name);
   if (existsSync(direct)) return direct;
+
+  // 3. pnpm virtual store fallback
   const store = join('node_modules', '.pnpm');
   if (existsSync(store)) {
     for (const dir of readdirSync(store)) {
       if (!dir.includes('@expo-google-fonts+inter')) continue;
-      const candidate = join(store, dir, 'node_modules', '@expo-google-fonts', 'inter', name);
-      if (existsSync(candidate)) return candidate;
+      const subCandidate = join(store, dir, 'node_modules', '@expo-google-fonts', 'inter', variant, name);
+      if (existsSync(subCandidate)) return subCandidate;
+      const rootCandidate = join(store, dir, 'node_modules', '@expo-google-fonts', 'inter', name);
+      if (existsSync(rootCandidate)) return rootCandidate;
     }
   }
+
   throw new Error(
     `[og] ${name} tidak ditemukan. Pasang @expo-google-fonts/inter atau taruh TTF-nya di node_modules/@expo-google-fonts/inter/.`
   );
