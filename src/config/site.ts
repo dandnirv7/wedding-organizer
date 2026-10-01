@@ -20,7 +20,13 @@ export interface SiteSocials {
  * back to a placeholder domain.
  */
 function resolveSiteUrl(): string {
-  const raw = (import.meta.env.SITE_URL || '').trim().replace(/\/+$/, '');
+  const raw = (
+    import.meta.env.SITE_URL ||
+    import.meta.env.SITE ||
+    (import.meta.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${import.meta.env.VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
+    (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : '') ||
+    ''
+  ).trim().replace(/\/+$/, '');
   if (!raw) {
     throw new Error(
       '[config] SITE_URL is required. Copy .env.example to .env and set SITE_URL (e.g. SITE_URL=https://domain-produksi.id).'

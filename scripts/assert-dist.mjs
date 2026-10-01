@@ -17,7 +17,12 @@ function loadDotEnv() {
 }
 loadDotEnv();
 
-const SITE = (process.env.SITE_URL || '').replace(/\/+$/, '');
+const SITE = (
+  process.env.SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') ||
+  ''
+).replace(/\/+$/, '');
 if (!SITE) {
   console.error('FAIL: SITE_URL env is required (same source of truth as astro.config.mjs).');
   process.exit(1);

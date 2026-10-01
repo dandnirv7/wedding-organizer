@@ -19,7 +19,12 @@ function loadDotEnv() {
   } catch {}
 }
 loadDotEnv();
-const siteUrl = (process.env.SITE_URL || '').trim().replace(/\/+$/, '');
+const siteUrl = (
+  process.env.SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') ||
+  ''
+).trim().replace(/\/+$/, '');
 
 if (!siteUrl) {
   throw new Error(
