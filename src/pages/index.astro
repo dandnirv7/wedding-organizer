@@ -256,7 +256,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
     </div>
   </section>
 
-  <!-- 07 · CARA KAMI BEKERJA — empat langkah + tiga bidang -->
+  <!-- 07 · CARA KAMI BEKERJA — empat langkah interaktif (sticky scrollspy desktop) -->
   <section class="band band--ivory" id="proses" aria-labelledby="proses-title">
     <div class="wrap">
       <SectionHead
@@ -266,34 +266,81 @@ const pad = (n: number) => String(n).padStart(2, '0');
         headingId="proses-title"
         accent
       />
-      <ol class="cols cols--4 cols--ruled mt-6">
-        {
-          steps.map((step, i) => (
-            <li class="col">
-              <h3 class="col__label">
-                <span class="figure">{pad(i + 1)}</span> {step.name}
-              </h3>
-              <p class="col__body mt-4">{step.body}</p>
-            </li>
-          ))
-        }
-      </ol>
-      <div class="grid-process mt-6">
-        <FramePlate
-          frame={frames.process[0]}
-          sizes="(min-width: 64rem) 40vw, 50vw"
-          widths={[340, 520, 680]}
-        />
-        <FramePlate
-          frame={frames.process[1]}
-          sizes="(min-width: 64rem) 20vw, 50vw"
-          widths={[200, 360, 520]}
-        />
-        <FramePlate
-          frame={frames.process[2]}
-          sizes="(min-width: 64rem) 20vw, 50vw"
-          widths={[200, 360, 520]}
-        />
+      <div class="process-container mt-12">
+        <!-- Kolom Kiri: Garis Perjalanan & Rangkaian Tahapan -->
+        <ol class="process-steps" role="list">
+          {
+            steps.map((step, i) => (
+              <li
+                class:list={["process-step", i === 0 && "is-active"]}
+                data-step-index={i}
+                tabindex="0"
+                role="button"
+                aria-label={`Langkah ${pad(i + 1)}: ${step.name}`}
+              >
+                <div class="process-step__header">
+                  <span class="process-step__number font-mono">{pad(i + 1)}</span>
+                  <div class="process-step__titles">
+                    <h3 class="process-step__name">{step.name}</h3>
+                    <p class="process-step__tagline">{step.tagline}</p>
+                  </div>
+                </div>
+
+                <div class="process-step__details">
+                  <p class="process-step__body">{step.body}</p>
+                  {step.highlights && step.highlights.length > 0 && (
+                    <ul class="process-step__highlights" role="list">
+                      {step.highlights.map((item) => (
+                        <li class="process-step__highlight-item">
+                          <span class="process-step__dash" aria-hidden="true">—</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                {/* Tampilan gambar inline di layar mobile/tablet */}
+                {frames.process[i] && (
+                  <div class="process-step__mobile-media">
+                    <FramePlate
+                      frame={frames.process[i]}
+                      sizes="(min-width: 48rem) 50vw, 100vw"
+                      widths={[320, 480, 640]}
+                    />
+                  </div>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+
+        <!-- Kolom Kanan: Panggung Media Sticky (Desktop) -->
+        <div class="process-stage" aria-hidden="true">
+          <div class="process-stage__viewport">
+            {
+              frames.process.map((frameItem, i) => (
+                <div
+                  class:list={["process-stage__item", i === 0 && "is-active"]}
+                  data-stage-index={i}
+                >
+                  <FramePlate
+                    frame={frameItem}
+                    sizes="(min-width: 64rem) 40vw, 50vw"
+                    widths={[480, 720, 1080]}
+                  />
+                </div>
+              ))
+            }
+          </div>
+          <div class="process-stage__footer">
+            <div class="process-stage__indicator">
+              <span class="process-stage__pip" aria-hidden="true"></span>
+              <span>Tahap <span class="active-step-num">01</span> / 04</span>
+            </div>
+            <span class="active-step-name text-(--color-champagne-deep)">{steps[0]?.name}</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -591,40 +638,6 @@ const pad = (n: number) => String(n).padStart(2, '0');
         });
       }
 
-      // 07 · Cara Kami Bekerja — Kolom & Grid Proses
-      const processCols = document.querySelectorAll("#proses .cols--4 .col");
-      if (processCols.length > 0) {
-        gsap.from(processCols, {
-          scrollTrigger: {
-            trigger: "#proses .cols--4",
-            start: "top 85%",
-            once: true,
-          },
-          y: 24,
-          opacity: 0,
-          duration: 0.7,
-          stagger: 0.12,
-          ease: "power2.out",
-          clearProps: "all",
-        });
-      }
-
-      const processPlates = document.querySelectorAll("#proses .grid-process .plate");
-      if (processPlates.length > 0) {
-        gsap.from(processPlates, {
-          scrollTrigger: {
-            trigger: "#proses .grid-process",
-            start: "top 85%",
-            once: true,
-          },
-          y: 24,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.12,
-          ease: "power2.out",
-          clearProps: "all",
-        });
-      }
 
       // 08 · Tim — Kartu Person
       const teamMembers = document.querySelectorAll('section[aria-labelledby="tim-title"] .grid-team .person');
@@ -697,6 +710,65 @@ const pad = (n: number) => String(n).padStart(2, '0');
         });
       }
 
+      // 07 · Cara Kami Bekerja — Interactive Step Navigation & Scrollspy (Semua Ukuran Layar)
+      const processSteps = document.querySelectorAll<HTMLElement>("#proses .process-step");
+      const stageItems = document.querySelectorAll<HTMLElement>("#proses .process-stage__item");
+      const activeNumEl = document.querySelector<HTMLElement>("#proses .active-step-num");
+      const activeNameEl = document.querySelector<HTMLElement>("#proses .active-step-name");
+
+      if (processSteps.length > 0) {
+        const activateStep = (index: number) => {
+          processSteps.forEach((step, i) => {
+            const isActive = i === index;
+            step.classList.toggle("is-active", isActive);
+            step.setAttribute("aria-current", isActive ? "step" : "false");
+          });
+
+          if (stageItems.length > 0) {
+            stageItems.forEach((item, i) => {
+              const isActive = i === index;
+              item.classList.toggle("is-active", isActive);
+            });
+          }
+
+          if (activeNumEl) {
+            activeNumEl.textContent = String(index + 1).padStart(2, "0");
+          }
+          const currentStep = processSteps[index];
+          if (activeNameEl && currentStep) {
+            const title = currentStep.querySelector(".process-step__name")?.textContent?.trim();
+            if (title) activeNameEl.textContent = title;
+          }
+        };
+
+        activateStep(0);
+
+        processSteps.forEach((step, i) => {
+          ScrollTrigger.create({
+            trigger: step,
+            start: "top 65%",
+            end: "bottom 35%",
+            onEnter: () => activateStep(i),
+            onEnterBack: () => activateStep(i),
+          });
+
+          const onClick = () => {
+            activateStep(i);
+            step.scrollIntoView({ behavior: "smooth", block: "center" });
+          };
+          const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              activateStep(i);
+              step.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          };
+
+          step.addEventListener("click", onClick);
+          step.addEventListener("keydown", onKey);
+        });
+      }
+
       // 12 · Penutup — Closing Grid
       const closingContent = document.querySelectorAll('section[aria-labelledby="penutup-title"] .grid-closing > *');
       if (closingContent.length > 0) {
@@ -721,10 +793,32 @@ const pad = (n: number) => String(n).padStart(2, '0');
       gsap.set(".gs-hero-item, .gs-hero-media", {
         clearProps: "all",
       });
+      const processSteps = document.querySelectorAll<HTMLElement>("#proses .process-step");
+      processSteps.forEach((s) => s.classList.add("is-active"));
     });
   }
 
   // Jalankan saat load awal dan saat navigasi client router Astro
   initAnimations();
   document.addEventListener("astro:page-load", initAnimations);
+
+  // Refresh ScrollTrigger saat gambar dan font selesai dimuat agar posisi trigger akurat di semua ukuran layar
+  window.addEventListener("load", () => {
+    ScrollTrigger.refresh();
+  });
+
+  if (document.fonts) {
+    document.fonts.ready.then(() => {
+      ScrollTrigger.refresh();
+    });
+  }
+
+  // Refresh saat resize / rotasi perangkat dengan debounce ringan
+  let resizeTimer: number;
+  window.addEventListener("resize", () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+  });
 </script>

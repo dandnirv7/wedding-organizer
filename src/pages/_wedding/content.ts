@@ -13,20 +13,20 @@
  *
  * Sapaan: "kalian" (bukan "kamu") — disepakati saat halaman dibangun ulang.
  */
-import type { ImageMetadata } from 'astro';
+import type { ImageMetadata } from "astro";
 
-import openingPhotograph from '../../assets/wedding/opening-photograph.webp';
-import weddingPhoto from '../../assets/wedding/wedding-photo.webp';
-import mainStory from '../../assets/wedding/main-story.webp';
-import couplesDetail from '../../assets/wedding/couples-detail.webp';
-import flowerDetail from '../../assets/wedding/flower-detail.webp';
-import ringDetail from '../../assets/wedding/ring-detail.webp';
-import tableDetail from '../../assets/wedding/table-detail.webp';
-import locationDetail from '../../assets/wedding/location-detail.webp';
-import eventDetail from '../../assets/wedding/event-detail.webp';
-import mocaTeam from '../../assets/wedding/moca-team.webp';
-import temporaryTeamOne from '../../assets/wedding/temporary-moca-team.webp';
-import temporaryTeamTwo from '../../assets/wedding/temporary-moca-team-2.webp';
+import openingPhotograph from "../../assets/wedding/opening-photograph.webp";
+import weddingPhoto from "../../assets/wedding/wedding-photo.webp";
+import mainStory from "../../assets/wedding/main-story.webp";
+import couplesDetail from "../../assets/wedding/couples-detail.webp";
+import flowerDetail from "../../assets/wedding/flower-detail.webp";
+import ringDetail from "../../assets/wedding/ring-detail.webp";
+import tableDetail from "../../assets/wedding/table-detail.webp";
+import locationDetail from "../../assets/wedding/location-detail.webp";
+import eventDetail from "../../assets/wedding/event-detail.webp";
+import mocaTeam from "../../assets/wedding/moca-team.webp";
+import temporaryTeamOne from "../../assets/wedding/temporary-moca-team.webp";
+import temporaryTeamTwo from "../../assets/wedding/temporary-moca-team-2.webp";
 
 /**
  * Slot media. Rasio tata letak sudah final dan terkunci, jadi aset yang berganti
@@ -56,160 +56,268 @@ const frame = (
   caption: string,
   src: ImageMetadata,
   alt: string,
-  sm?: { width: number; height: number }
+  sm?: { width: number; height: number },
 ): Frame => ({ id, width, height, caption, src, alt, sm });
 
 /** Rasio tiap slot, diukur dari komposisi di referensi (1440 / 834 / 390). */
 export const frames = {
   hero: frame(
-    'H1',
+    "H1",
     1600,
     1600,
-    'momen hari-H, prosesi Tradisi Jawa',
+    "momen hari-H, prosesi Tradisi Jawa",
     openingPhotograph,
-    'Pengantin Tradisi Jawa duduk berdampingan di halaman joglo, mengenakan busana emas dan mahkota bunga',
-    { width: 342, height: 360 }
+    "Pengantin Tradisi Jawa duduk berdampingan di halaman joglo, mengenakan busana emas dan mahkota bunga",
+    { width: 342, height: 360 },
   ),
   portfolio: [
     frame(
-      'W1a',
+      "W1a",
       2100,
       1400,
-      'Persiapan Cerita 01',
+      "Persiapan Cerita 01",
       mainStory,
-      'Dua tangan berhias cincin bersenggolan di atas buket bunga oranye',
-      { width: 342, height: 280 }
+      "Dua tangan berhias cincin bersenggolan di atas buket bunga oranye",
+      { width: 342, height: 280 },
     ),
-    frame('W1b', 1020, 680, 'Momen Cerita 01', couplesDetail, 'Dua tangan bersentuhan di depan dinding monogram bunga', {
-      width: 342,
-      height: 160,
-    }),
-    frame('W1c', 1020, 680, 'Detail Cerita 01', flowerDetail, 'Tangan memegang setangkai bunga putih', {
-      width: 342,
-      height: 160,
-    }),
+    frame(
+      "W1b",
+      1020,
+      680,
+      "Momen Cerita 01",
+      couplesDetail,
+      "Dua tangan bersentuhan di depan dinding monogram bunga",
+      {
+        width: 342,
+        height: 160,
+      },
+    ),
+    frame(
+      "W1c",
+      1020,
+      680,
+      "Detail Cerita 01",
+      flowerDetail,
+      "Tangan memegang setangkai bunga putih",
+      {
+        width: 342,
+        height: 160,
+      },
+    ),
   ],
   craft: frame(
-    'D1',
+    "D1",
     2000,
     815,
-    'Pekerjaan yang jarang terlihat',
+    "Pekerjaan yang jarang terlihat",
     weddingPhoto,
-    'Pria mengenakan mahkota Tradisi Jawa dan busana putih',
-    { width: 342, height: 250 }
+    "Pria mengenakan mahkota Tradisi Jawa dan busana putih",
+    { width: 342, height: 250 },
   ),
   detail: [
-    frame('D2a', 1850, 997, 'Dekorasi hari-H', ringDetail, 'Bunga dan cincin di atas kain sutra keemasan', {
-      width: 342,
-      height: 240,
-    }),
-    frame('D2b', 1200, 501, 'Bunga dan sentuhan kecil', flowerDetail, 'Tangan memegang setangkai bunga putih', {
-      width: 166,
-      height: 132,
-    }),
-    frame('D2c', 1200, 501, 'Tata meja acara', tableDetail, 'Meja bulat dihiasi bunga dan lilin', {
-      width: 166,
-      height: 132,
-    }),
-    frame('D2d', 1000, 500, 'Detail personal', couplesDetail, 'Dua tangan bersentuhan di depan dinding monogram bunga', {
-      width: 166,
-      height: 132,
-    }),
-    frame('D2e', 1000, 500, 'Suasana lokasi', locationDetail, 'Kursi dan bunga di ruang acara', {
-      width: 166,
-      height: 132,
-    }),
-    frame('D2f', 1000, 500, 'Susunan meja panjang', eventDetail, 'Meja panjang dihiasi bunga oranye', {
-      width: 342,
-      height: 160,
-    }),
+    frame(
+      "D2a",
+      1850,
+      997,
+      "Dekorasi hari-H",
+      ringDetail,
+      "Bunga dan cincin di atas kain sutra keemasan",
+      {
+        width: 342,
+        height: 240,
+      },
+    ),
+    frame(
+      "D2b",
+      1200,
+      501,
+      "Bunga dan sentuhan kecil",
+      flowerDetail,
+      "Tangan memegang setangkai bunga putih",
+      {
+        width: 166,
+        height: 132,
+      },
+    ),
+    frame(
+      "D2c",
+      1200,
+      501,
+      "Tata meja acara",
+      tableDetail,
+      "Meja bulat dihiasi bunga dan lilin",
+      {
+        width: 166,
+        height: 132,
+      },
+    ),
+    frame(
+      "D2d",
+      1000,
+      500,
+      "Detail personal",
+      couplesDetail,
+      "Dua tangan bersentuhan di depan dinding monogram bunga",
+      {
+        width: 166,
+        height: 132,
+      },
+    ),
+    frame(
+      "D2e",
+      1000,
+      500,
+      "Suasana lokasi",
+      locationDetail,
+      "Kursi dan bunga di ruang acara",
+      {
+        width: 166,
+        height: 132,
+      },
+    ),
+    frame(
+      "D2f",
+      1000,
+      500,
+      "Susunan meja panjang",
+      eventDetail,
+      "Meja panjang dihiasi bunga oranye",
+      {
+        width: 342,
+        height: 160,
+      },
+    ),
   ],
   process: [
-    frame('P1', 1560, 690, 'Dekorasi dan bunga', ringDetail, 'Bunga dan cincin di atas kain sutra keemasan', {
-      width: 166,
-      height: 230,
-    }),
-    frame('P2', 900, 690, 'Ruang acara', locationDetail, 'Kursi dan bunga di ruang acara', {
-      width: 166,
-      height: 230,
-    }),
-    frame('P3', 720, 690, 'Tata meja siap', tableDetail, 'Meja bulat dihiasi bunga dan lilin', {
-      width: 166,
-      height: 230,
-    }),
+    frame(
+      "P1",
+      1200,
+      900,
+      "Konsultasi awal dan pemahaman visi",
+      ringDetail,
+      "Bunga dan cincin di atas kain sutra keemasan",
+      {
+        width: 342,
+        height: 240,
+      },
+    ),
+    frame(
+      "P2",
+      1200,
+      900,
+      "Perencanaan konsep, prioritas, dan timeline",
+      locationDetail,
+      "Kursi dan bunga di ruang acara",
+      {
+        width: 342,
+        height: 240,
+      },
+    ),
+    frame(
+      "P3",
+      1200,
+      900,
+      "Persiapan dan koordinasi bersama seluruh vendor",
+      tableDetail,
+      "Meja bulat dihiasi bunga dan lilin",
+      {
+        width: 342,
+        height: 240,
+      },
+    ),
+    frame(
+      "P4",
+      1200,
+      900,
+      "Pelaksanaan alur hari-H yang tenang dan teratur",
+      eventDetail,
+      "Susunan ruang acara dan meja panjang tertata rapi untuk menyambut hari-H",
+      {
+        width: 342,
+        height: 240,
+      },
+    ),
   ],
   team: [
     frame(
-      'T1',
+      "T1",
       1040,
       906,
-      'Tim 01, perencanaan',
+      "Tim 01, perencanaan",
       mocaTeam,
-      'Tiga perempuan berpose bersama buket bunga merah muda',
-      { width: 180, height: 170 }
+      "Tiga perempuan berpose bersama buket bunga merah muda",
+      { width: 180, height: 170 },
     ),
     frame(
-      'T2',
+      "T2",
       1040,
       906,
-      'Tim 02, koordinasi',
+      "Tim 02, koordinasi",
       temporaryTeamOne,
-      'Seorang perempuan sedang menyiapkan diri untuk hari-H',
-      { width: 152, height: 170 }
+      "Seorang perempuan sedang menyiapkan diri untuk hari-H",
+      { width: 152, height: 170 },
     ),
     frame(
-      'T3',
+      "T3",
       1040,
       906,
-      'Tim 03, pelaksanaan',
+      "Tim 03, pelaksanaan",
       temporaryTeamTwo,
-      'Seorang perempuan tersenyum di meja acara',
-      { width: 342, height: 200 }
+      "Seorang perempuan tersenyum di meja acara",
+      { width: 342, height: 200 },
     ),
   ],
   voices: [
     frame(
-      'S1',
+      "S1",
       1289,
       1000,
-      'Dokumentasi pasangan Ardi & Citra',
+      "Dokumentasi pasangan Ardi & Citra",
       mainStory,
-      'Dua tangan berhias cincin bersenggolan di atas buket bunga oranye',
-      { width: 342, height: 230 }
+      "Dua tangan berhias cincin bersenggolan di atas buket bunga oranye",
+      { width: 342, height: 230 },
     ),
     frame(
-      'S2',
+      "S2",
       1289,
       1000,
-      'Dokumentasi pasangan Raka & Aulia',
+      "Dokumentasi pasangan Raka & Aulia",
       couplesDetail,
-      'Dua tangan bersentuhan di depan dinding monogram bunga',
-      { width: 342, height: 230 }
+      "Dua tangan bersentuhan di depan dinding monogram bunga",
+      { width: 342, height: 230 },
     ),
     frame(
-      'S3',
+      "S3",
       1289,
       1000,
-      'Dokumentasi pasangan Dimas & Nabila',
+      "Dokumentasi pasangan Dimas & Nabila",
       ringDetail,
-      'Bunga dan cincin di atas kain sutra keemasan',
-      { width: 342, height: 230 }
+      "Bunga dan cincin di atas kain sutra keemasan",
+      { width: 342, height: 230 },
     ),
   ],
   form: {
-    ...frame('F1', 1692, 1000, 'Dokumentasi hari-H', flowerDetail, 'Tangan memegang setangkai bunga putih', {
-      width: 342,
-      height: 220,
-    }),
+    ...frame(
+      "F1",
+      1692,
+      1000,
+      "Dokumentasi hari-H",
+      flowerDetail,
+      "Tangan memegang setangkai bunga putih",
+      {
+        width: 342,
+        height: 220,
+      },
+    ),
   },
   closing: frame(
-    'C1',
+    "C1",
     1729,
     1000,
-    'Momen penutup, tangan dan cincin',
+    "Momen penutup, tangan dan cincin",
     couplesDetail,
-    'Dua tangan bersentuhan di depan dinding monogram bunga',
-    { width: 342, height: 240 }
+    "Dua tangan bersentuhan di depan dinding monogram bunga",
+    { width: 342, height: 240 },
   ),
 } as const;
 
@@ -230,26 +338,45 @@ export const stories: StoryItem[] = [
     couple: null,
     concept: null,
     location: null,
-    note: 'Menunggu cerita asli MOCA',
+    note: "Menunggu cerita asli MOCA",
     frames: [frames.portfolio[0], frames.portfolio[1], frames.portfolio[2]],
   },
 ];
 
 /** Label dan nilai tiga baris di bawah grid Cerita Pernikahan. */
 export const storyMeta = [
-  { label: 'Pasangan', value: stories[0].couple, note: stories[0].note },
-  { label: 'Konsep', value: stories[0].concept, note: 'Menunggu data acara' },
-  { label: 'Lokasi', value: stories[0].location, note: 'Menunggu data lokasi' },
+  { label: "Pasangan", value: stories[0].couple, note: stories[0].note },
+  { label: "Konsep", value: stories[0].concept, note: "Menunggu data acara" },
+  { label: "Lokasi", value: stories[0].location, note: "Menunggu data lokasi" },
 ];
 
 /** Deretan label penutup blok pengantar, bukan paragraf. */
-export const craftKeywords = ['Venue', 'Detail', 'Vendor', 'Timeline', 'Koordinasi', 'Eksekusi'];
+export const craftKeywords = [
+  "Venue",
+  "Detail",
+  "Vendor",
+  "Timeline",
+  "Koordinasi",
+  "Eksekusi",
+];
 
 /** Tiga pekerjaan yang berjalan di balik satu hari. */
 export const behindTheDay = [
-  { no: '01', name: 'Perencanaan', body: 'Konsep, kebutuhan, keputusan, dan timeline.' },
-  { no: '02', name: 'Koordinasi vendor', body: 'Tim, vendor, dan jadwal bergerak bersama.' },
-  { no: '03', name: 'Hari pelaksanaan', body: 'Tradisi, keluarga, dan persiapan berjalan sesuai rencana.' },
+  {
+    no: "01",
+    name: "Perencanaan",
+    body: "Konsep, kebutuhan, keputusan, dan timeline.",
+  },
+  {
+    no: "02",
+    name: "Koordinasi vendor",
+    body: "Tim, vendor, dan jadwal bergerak bersama.",
+  },
+  {
+    no: "03",
+    name: "Hari pelaksanaan",
+    body: "Tradisi, keluarga, dan persiapan berjalan sesuai rencana.",
+  },
 ];
 
 export interface ServiceItem {
@@ -258,25 +385,78 @@ export interface ServiceItem {
 }
 
 export const services: ServiceItem[] = [
-  { name: 'PERENCANAAN PENUH', summary: 'Dari konsep hingga hari pelaksanaan.' },
-  { name: 'KOORDINASI HARI-H', summary: 'Tim, vendor, dan jadwal bergerak bersama.' },
-  { name: 'PERNIKAHAN ADAT', summary: 'Tradisi dan keluarga diperhatikan.' },
-  { name: 'PERNIKAHAN INTIM', summary: 'Perayaan personal dengan persiapan terarah.' },
+  {
+    name: "PERENCANAAN PENUH",
+    summary: "Dari konsep hingga hari pelaksanaan.",
+  },
+  {
+    name: "KOORDINASI HARI-H",
+    summary: "Tim, vendor, dan jadwal bergerak bersama.",
+  },
+  { name: "PERNIKAHAN ADAT", summary: "Tradisi dan keluarga diperhatikan." },
+  {
+    name: "PERNIKAHAN INTIM",
+    summary: "Perayaan personal dengan persiapan terarah.",
+  },
 ];
 
 /** Baris penanda di bawah grid detail: motif garis dan titik. */
-export const craftLegend = ['Detail', 'Vendor', 'Lokasi', 'Persiapan', 'Hari-H'];
+export const craftLegend = [
+  "Detail",
+  "Vendor",
+  "Lokasi",
+  "Persiapan",
+  "Hari-H",
+];
 
 export interface Step {
   name: string;
+  tagline: string;
   body: string;
+  highlights: readonly string[];
 }
 
 export const steps: Step[] = [
-  { name: 'Konsultasi', body: 'Memahami visi dan kebutuhan kalian.' },
-  { name: 'Perencanaan', body: 'Menyusun konsep, prioritas, dan timeline.' },
-  { name: 'Persiapan', body: 'Koordinasi vendor dan setiap detail.' },
-  { name: 'Hari-H', body: 'Kalian hadir dalam momen. Kami menjaga alurnya.' },
+  {
+    name: "Konsultasi",
+    tagline: "Mendengarkan Visi & Pemetaan Awal",
+    body: "Sesi percakapan awal yang hangat dan personal untuk memahami kisah kalian, gaya perayaan yang diimpikan, estimasi anggaran, serta harapan keluarga. Kami mendengarkan secara menyeluruh sebelum menyusun rancangan apa pun.",
+    highlights: [
+      "Diskusi visi konsep, format perayaan, & preferensi estetika",
+      "Pemetaan alokasi anggaran realistis & skala prioritas utama",
+      "Rekomendasi timeline persiapan awal & langkah pertama",
+    ],
+  },
+  {
+    name: "Perencanaan",
+    tagline: "Konsep Tematik & Kurasi Mitra Terpercaya",
+    body: "Merumuskan seluruh gagasan menjadi rencana kerja nyata yang terstruktur. Kami menyusun moodboard suasana, alur pembiayaan yang transparan, serta mengurasi mitra vendor terbaik yang paling selaras dengan karakter kalian.",
+    highlights: [
+      "Penyusunan moodboard visual, palet warna, & desain suasana",
+      "Kurasi, negosiasi, & penjadwalan vendor terpercaya",
+      "Penyusunan master timeline persiapan terstruktur per bulan",
+    ],
+  },
+  {
+    name: "Persiapan",
+    tagline: "Harmonisasi Teknis & Mitigasi Seluruh Detail",
+    body: "Memasuki fase akhir, kami mengikat seluruh detail operasional bersama vendor dan keluarga. Mulai dari technical meeting komprehensif, gladi resik, hingga rencana cadangan dipersiapkan agar tidak ada hal penting yang terlewat.",
+    highlights: [
+      "Technical meeting menyeluruh & harmonisasi lintas vendor",
+      "Penyusunan rundown menit-demi-menit & panduan keluarga",
+      "Simulasi alur acara & penyiapan rencana kontingensi lapangan",
+    ],
+  },
+  {
+    name: "Hari Pelaksanaan",
+    tagline: "Kehadiran Utuh & Eksekusi yang Tenang",
+    body: "Saat hari istimewa tiba, kalian dan keluarga hanya perlu hadir sepenuhnya untuk merayakan cinta dan kebersamaan. Tim profesional kami mengawal setiap detik alur di balik layar dengan tenang, sigap, dan teratur.",
+    highlights: [
+      "Pengawalan penuh dari persiapan pagi hingga resepsi selesai",
+      "Koordinasi panggung, waktu saji hidangan, & kenyamanan tamu",
+      "Penanganan kendala tak terduga secara tak kasat mata",
+    ],
+  },
 ];
 
 export interface TeamMember {
@@ -288,21 +468,21 @@ export interface TeamMember {
 
 export const team: TeamMember[] = [
   {
-    name: 'NAMA TIM 01',
-    role: 'Perencanaan',
-    body: 'Mendengar cerita dan menyusun langkah pertama bersama kalian.',
+    name: "NAMA TIM 01",
+    role: "Perencanaan",
+    body: "Mendengar cerita dan menyusun langkah pertama bersama kalian.",
     frame: frames.team[0],
   },
   {
-    name: 'NAMA TIM 02',
-    role: 'Koordinasi',
-    body: 'Menghubungkan orang dan detail agar semua bergerak selaras.',
+    name: "NAMA TIM 02",
+    role: "Koordinasi",
+    body: "Menghubungkan orang dan detail agar semua bergerak selaras.",
     frame: frames.team[1],
   },
   {
-    name: 'NAMA TIM 03',
-    role: 'Pelaksanaan',
-    body: 'Menjaga alur saat hari yang ditunggu akhirnya tiba.',
+    name: "NAMA TIM 03",
+    role: "Pelaksanaan",
+    body: "Menjaga alur saat hari yang ditunggu akhirnya tiba.",
     frame: frames.team[2],
   },
 ];
@@ -318,27 +498,27 @@ export interface Testimonial {
 
 export const testimonials: readonly Testimonial[] = [
   {
-    id: 'voice-1',
+    id: "voice-1",
     quote:
-      'Persiapan pernikahan kami terasa jauh lebih tenang bersama MOCA. Banyak hal yang sebelumnya membuat kami khawatir ternyata bisa ditangani dengan baik, sehingga kami bisa lebih fokus menikmati setiap proses menuju hari pernikahan.',
-    couple: 'Ardi & Citra',
-    context: 'Wedding Day',
+      "Persiapan pernikahan kami terasa jauh lebih tenang bersama MOCA. Banyak hal yang sebelumnya membuat kami khawatir ternyata bisa ditangani dengan baik, sehingga kami bisa lebih fokus menikmati setiap proses menuju hari pernikahan.",
+    couple: "Ardi & Citra",
+    context: "Wedding Day",
     frame: frames.voices[0],
   },
   {
-    id: 'voice-2',
+    id: "voice-2",
     quote:
-      'Yang paling kami rasakan adalah koordinasinya yang rapi. Di hari pernikahan, kami tidak perlu sibuk memikirkan detail acara dan bisa benar-benar menikmati waktu bersama keluarga dan orang-orang terdekat.',
-    couple: 'Raka & Aulia',
-    context: 'Wedding Day',
+      "Yang paling kami rasakan adalah koordinasinya yang rapi. Di hari pernikahan, kami tidak perlu sibuk memikirkan detail acara dan bisa benar-benar menikmati waktu bersama keluarga dan orang-orang terdekat.",
+    couple: "Raka & Aulia",
+    context: "Wedding Day",
     frame: frames.voices[1],
   },
   {
-    id: 'voice-3',
+    id: "voice-3",
     quote:
-      'Setelah melewati begitu banyak persiapan, rasanya lega ketika akhirnya bisa menikmati hari yang kami tunggu-tunggu. MOCA membantu membuat semuanya terasa lebih terarah, sehingga kami bisa hadir sepenuhnya sebagai pasangan dan menikmati setiap momennya.',
-    couple: 'Dimas & Nabila',
-    context: 'Wedding Day',
+      "Setelah melewati begitu banyak persiapan, rasanya lega ketika akhirnya bisa menikmati hari yang kami tunggu-tunggu. MOCA membantu membuat semuanya terasa lebih terarah, sehingga kami bisa hadir sepenuhnya sebagai pasangan dan menikmati setiap momennya.",
+    couple: "Dimas & Nabila",
+    context: "Wedding Day",
     frame: frames.voices[2],
   },
 ];
@@ -352,134 +532,142 @@ export interface FaqEntry {
 }
 
 export const faq: FaqEntry[] = [
-  { q: 'Kapan sebaiknya mulai menggunakan jasa wedding organizer?', a: null },
-  { q: 'Apakah layanan bisa disesuaikan dengan kebutuhan kami?', a: null },
-  { q: 'Apakah kalian membantu koordinasi vendor?', a: null },
-  { q: 'Apakah kalian menangani pernikahan adat?', a: null },
-  { q: 'Bagaimana proses konsultasinya?', a: null },
-  { q: 'Apa yang terjadi setelah kami menghubungi kalian?', a: null },
+  { q: "Kapan sebaiknya mulai menggunakan jasa wedding organizer?", a: null },
+  { q: "Apakah layanan bisa disesuaikan dengan kebutuhan kami?", a: null },
+  { q: "Apakah kalian membantu koordinasi vendor?", a: null },
+  { q: "Apakah kalian menangani pernikahan adat?", a: null },
+  { q: "Bagaimana proses konsultasinya?", a: null },
+  { q: "Apa yang terjadi setelah kami menghubungi kalian?", a: null },
 ];
 
 /** Opsi form: label yang tampil, bukan nilai kiriman. */
 export const formOptions = {
-  layanan: ['Perencanaan penuh', 'Koordinasi hari-H', 'Pernikahan adat', 'Pernikahan intim'],
-  tamu: ['< 100', '100–300', '300–600', '600–1000', '> 1000'],
+  layanan: [
+    "Perencanaan penuh",
+    "Koordinasi hari-H",
+    "Pernikahan adat",
+    "Pernikahan intim",
+  ],
+  tamu: ["< 100", "100–300", "300–600", "600–1000", "> 1000"],
 } as const;
 
 export const page = {
   meta: {
-    title: 'MOCA — Wedding Organizer',
+    title: "MOCA — Wedding Organizer",
     description:
-      'Wedding organizer yang merencanakan dan mengoordinasikan pernikahan dari percakapan pertama sampai hari pelaksanaan: venue, detail, vendor, timeline, sampai hari-H.',
+      "Wedding organizer yang merencanakan dan mengoordinasikan pernikahan dari percakapan pertama sampai hari pelaksanaan: venue, detail, vendor, timeline, sampai hari-H.",
   },
   nav: [
-    { href: '#layanan', label: 'Layanan' },
-    { href: '#pernikahan', label: 'Pernikahan' },
-    { href: '#tentang', label: 'Tentang' },
-    { href: '#tanya', label: 'FAQ' },
+    { href: "#layanan", label: "Layanan" },
+    { href: "#pernikahan", label: "Pernikahan" },
+    { href: "#tentang", label: "Tentang" },
+    { href: "#tanya", label: "FAQ" },
   ],
-  brand: 'MOCA',
-  headerCta: 'Mulai Merencanakan',
+  brand: "MOCA",
+  headerCta: "Mulai Merencanakan",
   hero: {
-    eyebrow: 'MC · WO · WCC',
-    title: 'Setiap detail kami siapkan agar kalian bisa menikmati harinya.',
-    lede: 'Dari perencanaan hingga hari pelaksanaan. Di balik momen yang kalian nikmati, ada tim yang menjaga semuanya berjalan.',
-    primaryCta: 'Mulai Merencanakan',
-    secondaryCta: 'Lihat Pernikahan',
-    secondaryTarget: '#pernikahan',
+    eyebrow: "MC · WO · WCC",
+    title: "Setiap detail kami siapkan agar kalian bisa menikmati harinya.",
+    lede: "Dari perencanaan hingga hari pelaksanaan. Di balik momen yang kalian nikmati, ada tim yang menjaga semuanya berjalan.",
+    primaryCta: "Mulai Merencanakan",
+    secondaryCta: "Lihat Pernikahan",
+    secondaryTarget: "#pernikahan",
   },
   intro: {
-    eyebrow: 'Yang terlihat / Yang kami tangani',
-    headline: 'Acara yang terlihat sederhana sebenarnya tidak pernah sederhana.',
-    lede: 'Di balik satu hari yang terasa lancar, ada keputusan, detail, vendor, jadwal, dan orang-orang yang harus berjalan bersama.',
+    eyebrow: "Yang terlihat / Yang kami tangani",
+    headline:
+      "Acara yang terlihat sederhana sebenarnya tidak pernah sederhana.",
+    lede: "Di balik satu hari yang terasa lancar, ada keputusan, detail, vendor, jadwal, dan orang-orang yang harus berjalan bersama.",
   },
   portfolio: {
-    eyebrow: 'Cerita Pernikahan',
-    headline: 'Pernikahan yang telah kami dampingi',
-    lede: 'Setiap pasangan punya kebutuhan, gaya, dan cara merayakan yang berbeda. Kami membantu menerjemahkannya menjadi acara yang terasa personal.',
-    note: 'Foto editorial sementara — ganti dengan portofolio asli MOCA sebelum publikasi.',
+    eyebrow: "Cerita Pernikahan",
+    headline: "Pernikahan yang telah kami dampingi",
+    lede: "Setiap pasangan punya kebutuhan, gaya, dan cara merayakan yang berbeda. Kami membantu menerjemahkannya menjadi acara yang terasa personal.",
+    note: "Foto editorial sementara — ganti dengan portofolio asli MOCA sebelum publikasi.",
   },
   behind: {
-    eyebrow: 'Satu hari, banyak yang harus berjalan',
-    headline: 'Dari luar, satu momen. Di baliknya, banyak detail.',
-    lede: 'Perencanaan, vendor, dan hari pelaksanaan perlu bertemu dalam satu alur agar kalian bisa benar-benar hadir di dalam momennya.',
+    eyebrow: "Satu hari, banyak yang harus berjalan",
+    headline: "Dari luar, satu momen. Di baliknya, banyak detail.",
+    lede: "Perencanaan, vendor, dan hari pelaksanaan perlu bertemu dalam satu alur agar kalian bisa benar-benar hadir di dalam momennya.",
   },
   services: {
-    eyebrow: 'Layanan MOCA',
-    headline: 'Yang kami kerjakan',
-    lede: 'Kalian membawa visi. Kami membantu mengubahnya menjadi rencana yang siap dijalankan.',
-    note: 'Kategori layanan perlu dikonfirmasi dengan MOCA.',
+    eyebrow: "Layanan MOCA",
+    headline: "Yang kami kerjakan",
+    lede: "Kalian membawa visi. Kami membantu mengubahnya menjadi rencana yang siap dijalankan.",
+    note: "Kategori layanan perlu dikonfirmasi dengan MOCA.",
   },
   craft: {
-    eyebrow: 'Pekerjaan yang tak selalu terlihat',
-    headline: 'Hal-hal kecil yang menjaga hari besar.',
-    lede: 'Detail dicek. Vendor dikoordinasikan. Lokasi dipersiapkan. Semua itu terjadi sebelum kalian menerima tamu pertama.',
+    eyebrow: "Pekerjaan yang tak selalu terlihat",
+    headline: "Hal-hal kecil yang menjaga hari besar.",
+    lede: "Detail dicek. Vendor dikoordinasikan. Lokasi dipersiapkan. Semua itu terjadi sebelum kalian menerima tamu pertama.",
   },
   process: {
-    eyebrow: 'Cara kami bekerja',
-    headline: 'Dari percakapan hingga hari pelaksanaan',
-    lede: 'Proses yang jelas membantu kalian tahu apa yang sedang terjadi di setiap tahap.',
+    eyebrow: "Cara kami bekerja",
+    headline: "Dari percakapan hingga hari pelaksanaan",
+    lede: "Proses yang jelas membantu kalian tahu apa yang sedang terjadi di setiap tahap.",
   },
   team: {
-    eyebrow: 'Tim MOCA',
-    headline: 'Orang-orang di balik detail',
-    lede: 'Acara yang terasa lancar membutuhkan orang-orang yang memperhatikan detail sebelum kalian menyadarinya.',
-    note: 'Potret dan nama tim aktual menunggu aset dari MOCA.',
+    eyebrow: "Tim MOCA",
+    headline: "Orang-orang di balik detail",
+    lede: "Acara yang terasa lancar membutuhkan orang-orang yang memperhatikan detail sebelum kalian menyadarinya.",
+    note: "Potret dan nama tim aktual menunggu aset dari MOCA.",
   },
   voices: {
-    eyebrow: 'Cerita dari pasangan',
-    headline: 'Mereka yang sudah menjalaninya',
-    caption: 'Dokumentasi pasangan',
+    eyebrow: "Cerita dari pasangan",
+    headline: "Mereka yang sudah menjalaninya",
+    caption: "Dokumentasi pasangan",
     pendingQuote:
-      'Kutipan asli pasangan MOCA belum dikirim. Tidak ada cerita yang disusun untuk mengisi ruang ini.',
-    pendingCouple: 'Nama pasangan menunggu data MOCA',
-    pendingContext: 'Konteks acara menunggu data MOCA',
-    pendingCount: 'Belum ada testimoni yang bisa ditampilkan',
-    note: 'Contoh tata letak testimoni. Kutipan, nama, dan foto perlu diganti dengan cerita asli pasangan MOCA.',
+      "Kutipan asli pasangan MOCA belum dikirim. Tidak ada cerita yang disusun untuk mengisi ruang ini.",
+    pendingCouple: "Nama pasangan menunggu data MOCA",
+    pendingContext: "Konteks acara menunggu data MOCA",
+    pendingCount: "Belum ada testimoni yang bisa ditampilkan",
+    note: "Contoh tata letak testimoni. Kutipan, nama, dan foto perlu diganti dengan cerita asli pasangan MOCA.",
   },
   faq: {
-    eyebrow: 'Sebelum kita mulai',
-    headline: 'Pertanyaan yang mungkin ingin kalian ajukan',
-    pendingAnswer: 'Jawaban ini mengikuti kebijakan MOCA — silakan tanyakan langsung lewat WhatsApp.',
-    cta: 'Tanya lewat WhatsApp',
+    eyebrow: "Sebelum kita mulai",
+    headline: "Pertanyaan yang mungkin ingin kalian ajukan",
+    pendingAnswer:
+      "Jawaban ini mengikuti kebijakan MOCA — silakan tanyakan langsung lewat WhatsApp.",
+    cta: "Tanya lewat WhatsApp",
   },
   inquiry: {
-    eyebrow: 'Sekarang, tentang pernikahan kalian',
-    headline: 'Ceritakan sedikit tentang yang sedang kalian siapkan.',
-    lede: 'Setiap pernikahan dimulai dari sesuatu yang personal. Ceritakan kebutuhan kalian; kami akan membantu melihat langkah berikutnya.',
-    formEyebrow: 'Mulai dengan cerita kalian',
-    formHint: 'Cukup cerita singkat — kita bisa melanjutkan percakapan dari sana.',
-    submit: 'Mulai Konsultasi',
+    eyebrow: "Sekarang, tentang pernikahan kalian",
+    headline: "Ceritakan sedikit tentang yang sedang kalian siapkan.",
+    lede: "Setiap pernikahan dimulai dari sesuatu yang personal. Ceritakan kebutuhan kalian; kami akan membantu melihat langkah berikutnya.",
+    formEyebrow: "Mulai dengan cerita kalian",
+    formHint:
+      "Cukup cerita singkat — kita bisa melanjutkan percakapan dari sana.",
+    submit: "Mulai Konsultasi",
   },
   closing: {
-    headline: 'Kalian nikmati harinya. Kami urus detailnya.',
-    cta: 'Mulai Konsultasi',
+    headline: "Kalian nikmati harinya. Kami urus detailnya.",
+    cta: "Mulai Konsultasi",
   },
   footer: {
     columns: [
       {
-        title: 'Layanan',
+        title: "Layanan",
         links: [
-          { href: '#layanan', label: 'Perencanaan' },
-          { href: '#layanan', label: 'Koordinasi' },
-          { href: '#layanan', label: 'Pernikahan Adat' },
-          { href: '#layanan', label: 'Pernikahan Intim' },
+          { href: "#layanan", label: "Perencanaan" },
+          { href: "#layanan", label: "Koordinasi" },
+          { href: "#layanan", label: "Pernikahan Adat" },
+          { href: "#layanan", label: "Pernikahan Intim" },
         ],
       },
       {
-        title: 'Pernikahan',
+        title: "Pernikahan",
         links: [
-          { href: '#pernikahan', label: 'Pernikahan Kami' },
-          { href: '#tanya', label: 'FAQ' },
+          { href: "#pernikahan", label: "Pernikahan Kami" },
+          { href: "#tanya", label: "FAQ" },
         ],
       },
     ],
-    contactTitle: 'Hubungi',
+    contactTitle: "Hubungi",
     /** Ditampilkan hanya kalau tidak ada kanal yang sudah terisi. */
-    pendingContact: ['WhatsApp', 'Instagram', 'Email'],
+    pendingContact: ["WhatsApp", "Instagram", "Email"],
   },
   /** Tujuan semua CTA selama nomor WhatsApp belum diisi. */
-  formAnchor: '#mulainya',
+  formAnchor: "#mulainya",
   waMessage:
-    'Halo, saya ingin konsultasi soal pernikahan kami. Tanggal rencana: …, lokasi: …, jumlah tamu: …',
+    "Halo, saya ingin konsultasi soal pernikahan kami. Tanggal rencana: …, lokasi: …, jumlah tamu: …",
 } as const;
