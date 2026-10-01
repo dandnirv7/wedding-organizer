@@ -19,12 +19,22 @@ function loadDotEnv() {
   } catch {}
 }
 loadDotEnv();
-const siteUrl = (
+/** @param {string | undefined} [raw] */
+function normalizeSiteUrl(raw) {
+  let val = (raw || '').trim().replace(/^["']|["']$/g, '').trim().replace(/\/+$/, '');
+  if (!val) return '';
+  if (!/^https?:\/\//i.test(val)) {
+    val = `https://${val}`;
+  }
+  return val;
+}
+
+const siteUrl = normalizeSiteUrl(
   process.env.SITE_URL ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '') ||
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+  process.env.VERCEL_URL ||
   ''
-).trim().replace(/\/+$/, '');
+);
 
 if (!siteUrl) {
   throw new Error(

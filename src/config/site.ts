@@ -19,14 +19,23 @@ export interface SiteSocials {
  * (trimmed, no trailing slash). Fails fast instead of silently falling
  * back to a placeholder domain.
  */
+function normalizeSiteUrl(raw?: string): string {
+  let val = (raw || '').trim().replace(/^["']|["']$/g, '').trim().replace(/\/+$/, '');
+  if (!val) return '';
+  if (!/^https?:\/\//i.test(val)) {
+    val = `https://${val}`;
+  }
+  return val;
+}
+
 function resolveSiteUrl(): string {
-  const raw = (
+  const raw = normalizeSiteUrl(
     import.meta.env.SITE_URL ||
     import.meta.env.SITE ||
-    (import.meta.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${import.meta.env.VERCEL_PROJECT_PRODUCTION_URL}` : '') ||
-    (import.meta.env.VERCEL_URL ? `https://${import.meta.env.VERCEL_URL}` : '') ||
+    import.meta.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    import.meta.env.VERCEL_URL ||
     ''
-  ).trim().replace(/\/+$/, '');
+  );
   if (!raw) {
     throw new Error(
       '[config] SITE_URL is required. Copy .env.example to .env and set SITE_URL (e.g. SITE_URL=https://domain-produksi.id).'
