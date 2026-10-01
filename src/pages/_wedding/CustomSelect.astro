@@ -1,0 +1,385 @@
+---
+/**
+ * CustomSelect — Shadcn-style custom select component for wedding inquiry form.
+ *
+ * Implements accessible combobox/listbox pattern with smooth animations,
+ * checkmark on active selection, subtle elevation, and seamless integration
+ * with the parent <form> FormData and live WhatsApp preview.
+ */
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  id: string;
+  name: string;
+  label: string;
+  options: readonly string[];
+  defaultOption?: string;
+  defaultValue?: string;
+}
+
+const {
+  id,
+  name,
+  label,
+  options,
+  defaultOption = 'Belum tahu',
+  defaultValue = '',
+} = Astro.props;
+---
+
+<div class="custom-select" data-select-wrapper>
+  <!-- Hidden form input with actual value -->
+  <input
+    type="hidden"
+    id={id}
+    name={name}
+    value={defaultValue}
+    data-label={label}
+    data-select-input
+  />
+
+  <!-- Trigger Button -->
+  <button
+    type="button"
+    class="custom-select__trigger"
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    id={`${id}-trigger`}
+    data-select-trigger
+  >
+    <span class="custom-select__label" data-select-text>{defaultOption}</span>
+    <span class="custom-select__arrow" aria-hidden="true">
+      <Icon name="ph:caret-down" class="custom-select__chevron" />
+    </span>
+  </button>
+
+  <!-- Floating Popover Dropdown -->
+  <div
+    class="custom-select__popover"
+    role="listbox"
+    id={`${id}-listbox`}
+    aria-labelledby={`${id}-trigger`}
+    data-select-popover
+    hidden
+  >
+    <div class="custom-select__list">
+      <button
+        type="button"
+        role="option"
+        class="custom-select__item is-selected"
+        data-value=""
+        data-label={defaultOption}
+        aria-selected="true"
+      >
+        <span class="custom-select__item-text">{defaultOption}</span>
+        <span class="custom-select__check" aria-hidden="true">
+          <Icon name="ph:check" class="custom-select__check-icon" />
+        </span>
+      </button>
+
+      {
+        options.map((option) => (
+          <button
+            type="button"
+            role="option"
+            class="custom-select__item"
+            data-value={option}
+            data-label={option}
+            aria-selected="false"
+          >
+            <span class="custom-select__item-text">{option}</span>
+            <span class="custom-select__check" aria-hidden="true">
+              <Icon name="ph:check" class="custom-select__check-icon" />
+            </span>
+          </button>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style>
+  .custom-select {
+    position: relative;
+    inline-size: 100%;
+  }
+
+  .custom-select__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    inline-size: 100%;
+    min-block-size: 32px;
+    padding: 0 0 0.35rem;
+    background: transparent;
+    border: 0;
+    border-block-end: 1px solid var(--color-hairline-strong);
+    border-radius: 0;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.35;
+    color: var(--color-ink);
+    text-align: start;
+    cursor: pointer;
+    transition: border-color 200ms ease;
+  }
+
+  .custom-select__trigger:hover {
+    border-block-end-color: var(--color-ink-mute);
+  }
+
+  .custom-select__trigger:focus-visible {
+    outline: none;
+    border-block-end-color: var(--color-charcoal);
+  }
+
+  .custom-select__trigger[aria-expanded="true"] {
+    border-block-end-color: var(--color-charcoal);
+  }
+
+  .custom-select__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .custom-select__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-champagne-deep);
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .custom-select__chevron {
+    inline-size: 14px;
+    block-size: 14px;
+  }
+
+  .custom-select__trigger[aria-expanded="true"] .custom-select__arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Popover container with Shadcn floating card aesthetic */
+  .custom-select__popover {
+    position: absolute;
+    inset-block-start: calc(100% + 4px);
+    inset-inline-start: 0;
+    inline-size: 100%;
+    min-inline-size: 200px;
+    max-block-size: 260px;
+    background-color: #ffffff;
+    border: 1px solid var(--color-hairline);
+    border-radius: 4px;
+    box-shadow:
+      0 10px 25px -5px rgba(30, 29, 27, 0.1),
+      0 8px 10px -6px rgba(30, 29, 27, 0.04);
+    z-index: 50;
+    padding: 0.25rem;
+    animation: selectPopIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .custom-select__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    max-block-size: 250px;
+    overflow-y: auto;
+  }
+
+  .custom-select__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    inline-size: 100%;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: 0;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-ink);
+    text-align: start;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .custom-select__item:hover,
+  .custom-select__item:focus-visible {
+    background-color: #f4efe6;
+    color: var(--color-charcoal);
+    outline: none;
+  }
+
+  .custom-select__item.is-selected {
+    font-weight: 600;
+    color: var(--color-charcoal);
+    background-color: var(--color-ivory);
+  }
+
+  .custom-select__check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 14px;
+    block-size: 14px;
+    color: var(--color-champagne-deep);
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+
+  .custom-select__check-icon {
+    inline-size: 14px;
+    block-size: 14px;
+  }
+
+  .custom-select__item.is-selected .custom-select__check {
+    opacity: 1;
+  }
+
+  @keyframes selectPopIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .custom-select__popover {
+      animation: none;
+    }
+    .custom-select__arrow {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  function setupSelects() {
+    const wrappers = document.querySelectorAll<HTMLElement>('[data-select-wrapper]');
+
+    wrappers.forEach((wrapper) => {
+      if (wrapper.dataset.initialized) return;
+      wrapper.dataset.initialized = 'true';
+
+      const trigger = wrapper.querySelector<HTMLButtonElement>('[data-select-trigger]');
+      const popover = wrapper.querySelector<HTMLElement>('[data-select-popover]');
+      const labelText = wrapper.querySelector<HTMLElement>('[data-select-text]');
+      const hiddenInput = wrapper.querySelector<HTMLInputElement>('[data-select-input]');
+      const items = wrapper.querySelectorAll<HTMLButtonElement>('[data-value]');
+
+      if (!trigger || !popover || !labelText || !hiddenInput) return;
+
+      const open = () => {
+        // Close other open popovers first
+        document.querySelectorAll<HTMLElement>('[data-select-popover]:not([hidden])').forEach((p) => {
+          if (p !== popover) {
+            p.hidden = true;
+            const parent = p.closest('[data-select-wrapper]');
+            parent?.querySelector('[data-select-trigger]')?.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        popover.hidden = false;
+        trigger.setAttribute('aria-expanded', 'true');
+
+        // Focus the currently selected item
+        const selected = wrapper.querySelector<HTMLButtonElement>('.custom-select__item.is-selected');
+        selected?.focus();
+      };
+
+      const close = () => {
+        popover.hidden = true;
+        trigger.setAttribute('aria-expanded', 'false');
+      };
+
+      const toggle = () => {
+        if (popover.hidden) open();
+        else close();
+      };
+
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggle();
+      });
+
+      // Item selection
+      items.forEach((item) => {
+        item.addEventListener('click', (e) => {
+          e.preventDefault();
+          const val = item.dataset.value ?? '';
+          const txt = item.dataset.label ?? '';
+
+          hiddenInput.value = val;
+          labelText.textContent = txt;
+
+          items.forEach((it) => {
+            const isIt = it === item;
+            it.classList.toggle('is-selected', isIt);
+            it.setAttribute('aria-selected', String(isIt));
+          });
+
+          // Dispatch input and change events so parent form syncs
+          hiddenInput.dispatchEvent(new Event('input', { bubbles: true }));
+          hiddenInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+          close();
+          trigger.focus();
+        });
+      });
+
+      // Keyboard navigation
+      wrapper.addEventListener('keydown', (e) => {
+        if (popover.hidden) {
+          if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            open();
+          }
+          return;
+        }
+
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          close();
+          trigger.focus();
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const active = document.activeElement;
+          const itemList = Array.from(items);
+          const idx = itemList.indexOf(active as HTMLButtonElement);
+          const next = itemList[(idx + 1) % itemList.length];
+          next?.focus();
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const active = document.activeElement;
+          const itemList = Array.from(items);
+          const idx = itemList.indexOf(active as HTMLButtonElement);
+          const prev = idx <= 0 ? itemList[itemList.length - 1] : itemList[idx - 1];
+          prev?.focus();
+        }
+      });
+    });
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target?.closest('[data-select-wrapper]')) {
+        document.querySelectorAll<HTMLElement>('[data-select-popover]:not([hidden])').forEach((p) => {
+          p.hidden = true;
+          const parent = p.closest('[data-select-wrapper]');
+          parent?.querySelector('[data-select-trigger]')?.setAttribute('aria-expanded', 'false');
+        });
+      }
+    });
+  }
+
+  setupSelects();
+  document.addEventListener('astro:page-load', setupSelects);
+</script>

@@ -12,6 +12,8 @@
  * ditampilkan siap disalin, dan statusnya jujur mengatakan nomornya belum
  * dipasang. Tidak ada endpoint pengganti yang dikarang.
  */
+import CustomDatePicker from './CustomDatePicker.astro';
+import CustomSelect from './CustomSelect.astro';
 import { buildWaLink } from '../../capabilities/lead/lib/whatsapp';
 import { formOptions, page } from './content';
 
@@ -66,19 +68,30 @@ const services = formOptions.layanan;
       {
         fields.map((field) => {
           const id = `inq-${field.name}`;
+          const isCustomControl = field.type === 'select' || field.type === 'date';
+          const labelFor = isCustomControl ? `${id}-trigger` : id;
           return (
             <div class="inq__field">
-              <label class="inq__label" for={id}>
+              <label class="inq__label" for={labelFor} id={`${id}-label`}>
                 {field.label}
               </label>
 
               {field.type === 'select' ? (
-                <select class="inq__control" id={id} name={field.name} data-label={field.label}>
-                  <option value="">Belum tahu</option>
-                  {field.options?.map((option) => (
-                    <option value={option}>{option}</option>
-                  ))}
-                </select>
+                <CustomSelect
+                  id={id}
+                  name={field.name}
+                  label={field.label}
+                  options={field.options ?? []}
+                  defaultOption="Belum tahu"
+                  defaultValue=""
+                />
+              ) : field.type === 'date' ? (
+                <CustomDatePicker
+                  id={id}
+                  name={field.name}
+                  label={field.label}
+                  placeholder="Pilih tanggal (jika sudah ada)"
+                />
               ) : field.type === 'textarea' ? (
                 <textarea
                   class="inq__control inq__control--area"
