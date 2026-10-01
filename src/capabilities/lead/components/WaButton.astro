@@ -29,8 +29,16 @@ const {
   location = 'hero',
   class: className = '',
   slot: slotName,
-  ariaLabel = 'Hubungi tim kami via WhatsApp',
+  ariaLabel,
 } = Astro.props;
+
+/**
+ * Label aksesibel harus memuat teks yang terlihat (WCAG 2.5.3 Label in Name).
+ * `aria-label` yang tidak mengandung teks tombol membuat pembaca layar
+ *进步的 nama berbeda dari yang dibaca pengguna mata. Karena itu label default
+ * memakai `text` sebagai dasarnya, bukan kalimat terpisah.
+ */
+const resolvedAriaLabel = ariaLabel ?? `${text} via WhatsApp`;
 
 const waUrl = buildWaLink({ number, text: message });
 const hasNumber = waUrl !== '#';
@@ -45,7 +53,7 @@ const buttonClass = variant === 'onink' ? 'btn btn--on-ink' : variant === 'ghost
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={ariaLabel}
+          aria-label={resolvedAriaLabel}
           data-event="whatsapp_click"
           data-wa-location={location}
           class:list={[buttonClass, 'w-full', className]}
@@ -58,7 +66,7 @@ const buttonClass = variant === 'onink' ? 'btn btn--on-ink' : variant === 'ghost
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label={ariaLabel}
+        aria-label={resolvedAriaLabel}
         data-event="whatsapp_click"
         data-wa-location={location}
         slot={slotName}

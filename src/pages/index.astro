@@ -268,20 +268,22 @@ const pad = (n: number) => String(n).padStart(2, '0');
       />
       <div class="process-container mt-12">
         <!-- Kolom Kiri: Garis Perjalanan & Rangkaian Tahapan -->
-        <ol class="process-steps" role="list">
+        <ol class="process-steps">
           {
             steps.map((step, i) => (
               <li
                 class:list={["process-step", i === 0 && "is-active"]}
                 data-step-index={i}
-                tabindex="0"
-                role="button"
-                aria-label={`Langkah ${pad(i + 1)}: ${step.name}`}
+                aria-current={i === 0 ? "step" : undefined}
               >
                 <div class="process-step__header">
                   <span class="process-step__number font-mono">{pad(i + 1)}</span>
                   <div class="process-step__titles">
-                    <h3 class="process-step__name">{step.name}</h3>
+                    <h3 class="process-step__name">
+                      <button type="button" class="process-step__trigger">
+                        {step.name}
+                      </button>
+                    </h3>
                     <p class="process-step__tagline">{step.tagline}</p>
                   </div>
                 </div>
@@ -289,7 +291,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
                 <div class="process-step__details">
                   <p class="process-step__body">{step.body}</p>
                   {step.highlights && step.highlights.length > 0 && (
-                    <ul class="process-step__highlights" role="list">
+                    <ul class="process-step__highlights">
                       {step.highlights.map((item) => (
                         <li class="process-step__highlight-item">
                           <span class="process-step__dash" aria-hidden="true">—</span>
@@ -338,7 +340,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
               <span class="process-stage__pip" aria-hidden="true"></span>
               <span>Tahap <span class="active-step-num">01</span> / 04</span>
             </div>
-            <span class="active-step-name text-(--color-champagne-deep)">{steps[0]?.name}</span>
+            <span class="active-step-name text-(--color-champagne-text)">{steps[0]?.name}</span>
           </div>
         </div>
       </div>
@@ -718,11 +720,15 @@ const pad = (n: number) => String(n).padStart(2, '0');
 
       if (processSteps.length > 0) {
         const activateStep = (index: number) => {
-          processSteps.forEach((step, i) => {
-            const isActive = i === index;
-            step.classList.toggle("is-active", isActive);
-            step.setAttribute("aria-current", isActive ? "step" : "false");
-          });
+processSteps.forEach((step, i) => {
+          const isActive = i === index;
+          step.classList.toggle("is-active", isActive);
+          if (isActive) {
+            step.setAttribute("aria-current", "step");
+          } else {
+            step.removeAttribute("aria-current");
+          }
+        });
 
           if (stageItems.length > 0) {
             stageItems.forEach((item, i) => {
@@ -756,16 +762,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
             activateStep(i);
             step.scrollIntoView({ behavior: "smooth", block: "center" });
           };
-          const onKey = (e: KeyboardEvent) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              activateStep(i);
-              step.scrollIntoView({ behavior: "smooth", block: "center" });
-            }
-          };
 
           step.addEventListener("click", onClick);
-          step.addEventListener("keydown", onKey);
         });
       }
 

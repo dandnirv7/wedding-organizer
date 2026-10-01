@@ -40,9 +40,14 @@
   --color-hairline-strong: #c9bcab;
   --color-hairline-ink: #3a3631;
 
-  /* Accent */
+  /* Accent
+   * - champagne / champagne-deep: dekoratif (garis, hairline, non-teks)
+   * - champagne-text: champagne yang darkened khusus TEKS kecil di atas
+   *   bidang terang. #96794f hanya 3.69:1 di ivory dan gagal WCAG AA 4.5:1,
+   *   jadi teks kecil memakai #7d6539 (5.5:1) sebagai gantinya. */
   --color-champagne: #b69b72;
   --color-champagne-deep: #96794f;
+  --color-champagne-text: #7d6539;
 
   /* Type */
   --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
@@ -336,7 +341,13 @@
   }
 
   .label--accent {
-    color: var(--color-champagne-deep);
+    color: var(--color-champagne-text);
+  }
+
+  /* Eyebrow accent di atas band gelap: champagne-deep hanya 4.12:1 di charcoal,
+   * jadi pakai champagne terang yang lolos 6.5:1. */
+  .band--ink .label--accent {
+    color: var(--color-champagne);
   }
 
   .label--ink {
@@ -362,6 +373,12 @@
     text-transform: uppercase;
     color: var(--color-ink-mute);
     max-inline-size: 60ch;
+  }
+
+  /* Catatan di atas beige: ink-mute cuma 4.33:1, naikkan ke ink-soft (7.1:1). */
+  .band--beige .wait,
+  .band--beige .pending {
+    color: var(--color-ink-soft);
   }
 
   .band--ink .wait {
@@ -781,27 +798,43 @@
     border-inline-start: 2px solid transparent;
     margin-inline-start: -1px;
     background-color: transparent;
-    opacity: 0.65;
-    transition:
-      border-color 0.35s ease,
-      opacity 0.35s ease;
+    transition: border-color 0.35s ease;
     cursor: pointer;
-    outline: none;
   }
 
-  .process-step:focus-visible {
+  /* Tombol asli di dalam heading: keyboard & screen-reader dapat mengaktifkan
+     langkah, sementara仍 seluruh kartu tetap bisa diklik lewat bubbling. */
+  .process-step__trigger {
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-align: start;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .process-step__trigger:focus-visible {
     outline: 2px solid var(--color-champagne);
-    outline-offset: -2px;
+    outline-offset: 3px;
   }
 
   .process-step:hover {
-    opacity: 0.85;
+    border-inline-start-color: var(--color-hairline-strong);
   }
 
-  /* Active step: elegant champagne hairline accent and full editorial contrast across ALL screen sizes */
+  /* Active step: champagne hairline accent. Redup dari `opacity` supaya kontras
+     teks nonaktif tetap di atas ambang WCAG AA (tidak ikut meredup). */
   .process-step.is-active {
-    opacity: 1;
     border-inline-start-color: var(--color-champagne);
+  }
+
+  .process-step.is-active .process-step__name,
+  .process-step.is-active .process-step__tagline,
+  .process-step.is-active .process-step__body,
+  .process-step.is-active .process-step__highlight-item {
+    color: var(--color-ink);
   }
 
   @media (min-width: 64rem) {
@@ -828,8 +861,9 @@
     flex-shrink: 0;
   }
 
+  /* Champagne diperkuat agar lolos kontras 4.5:1 di atas ivory (LMS say < 3:1). */
   .process-step.is-active .process-step__number {
-    color: var(--color-champagne-deep);
+    color: var(--color-champagne-text);
   }
 
   .process-step__titles {
@@ -863,8 +897,9 @@
     transition: color 0.3s ease;
   }
 
+  /* Tagline nonaktif memakai token kontras (bukan champagne-deep 3.69:1). */
   .process-step.is-active .process-step__tagline {
-    color: var(--color-champagne-deep);
+    color: var(--color-champagne-text);
   }
 
   .process-step__details {
